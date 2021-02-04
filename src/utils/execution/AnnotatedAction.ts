@@ -1,4 +1,7 @@
+import { AUDIO_FILES, play } from '../audio';
 import { Action, ActionType } from '../../types';
+
+import { Audio } from 'expo-av';
 
 export default class AnnotatedAction {
   action: Action;
@@ -6,6 +9,9 @@ export default class AnnotatedAction {
 
   // For GoTo
   totalPasses: number;
+  // For Sound
+  private playingSound?: Audio.Sound;
+
   constructor(action: Action) {
     this.action = action;
     this.elapsedMs = 0;
@@ -27,7 +33,7 @@ export default class AnnotatedAction {
   public get nextNodeIndex(): number {
     if (
       this.action.type === ActionType.goTo &&
-      this.totalPasses < this.action.params.times
+      this.totalPasses < this.action.params.times - 1
     ) {
       return this.action.params.targetNode;
     }
@@ -42,12 +48,50 @@ export default class AnnotatedAction {
     return (100 * this.elapsedMs) / (this.action.params.time * 1000);
   }
 
-  public onLeave() {
-    this.totalPasses++;
+  public get time(): number {
+    return this.action.type === ActionType.goTo
+      ? 0
+      : this.action.params.time * 1000;
   }
 
-  public onStart() {
+  public onLeave() {
+    this.totalPasses++;
+    if (this.playingSound) {
+      const sound = this.playingSound;
+
+      sound
+        .setStatusAsync({ shouldPlay: false })
+        .then(() => sound.unloadAsync())
+        .then(() => (this.playingSound = undefined));
+    }
+  }
+
+  public onStart(isRapid?: boolean) {
     this.elapsedMs = 0;
+    if (!isRapid && this.action.type === ActionType.sound) {
+      play(AUDIO_FILES[this.action.params.sound], { isLooping: true }).then(
+        (sound) => (this.playingSound = sound)
+      );
+    }
+  }
+
+  public onPause() {
+    if (this.playingSound) {
+      const sound = this.playingSound;
+
+      sound.setStatusAsync({ shouldPlay: false }).then(() => {
+        sound.unloadAsync();
+      });
+    }
+  }
+
+  public onResume() {
+    if (this.action.type === ActionType.sound) {
+      play(AUDIO_FILES[this.action.params.sound], {
+        isLooping: true,
+        positionMillis: this.elapsedMs,
+      }).then((sound) => (this.playingSound = sound));
+    }
   }
 
   public get viewLabel(): string | undefined {

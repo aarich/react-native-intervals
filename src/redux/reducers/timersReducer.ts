@@ -1,4 +1,7 @@
 import {
+  AppActionTypes,
+  DELETE_TIMER,
+  RESET,
   SET_TIMERS,
   TimerActionTypes,
   UPSERT_TIMER,
@@ -14,7 +17,7 @@ export type TimersState = {
 
 const reducer = (
   state: TimersState = initialState,
-  action: TimerActionTypes
+  action: TimerActionTypes | AppActionTypes
 ): TimersState => {
   switch (action.type) {
     case SET_TIMERS: {
@@ -26,6 +29,13 @@ const reducer = (
     }
     case UPSERT_TIMER:
       return { ...state, [action.payload.id]: action.payload };
+    case DELETE_TIMER: {
+      const newstate = { ...state };
+      delete newstate[action.payload];
+      return newstate;
+    }
+    case RESET:
+      return initialState;
     default:
       return state;
   }

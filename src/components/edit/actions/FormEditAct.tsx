@@ -1,7 +1,7 @@
-import { Icon, Input, Text } from '@ui-kitten/components';
-
 import { BaseFormEditProps } from './FormEdit';
+import Input from '../../shared/Input';
 import React from 'react';
+import { Text } from '@ui-kitten/components';
 
 const FormEditAct = ({ params, setParams }: BaseFormEditProps) => {
   return (
@@ -10,18 +10,19 @@ const FormEditAct = ({ params, setParams }: BaseFormEditProps) => {
         Perform an action for the specified amount of time
       </Text>
       <Input
-        value={params?.name ? params?.name : ''}
+        value={params.name || ''}
         label="What is the action?"
         placeholder="Enter a name"
-        onChangeText={(name) => setParams({ ...params, name })}
-        accessoryRight={(props) => <Icon {...props} name="text-outline" />}
+        onChangeText={(name) => setParams((params) => ({ ...params, name }))}
+        iconRight="text-outline"
       />
       <Input
-        value={params?.time ? params?.time + '' : ''}
+        value={params.time || ''}
         label="How long to do this action, in seconds?"
         placeholder="Enter a number"
-        onChangeText={(time) => setParams({ ...params, time })}
-        accessoryRight={(props) => <Icon {...props} name="hash-outline" />}
+        onChangeText={(time) => setParams((params) => ({ ...params, time }))}
+        iconRight="hash-outline"
+        numeric
       />
     </>
   );

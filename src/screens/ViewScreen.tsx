@@ -1,13 +1,15 @@
-import { Alert, StyleSheet, View } from 'react-native';
+import { Alert, Platform, Share, StyleSheet, View } from 'react-native';
 import { Button, Icon, Layout, Text } from '@ui-kitten/components';
 import React, { useCallback, useEffect, useState } from 'react';
+import { activateKeepAwake, deactivateKeepAwake } from 'expo-keep-awake';
+import { getShortenedURL, makeURL, serialize } from '../utils/api';
 
 import { RouteProp } from '@react-navigation/native';
 import RunControls from '../components/view/RunControls';
-import { ScrollView } from 'react-native-gesture-handler';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { TimersParamList } from '../types';
 import ViewableFlow from '../components/view/ViewableFlow';
+import { useSetting } from '../redux/selectors';
 import { useTimer } from '../redux/selectors/TimerSelector';
 
 type Props = {
@@ -23,14 +25,56 @@ const ViewScreen = ({ navigation, route }: Props) => {
     []
   );
   const [progress, setProgress] = useState<(number | undefined)[]>([]);
+  const [isRunning, setIsRunning] = useState(false);
+  const showDescription = !useSetting('hideDescription');
 
   const share = useCallback(() => {
-    Alert.alert('Share', timer?.name);
-  }, [timer?.name]);
+    if (!timer) {
+      // shouldn't happen
+      return;
+    }
+
+    const serialized = serialize(timer);
+    const actuallyShareUrl = (urlGetter: (str: string) => Promise<string>) => {
+      urlGetter(serialized).then((url) => {
+        let content;
+        if (Platform.OS === 'ios') {
+          content = { url };
+        } else {
+          content = { message: url, title: 'Flow' };
+        }
+        Share.share(content);
+      });
+    };
+
+    Alert.alert(
+      'Share Flow',
+      "Would you like to generate a short link to this flow? To do that we'll store its contents in our url shortener, and anyone with access to the url will be able to view it.",
+      [
+        {
+          text: 'Share Short Link',
+          onPress: () => actuallyShareUrl(getShortenedURL),
+        },
+        { text: 'Try Full URL', onPress: () => actuallyShareUrl(makeURL) },
+        { text: 'Cancel', style: 'cancel' },
+      ]
+    );
+
+    console.log(encodeURIComponent(serialized));
+  }, [timer]);
+
+  useEffect(() => {
+    if (isRunning) {
+      activateKeepAwake();
+    } else {
+      deactivateKeepAwake();
+    }
+    return () => deactivateKeepAwake();
+  });
 
   useEffect(() => {
     if (!timer) {
-      Alert.alert('Timer not found');
+      Alert.alert('Flow not found');
       navigation.pop();
       return;
     }
@@ -43,14 +87,16 @@ const ViewScreen = ({ navigation, route }: Props) => {
             appearance="ghost"
             status="basic"
             accessoryLeft={(props) => <Icon {...props} name="share-outline" />}
-            onPress={() => share()}
+            onPress={share}
           />
           <Button
             style={{ paddingHorizontal: 0 }}
             appearance="ghost"
             status="basic"
             accessoryLeft={(props) => <Icon {...props} name="edit-outline" />}
-            onPress={() => navigation.push('EditScreen', { id })}
+            onPress={() =>
+              navigation.push('EditScreen', { id, serializedFlow: undefined })
+            }
           />
         </View>
       ),
@@ -59,30 +105,38 @@ const ViewScreen = ({ navigation, route }: Props) => {
 
   return (
     <Layout style={styles.container}>
-      <ScrollView>
-        {timer ? (
-          <View style={{ margin: '5%' }}>
-            {timer.description ? (
-              <Text category="s1" style={{ paddingBottom: 14 }}>
-                {timer.description}
-              </Text>
-            ) : null}
+      {timer ? (
+        <View
+          style={{
+            marginTop: '5%',
+            marginHorizontal: '5%',
+            flexGrow: 1,
+            flex: 1,
+          }}
+        >
+          {timer.description && showDescription ? (
+            <Text category="s1" style={{ paddingBottom: 14 }}>
+              {timer.description}
+            </Text>
+          ) : null}
+          <View>
             <RunControls
+              onRunningStateChange={setIsRunning}
               actions={timer.flow}
-              setActiveNode={setActiveNodeIndex}
-              setLabelOverrides={setLabelOverrides}
-              setProgress={setProgress}
-            />
-            <ViewableFlow
-              style={{ paddingTop: 10 }}
-              actions={timer.flow}
-              progress={progress}
-              activeNodeIndex={activeNodeIndex}
-              labelOverrides={labelOverrides}
+              onActiveNodeChange={setActiveNodeIndex}
+              onLabelOverridesChange={setLabelOverrides}
+              onProgressChange={setProgress}
             />
           </View>
-        ) : null}
-      </ScrollView>
+          <ViewableFlow
+            style={{ paddingTop: 10 }}
+            actions={timer.flow}
+            progress={progress}
+            activeNodeIndex={activeNodeIndex}
+            labelOverrides={labelOverrides}
+          />
+        </View>
+      ) : null}
     </Layout>
   );
 };

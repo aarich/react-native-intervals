@@ -6,6 +6,12 @@ import { View } from 'react-native';
 
 type Props = {
   executor: Executor;
+  timerActions: {
+    handleStart: () => void;
+    handlePause: () => void;
+    handleResume: () => void;
+    handleReset: () => void;
+  };
 };
 
 const makeButtonIf = (
@@ -24,23 +30,27 @@ const makeButtonIf = (
   ) : (
     <></>
   );
-const ControlButtons = ({ executor }: Props) => {
+const ControlButtons = ({ executor, timerActions }: Props) => {
   const { showStart, showPause, showResume, showReset } = executor;
   return (
     <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
       <ButtonGroup appearance="outline">
-        {makeButtonIf(showStart, 'Start', 'play-circle-outline', () =>
-          executor.start()
-        )}
-        {makeButtonIf(showPause, 'Pause', 'pause-circle-outline', () =>
-          executor.pause()
-        )}
-        {makeButtonIf(showResume, 'Resume', 'play-circle-outline', () =>
-          executor.resume()
-        )}
-        {makeButtonIf(showReset, 'Reset', 'refresh-outline', () =>
-          executor.reset()
-        )}
+        {makeButtonIf(showStart, 'Start', 'play-circle-outline', () => {
+          timerActions.handleStart();
+          executor.start();
+        })}
+        {makeButtonIf(showPause, 'Pause', 'pause-circle-outline', () => {
+          timerActions.handlePause();
+          executor.pause();
+        })}
+        {makeButtonIf(showResume, 'Resume', 'play-circle-outline', () => {
+          timerActions.handleResume();
+          executor.resume();
+        })}
+        {makeButtonIf(showReset, 'Reset', 'refresh-outline', () => {
+          timerActions.handleReset();
+          executor.reset();
+        })}
       </ButtonGroup>
     </View>
   );

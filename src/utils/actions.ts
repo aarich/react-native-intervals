@@ -1,18 +1,50 @@
 import {
   ActParams,
-  Action,
   ActionType,
   GoToParams,
+  ParameterizedAction,
   SoundParams,
   WaitParams,
-  pAction,
 } from '../types';
 
-import { BaseFormEditProps } from '../components/edit/FormEdit';
-import FormEditAct from '../components/edit/FormEditAct';
-import FormEditGoTo from '../components/edit/FormEditGoTo';
-import FormEditSound from '../components/edit/FormEditSound';
-import FormEditWait from '../components/edit/FormEditWait';
+import { AUDIO_FILES } from './audio';
+
+const getFancyTimeName = (s: number) => {
+  const portions: string[] = [];
+  const sInHour = 60 * 60;
+  const h = Math.trunc(s / sInHour);
+  if (h > 0) {
+    portions.push(h + ' hour' + (h > 1 ? 's' : ''));
+    s = s - h * sInHour;
+  }
+
+  const sInMinute = 60;
+  const m = Math.trunc(s / sInMinute);
+  if (m > 0) {
+    portions.push(m + ' minute' + (m > 1 ? 's' : ''));
+    s = s - m * sInMinute;
+  }
+
+  if (s > 0) {
+    portions.push(s + ' second' + (s > 1 ? 's' : ''));
+  }
+
+  return portions.join(', ');
+};
+
+const verifyNonEmptyString = (val: string, varName: string, step: number) => {
+  if (val.length === 0) {
+    throw new Error(`Step ${step} is missing ${varName}.`);
+  }
+};
+
+const verifyPositiveNumber = (val: number, varName: string, step: number) => {
+  if (val < 1) {
+    throw new Error(
+      `Step ${step} has invalid ${varName} (${val}). It has to be a positive number.`
+    );
+  }
+};
 
 export const getActionTypes = () => {
   const ret: ActionType[] = [];
@@ -27,9 +59,23 @@ type ActionInfo<T extends ActionType> = {
   label: string;
   themeStatus: string;
   icon: string;
-  editComponent: React.FunctionComponent<BaseFormEditProps>;
-  getAction: (draftParams: Record<string, string>, index: number) => Action;
-  getDetails: (action: pAction<T>) => string;
+  getAction: (
+    draftParams: Record<string, string>,
+    index: number
+  ) => ParameterizedAction<T>;
+  getDetails: (action: ParameterizedAction<T>) => string;
+  validate: (action: ParameterizedAction<T>, step: number) => void;
+};
+
+const validateDefault = (
+  action: { params: { name?: string; time: number } },
+  step: number
+) => {
+  const params = action.params;
+  if (params.name) {
+    verifyNonEmptyString(params.name, 'Name', step);
+  }
+  verifyPositiveNumber(params.time, 'Time', step);
 };
 
 const actActionInfo: ActionInfo<ActionType.act> = {
@@ -37,7 +83,6 @@ const actActionInfo: ActionInfo<ActionType.act> = {
   label: 'Action',
   themeStatus: 'success',
   icon: 'flash-outline',
-  editComponent: FormEditAct,
   getAction: (draftParams, index) => {
     const params = getCheckedTypes(draftParams, {
       time: paramType.int,
@@ -45,7 +90,9 @@ const actActionInfo: ActionInfo<ActionType.act> = {
     }) as ActParams;
     return { params, index, type: ActionType.act };
   },
-  getDetails: (action) => `${action.params.time} s | ${action.params.name}`,
+  getDetails: (action) =>
+    `${getFancyTimeName(action.params.time)} | ${action.params.name}`,
+  validate: validateDefault,
 };
 
 const waitActionInfo: ActionInfo<ActionType.wait> = {
@@ -53,7 +100,6 @@ const waitActionInfo: ActionInfo<ActionType.wait> = {
   label: 'Wait',
   themeStatus: 'info',
   icon: 'clock-outline',
-  editComponent: FormEditWait,
   getAction: (draftParams, index) => {
     const params = getCheckedTypes(draftParams, {
       time: paramType.int,
@@ -61,7 +107,8 @@ const waitActionInfo: ActionInfo<ActionType.wait> = {
 
     return { params, index, type: ActionType.wait };
   },
-  getDetails: (action) => `${action.params.time} s`,
+  getDetails: (action) => `Wait ${getFancyTimeName(action.params.time)}`,
+  validate: validateDefault,
 };
 
 const soundActionInfo: ActionInfo<ActionType.sound> = {
@@ -69,17 +116,19 @@ const soundActionInfo: ActionInfo<ActionType.sound> = {
   label: 'Sound',
   themeStatus: 'danger',
   icon: 'bell-outline',
-  editComponent: FormEditSound,
   getAction: (draftParams, index) => {
     const params = getCheckedTypes(draftParams, {
       time: paramType.int,
-      soundType: paramType.str,
+      sound: paramType.int,
     }) as SoundParams;
 
     return { params, index, type: ActionType.sound };
   },
   getDetails: (action) =>
-    `${action.params.time} s | ${action.params.soundType}`,
+    `Play ${AUDIO_FILES[action.params.sound].name} for ${getFancyTimeName(
+      action.params.time
+    )}`,
+  validate: validateDefault,
 };
 
 const gotoActionInfo: ActionInfo<ActionType.goTo> = {
@@ -87,7 +136,6 @@ const gotoActionInfo: ActionInfo<ActionType.goTo> = {
   label: 'Go To',
   themeStatus: 'warning',
   icon: 'corner-right-up-outline',
-  editComponent: FormEditGoTo,
   getAction: (draftParams, index) => {
     const params = getCheckedTypes(draftParams, {
       times: paramType.int,
@@ -97,7 +145,15 @@ const gotoActionInfo: ActionInfo<ActionType.goTo> = {
     return { params, index, type: ActionType.goTo };
   },
   getDetails: (action) =>
-    `${action.params.targetNode} | ${action.params.times} times`,
+    `Return to step ${action.params.targetNode + 1}${
+      action.params.times === 1
+        ? ' once'
+        : `. These steps repeat ${action.params.times} times`
+    }`,
+  validate: (action, step) => {
+    const params = action.params;
+    verifyPositiveNumber(params.times, 'Repetitions', step);
+  },
 };
 
 enum paramType {

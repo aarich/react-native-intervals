@@ -19,7 +19,7 @@ const ActionSelector = ({ onInsert, allowGoTo }: Props) => {
   const basicColor = 'color-basic-' + (scheme === 'dark' ? '700' : '300');
   return (
     <Card
-      style={{ flex: 1, backgroundColor: theme[basicColor] }}
+      style={{ backgroundColor: theme[basicColor] }}
       status="info"
       header={(props) => (
         <View {...props}>
@@ -32,7 +32,6 @@ const ActionSelector = ({ onInsert, allowGoTo }: Props) => {
     >
       <View
         style={{
-          flex: 1,
           flexDirection: 'row',
           justifyContent: 'space-evenly',
         }}

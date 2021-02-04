@@ -6,18 +6,21 @@ export enum ActionType {
 }
 
 export type BottomTabParamList = {
-  Timers: undefined;
+  Flows: undefined;
   More: undefined;
 };
 
 export type TimersParamList = {
   LibraryScreen: undefined;
   ViewScreen: { id: string };
-  EditScreen: { id?: string };
+  EditScreen: { id?: string; serializedFlow?: string };
 };
 
 export type MoreParamList = {
   MoreScreen: undefined;
+  AboutScreen: undefined;
+  HelpScreen: undefined;
+  FeedbackScreen: undefined;
 };
 
 export type Timer = {
@@ -37,7 +40,7 @@ type ActAction = {
   params: ActParams;
 };
 
-type WaitAction = {
+export type WaitAction = {
   type: ActionType.wait;
   params: WaitParams;
 };
@@ -55,7 +58,7 @@ type GoToAction = {
 // PARAMS
 
 export type SoundParams = {
-  soundType: string; // TODO enumerate
+  sound: number;
   time: number;
 };
 
@@ -72,7 +75,7 @@ export type ActParams = {
   name: string;
 };
 
-export type pAction<T extends ActionType> = (
+export type ParameterizedAction<T extends ActionType> = (
   | ActAction
   | WaitAction
   | SoundAction

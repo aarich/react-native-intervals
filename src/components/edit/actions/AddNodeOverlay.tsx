@@ -1,10 +1,10 @@
-import { Action, ActionType } from '../../types';
+import { Action, ActionType } from '../../../types';
 import { Button, Card, Modal, Text } from '@ui-kitten/components';
+import { Keyboard, StyleSheet, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
 
 import FormEdit from './FormEdit';
-import { getActionInfo } from '../../utils/actions';
+import { getActionInfo } from '../../../utils/actions';
 
 type Props = {
   typeToCreate?: ActionType;
@@ -25,10 +25,6 @@ const AddNodeOverlay = ({
 }: Props) => {
   const [draft, setDraft] = useState(actionToEdit?.params || {});
 
-  const validateAndSave = () => {
-    onSave(draft);
-  };
-
   useEffect(() => {
     setDraft(actionToEdit?.params || {});
     // any change should reset the draft
@@ -41,13 +37,13 @@ const AddNodeOverlay = ({
     <Modal
       visible={isVisible}
       backdropStyle={styles.backdrop}
-      onBackdropPress={onCancel}
+      onBackdropPress={() => Keyboard.dismiss()}
     >
       <Card
         disabled={true}
         header={(props) => (
           <View {...props}>
-            <Text category="h3">
+            <Text category="h5">
               {`${typeToCreate ? 'Add' : 'Edit'} ${typeLabel}`}
             </Text>
           </View>
@@ -58,7 +54,7 @@ const AddNodeOverlay = ({
               <Button appearance="ghost" onPress={onCancel}>
                 Cancel
               </Button>
-              <Button status="primary" onPress={validateAndSave}>
+              <Button status="primary" onPress={() => onSave(draft)}>
                 {typeToCreate ? 'Add' : 'Save'}
               </Button>
             </View>

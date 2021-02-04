@@ -1,31 +1,9 @@
 import { Action, ActionType } from '../../types';
+import { calculateRuntime, msToViewable } from '../api';
 
 import AnnotatedAction from './AnnotatedAction';
 
 export type RunStatus = 'notstarted' | 'running' | 'paused' | 'done';
-
-const msToViewable = (duration: number) => {
-  const portions: string[] = [];
-
-  const msInHour = 1000 * 60 * 60;
-  const hours = Math.trunc(duration / msInHour);
-  if (hours > 0) {
-    portions.push(hours + ':');
-    duration = duration - hours * msInHour;
-  }
-
-  const msInMinute = 1000 * 60;
-  const minutes = Math.trunc(duration / msInMinute);
-  portions.push((minutes > 9 ? '' : '0') + minutes + ':');
-  duration = duration - minutes * msInMinute;
-
-  const seconds = Math.trunc(duration / 1000);
-  portions.push((seconds > 9 ? '' : '0') + seconds);
-
-  // portions.push('.' + (duration % 1000) / 100);
-
-  return portions.join('');
-};
 
 export default class Executor {
   public status: RunStatus;
@@ -34,6 +12,7 @@ export default class Executor {
 
   private initialFlow: Action[];
   private annotatedFlow: AnnotatedAction[];
+  private finalElapsedTimeMs: number;
 
   private setLabelOverides: (l: (string | undefined)[]) => void;
   private setNodeProgresses: (progress: (number | undefined)[]) => void;
@@ -43,6 +22,7 @@ export default class Executor {
     setLabelOverides: (labelOverrides: (string | undefined)[]) => void,
     setCurrentNodeProgress: (progress: (number | undefined)[]) => void
   ) {
+    this.finalElapsedTimeMs = calculateRuntime(flow);
     this.initialFlow = flow;
     this.annotatedFlow = flow.map((action) => new AnnotatedAction(action));
     this.currentNodeIndex = 0;
@@ -52,15 +32,18 @@ export default class Executor {
     this.setNodeProgresses = setCurrentNodeProgress;
   }
 
-  public tick(ms: number) {
-    if (this.status !== 'running') {
+  public tick(ms: number, isRapid?: boolean) {
+    if (!isRapid && this.status !== 'running') {
       return;
     }
     this.totalElapsedMs += ms;
 
     this.currentNode?.tick(ms);
 
-    while (this.currentNode?.isFinished && this.status === 'running') {
+    while (
+      this.currentNode?.isFinished &&
+      (this.status === 'running' || isRapid)
+    ) {
       const currentNode = this.currentNode;
       const nextNodeIndex = currentNode.nextNodeIndex;
 
@@ -70,12 +53,22 @@ export default class Executor {
         this.finish();
       } else {
         this.currentNodeIndex = nextNodeIndex;
-        this.currentNode.onStart();
+        this.currentNode.onStart(isRapid);
       }
     }
 
     this.setLabelOverides(this.getLabelOverrides());
     this.setNodeProgresses(this.getNodeProgresses());
+  }
+
+  public replaySince(lastActiveTimeMs: number, msInterval: number) {
+    const now = new Date().getTime();
+    for (let time = lastActiveTimeMs; time < now; time += msInterval) {
+      if (this.status === 'done') {
+        break;
+      }
+      this.tick(msInterval, true);
+    }
   }
 
   private finish() {
@@ -90,15 +83,21 @@ export default class Executor {
     this.currentNodeIndex = 0;
     this.status = 'notstarted';
     this.totalElapsedMs = 0;
+    this.setNodeProgresses(this.initialFlow.map(() => undefined));
   }
   public start(): void {
+    if (this.totalElapsedMs === 0) {
+      this.currentNode?.onStart();
+    }
     this.status = 'running';
   }
   public pause(): void {
     this.status = 'paused';
+    this.currentNode?.onPause();
   }
   public resume(): void {
     this.status = 'running';
+    this.currentNode?.onResume();
   }
 
   private get currentNode(): AnnotatedAction | undefined {
@@ -107,12 +106,22 @@ export default class Executor {
       : this.annotatedFlow[this.currentNodeIndex];
   }
 
-  public totalElapsed(): string {
-    return msToViewable(this.totalElapsedMs);
+  public totalElapsed(countUp: boolean): string {
+    if (countUp) {
+      return msToViewable(this.totalElapsedMs);
+    } else {
+      return msToViewable(this.finalElapsedTimeMs - this.totalElapsedMs);
+    }
   }
 
-  public currentElapsed(): string {
-    return msToViewable(this.currentNode?.elapsedMs || 0);
+  public currentElapsed(countUp: boolean): string {
+    if (countUp) {
+      return msToViewable(this.currentNode?.elapsedMs || 0);
+    } else {
+      return msToViewable(
+        (this.currentNode?.time || 0) - (this.currentNode?.elapsedMs || 0)
+      );
+    }
   }
 
   public get showStart(): boolean {

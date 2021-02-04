@@ -1,19 +1,17 @@
 import * as Linking from 'expo-linking';
 
 export default {
-  prefixes: [Linking.makeUrl('/')],
+  prefixes: [
+    Linking.makeUrl('/'),
+    Linking.makeUrl('https://mrarich.com/flows'),
+  ],
   config: {
     screens: {
       Root: {
         screens: {
-          TabOne: {
+          Timers: {
             screens: {
-              TabOneScreen: 'one',
-            },
-          },
-          TabTwo: {
-            screens: {
-              TabTwoScreen: 'two',
+              LibraryScreen: '',
             },
           },
         },

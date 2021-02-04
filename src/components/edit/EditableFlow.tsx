@@ -1,71 +1,37 @@
-import { Button, Divider, Icon, Text } from '@ui-kitten/components';
+import { Button, Icon, Text } from '@ui-kitten/components';
 import { StyleProp, View, ViewStyle } from 'react-native';
 
 import { Action } from '../../types';
 import ActionIcon from '../shared/ActionIcon';
+import InsertHereButton from './InsertHereButton';
 import React from 'react';
 import { getActionInfo } from '../../utils/actions';
 
-const getInsertHereButton = (
-  i: number,
-  activeInsertIndex: number,
-  setActiveInsertIndex: (i: number) => void
-) => (
-  <View style={{ flex: 1, flexDirection: 'row' }}>
-    <View
-      style={{
-        flex: 1,
-        alignContent: 'center',
-        justifyContent: 'center',
-        marginHorizontal: 20,
-      }}
-    >
-      <Divider />
-    </View>
-    <Button
-      style={{ flex: 2 }}
-      appearance={activeInsertIndex === i ? 'filled' : 'ghost'}
-      accessoryLeft={(props) => <Icon {...props} name="plus-circle-outline" />}
-      size="small"
-      onPress={() => setActiveInsertIndex(i)}
-    >
-      {activeInsertIndex === i ? 'Inserting Here' : 'Insert Here'}
-    </Button>
-    <View
-      style={{
-        flex: 1,
-        alignContent: 'center',
-        marginHorizontal: 20,
-        justifyContent: 'center',
-      }}
-    >
-      <Divider />
-    </View>
-  </View>
-);
-
 type Props = {
   actions: Action[];
-  editNode: (index: number) => void;
-  deleteNode: (index: number) => void;
+  onEditNode: (index: number) => void;
+  onDeleteNode: (index: number) => void;
   style?: StyleProp<ViewStyle>;
   activeInsertIndex: number;
-  setActiveInsertIndex: (index: number) => void;
+  onUpdateActiveInsertIndex: (index: number) => void;
 };
 
 const EditableFlow = ({
   actions,
-  editNode,
-  deleteNode,
+  onEditNode,
+  onDeleteNode: onDeleteNode,
   style,
   activeInsertIndex,
-  setActiveInsertIndex,
+  onUpdateActiveInsertIndex,
 }: Props) => {
   return (
     <View style={style}>
       {actions.map((action, i) => (
         <View key={i}>
-          {getInsertHereButton(i, activeInsertIndex, setActiveInsertIndex)}
+          <InsertHereButton
+            isActive={activeInsertIndex === i}
+            onPress={() => onUpdateActiveInsertIndex(i)}
+          />
           <View
             style={{
               flexDirection: 'row',
@@ -80,9 +46,9 @@ const EditableFlow = ({
                 flexDirection: 'row',
               }}
             >
-              {/* <View style={{ justifyContent: 'center', paddingRight: 8 }}>
+              <View style={{ justifyContent: 'center', paddingRight: 8 }}>
                 <Text>{i + 1}</Text>
-              </View> */}
+              </View>
               <ActionIcon type={action.type} size={40} />
             </View>
             <View
@@ -107,19 +73,22 @@ const EditableFlow = ({
                 accessoryLeft={(props) => (
                   <Icon {...props} name="edit-outline" />
                 )}
-                onPress={() => editNode(i)}
+                onPress={() => onEditNode(i)}
               />
               <Button
                 appearance="ghost"
                 accessoryLeft={(props) => (
                   <Icon {...props} name="trash-outline" />
                 )}
-                onPress={() => deleteNode(i)}
+                onPress={() => onDeleteNode(i)}
               />
             </View>
           </View>
           {i === actions.length - 1 ? (
-            getInsertHereButton(i + 1, activeInsertIndex, setActiveInsertIndex)
+            <InsertHereButton
+              isActive={activeInsertIndex === i + 1}
+              onPress={() => onUpdateActiveInsertIndex(i + 1)}
+            />
           ) : (
             <></>
           )}

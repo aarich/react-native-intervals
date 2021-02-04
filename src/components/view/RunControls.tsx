@@ -1,69 +1,125 @@
+import { AppState, AppStateStatus, View } from 'react-native';
 import { Card, useTheme } from '@ui-kitten/components';
-import React, { useEffect, useMemo } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import { Action } from '../../types';
 import ControlButtons from './ControlButtons';
 import DoubleTimer from './DoubleTimer';
 import Executor from '../../utils/execution/Executor';
 import useColorScheme from '../../hooks/useColorScheme';
-import { useMsClock } from '../../hooks/useClock';
+import { useSetting } from '../../redux/selectors';
+import { useTimer } from '../../hooks/useClock';
 
 type Props = {
   actions: Action[];
-  setActiveNode: (index: number | undefined) => void;
-  setLabelOverrides: (overrides: (string | undefined)[]) => void;
-  setProgress: (progress: (number | undefined)[]) => void;
+  onActiveNodeChange: (index: number | undefined) => void;
+  onLabelOverridesChange: (overrides: (string | undefined)[]) => void;
+  onProgressChange: (progress: (number | undefined)[]) => void;
+  onRunningStateChange: (isRunning: boolean) => void;
 };
 
 const RunControls = ({
   actions,
-  setActiveNode,
-  setLabelOverrides,
-  setProgress,
+  onActiveNodeChange,
+  onLabelOverridesChange,
+  onProgressChange,
+  onRunningStateChange,
 }: Props) => {
   const executor = useMemo(
-    () => new Executor(actions, setLabelOverrides, setProgress),
-    [actions, setLabelOverrides, setProgress]
+    () => new Executor(actions, onLabelOverridesChange, onProgressChange),
+    [actions, onLabelOverridesChange, onProgressChange]
   );
+
+  const countUp = useSetting('countUp');
   const theme = useTheme();
   const scheme = useColorScheme();
   const basicColor = 'color-basic-' + (scheme === 'dark' ? '700' : '300');
 
-  const { timer, startTimer, clearTimer, interval } = useMsClock();
+  const { timer, interval, ...timerActions } = useTimer();
+  const appState = useRef(AppState.currentState);
+  const [lastActiveTimeMs, setLastActiveTimeMs] = useState<number>();
 
   useEffect(() => {
-    console.log('useEFFECT A');
-    setActiveNode(executor.currentNodeIndex);
-  }, [executor.currentNodeIndex, setActiveNode]);
+    onActiveNodeChange(executor.currentNodeIndex);
+  }, [executor.currentNodeIndex, onActiveNodeChange]);
+
+  useEffect(() => {
+    if (executor.status === 'running') {
+      onRunningStateChange(true);
+    } else {
+      onRunningStateChange(false);
+    }
+  }, [executor.status, onRunningStateChange]);
 
   useEffect(() => {
     executor.tick(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timer]);
 
-  // start clock
+  const handleAppStateChange = useCallback(
+    (nextAppState: AppStateStatus) => {
+      if (
+        executor.status === 'running' &&
+        appState.current === 'active' &&
+        nextAppState.match(/inactive|background/)
+      ) {
+        // Only set this if we are going into the background AND the timer is running
+        setLastActiveTimeMs(new Date().getTime());
+        executor.pause();
+        timerActions.handlePause();
+      } else if (
+        appState.current.match(/inactive|background/) &&
+        nextAppState === 'active' &&
+        lastActiveTimeMs
+      ) {
+        executor.replaySince(lastActiveTimeMs, interval);
+        setLastActiveTimeMs(undefined);
+        if (executor.status !== 'done') {
+          timerActions.handleResume();
+          executor.resume();
+        }
+      }
+
+      appState.current = nextAppState;
+    },
+    [executor, interval, lastActiveTimeMs, timerActions]
+  );
+
   useEffect(() => {
-    startTimer();
-    setActiveNode(0);
-    return () => clearTimer();
+    AppState.addEventListener('change', handleAppStateChange);
+    return () => AppState.removeEventListener('change', handleAppStateChange);
+  }, [handleAppStateChange]);
+
+  useEffect(() => {
+    onActiveNodeChange(0);
+    return () => timerActions.handlePause();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <Card
-      style={{
-        flex: 1,
-        backgroundColor: theme[basicColor],
-        borderColor: theme['color-basic-500'],
-      }}
-    >
-      <DoubleTimer
-        style={{ paddingBottom: 10 }}
-        topText={executor.currentElapsed()}
-        bottomText={executor.totalElapsed()}
-      />
-      <ControlButtons executor={executor} />
-    </Card>
+    <>
+      <View style={{}}>
+        <Card
+          style={{
+            backgroundColor: theme[basicColor],
+            borderColor: theme['color-basic-500'],
+          }}
+        >
+          <DoubleTimer
+            style={{ paddingBottom: 10 }}
+            topText={executor.currentElapsed(countUp)}
+            bottomText={executor.totalElapsed(countUp)}
+          />
+          <ControlButtons executor={executor} timerActions={timerActions} />
+        </Card>
+      </View>
+    </>
   );
 };
 

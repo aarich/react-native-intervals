@@ -1,12 +1,135 @@
-import * as React from 'react';
+import { Alert, StyleSheet, View } from 'react-native';
+import {
+  BooleanSettings,
+  SelectSettings,
+} from '../../redux/reducers/settingsReducer';
+import { Divider, Icon, Layout, List, ListItem } from '@ui-kitten/components';
+import React, { useCallback } from 'react';
 
-import { StyleSheet, Text, View } from 'react-native';
+import { AdUnit } from '../../utils/ads';
+import ListItemAds from '../../components/more/ListItemAds';
+import ListItemTheme from '../../components/more/ListItemTheme';
+import ListItemToggle from '../../components/more/ListItemToggle';
+import { MoreParamList } from '../../types';
+import PotentialAd from '../../components/shared/PotentialAd';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { resetApp } from '../../redux/actions';
+import { useAppDispatch } from '../../redux/store';
 
-const MoreScreen = () => {
+type Props = {
+  navigation: StackNavigationProp<MoreParamList, 'MoreScreen'>;
+};
+
+type ListItemNav = { label: string; destination: keyof MoreParamList };
+type ListItemAction = { label: string; action: () => void };
+type ListItemBooleanSetting = {
+  setting: keyof BooleanSettings;
+  isBoolean: true;
+};
+type ListItemSelectSetting = {
+  setting: keyof SelectSettings;
+  isBoolean: false;
+};
+
+const MoreScreen = ({ navigation }: Props) => {
+  const dispatch = useAppDispatch();
+
+  const resetAppAlert = useCallback(() => {
+    Alert.alert(
+      'Are you sure?',
+      'This will clear all saved flows. You cannot undo this action.',
+      [
+        {
+          text: 'Reset',
+          style: 'destructive',
+          onPress: () => {
+            dispatch(resetApp());
+          },
+        },
+        {
+          text: 'Cancel',
+        },
+      ]
+    );
+  }, [dispatch]);
+
+  const listItems: (
+    | ListItemNav
+    | ListItemSelectSetting
+    | ListItemAction
+    | ListItemBooleanSetting
+  )[] = [
+    { label: 'Help', destination: 'HelpScreen' },
+    { label: 'About', destination: 'AboutScreen' },
+    { label: 'Feedback', destination: 'FeedbackScreen' },
+    { label: 'Reset', action: resetAppAlert },
+  ];
+  const lastNavListItem = listItems.length - 1;
+
+  const selectables: (keyof SelectSettings)[] = ['theme', 'ads'];
+  const booleans: (keyof BooleanSettings)[] = [
+    'countUp',
+    'showTotalTime',
+    'hideDescription',
+  ];
+
+  booleans.forEach((setting) => listItems.push({ setting, isBoolean: true }));
+  selectables.forEach((setting) =>
+    listItems.push({ setting, isBoolean: false })
+  );
+
+  const getListItem = (
+    listItem:
+      | ListItemNav
+      | ListItemSelectSetting
+      | ListItemAction
+      | ListItemBooleanSetting,
+    index: number
+  ) => {
+    if ('setting' in listItem) {
+      if (listItem.isBoolean) {
+        return <ListItemToggle setting={listItem.setting} />;
+      } else {
+        const Comp: () => JSX.Element = {
+          ads: ListItemAds,
+          theme: ListItemTheme,
+        }[listItem.setting];
+
+        return <Comp />;
+      }
+    } else {
+      return (
+        <>
+          <ListItem
+            title={listItem.label}
+            onPress={
+              'destination' in listItem
+                ? () => navigation.push(listItem.destination)
+                : listItem.action
+            }
+            accessoryRight={(props) => (
+              <Icon {...props} name="chevron-right-outline" />
+            )}
+          />
+          {index === lastNavListItem ? (
+            <View style={{ height: 20 }}></View>
+          ) : null}
+        </>
+      );
+    }
+  };
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>More</Text>
-    </View>
+    <Layout style={styles.container}>
+      <List
+        style={{ flex: 1, width: '100%' }}
+        ItemSeparatorComponent={Divider}
+        data={listItems}
+        keyExtractor={(_, i) => '' + i}
+        renderItem={({ item, index }) => getListItem(item, index)}
+      />
+      <PotentialAd unit={AdUnit.library} />
+    </Layout>
   );
 };
 
