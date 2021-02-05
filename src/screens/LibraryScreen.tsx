@@ -109,7 +109,7 @@ const LibraryScreen = ({ navigation }: Props) => {
             <Text category="h1">Nothing Here</Text>
             <Text category="s1" style={{ textAlign: 'center', paddingTop: 10 }}>
               {
-                'Not sure where to start? Try the "More" tab to learn how to create a new flow.'
+                'Not sure where to start? Try the "More" tab to learn how to create a new flow. Or tap the + icon at the top right to dive in!'
               }
             </Text>
           </View>

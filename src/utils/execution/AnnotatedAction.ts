@@ -69,9 +69,9 @@ export default class AnnotatedAction {
   public onStart(isRapid?: boolean) {
     this.elapsedMs = 0;
     if (!isRapid && this.action.type === ActionType.sound) {
-      play(AUDIO_FILES[this.action.params.sound], { isLooping: true }).then(
-        (sound) => (this.playingSound = sound)
-      );
+      play(AUDIO_FILES[this.action.params.sound], {
+        isLooping: true,
+      }).then((sound) => (this.playingSound = sound));
     }
   }
 

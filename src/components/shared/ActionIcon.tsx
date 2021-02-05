@@ -11,7 +11,7 @@ type Props = {
   onPress?: () => void;
   size: number;
   iconSize?: number;
-  disabled?: boolean;
+  disabledMsg?: string;
   active?: boolean;
   showLabel?: boolean;
 };
@@ -20,7 +20,7 @@ const ActionIcon = ({
   type,
   onPress,
   size,
-  disabled = false,
+  disabledMsg,
   active = false,
   showLabel = true,
   iconSize,
@@ -32,7 +32,9 @@ const ActionIcon = ({
   const iconSizeProps = iconSize ? { width: iconSize, height: iconSize } : {};
   return (
     <View style={{ alignItems: 'center' }}>
-      <Pressable onPress={disabled ? () => Alert.alert('bad') : undefined}>
+      <Pressable
+        onPress={disabledMsg ? () => Alert.alert(disabledMsg) : undefined}
+      >
         <Button
           status={actionInfo.themeStatus}
           onPress={onPress}
@@ -46,7 +48,7 @@ const ActionIcon = ({
           accessoryLeft={(props) => (
             <Icon {...props} name={actionInfo.icon} {...iconSizeProps} />
           )}
-          disabled={disabled}
+          disabled={!!disabledMsg}
         />
       </Pressable>
       {showLabel ? <Text category="c1">{actionInfo.label}</Text> : null}

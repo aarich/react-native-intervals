@@ -6,9 +6,10 @@ import { View } from 'react-native';
 type Props = {
   isActive: boolean;
   onPress: () => void;
+  paddingBottom?: number;
 };
 
-const InsertHereButton = ({ isActive, onPress }: Props) => {
+const InsertHereButton = ({ isActive, onPress, paddingBottom }: Props) => {
   return (
     <View style={{ flex: 1, flexDirection: 'row' }}>
       <View
@@ -17,6 +18,7 @@ const InsertHereButton = ({ isActive, onPress }: Props) => {
           alignContent: 'center',
           justifyContent: 'center',
           marginHorizontal: 20,
+          paddingBottom,
         }}
       >
         <Divider />

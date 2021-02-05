@@ -1,27 +1,31 @@
 import { Action, ActionType, TimersParamList } from '../types';
+import ActionSelector, {
+  InstructionType,
+} from '../components/edit/ActionSelector';
 import { Alert, StyleSheet, View } from 'react-native';
-import { Button, Icon, Layout, Text } from '@ui-kitten/components';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Button, Icon, Input, Layout, Text } from '@ui-kitten/components';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   calculateRuntime,
   createNewID,
   deserialize,
+  fixIndexes,
   msToViewable,
   validateFlow,
 } from '../utils/api';
 import { useTimer, useTimers } from '../redux/selectors/TimerSelector';
 
-import ActionSelector from '../components/edit/ActionSelector';
 import AddNodeOverlay from '../components/edit/actions/AddNodeOverlay';
 import EditableFlow from '../components/edit/EditableFlow';
 import EmptyCanvasHelp from '../components/edit/EmptyCanvasHelp';
-import Input from '../components/shared/Input';
 import { RouteProp } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { getActionInfo } from '../utils/actions';
 import { saveTimer } from '../redux/actions';
 import { useAppDispatch } from '../redux/store';
+import useColorScheme from '../hooks/useColorScheme';
+import { useStateWithPromise } from '../hooks/useStateWithPromise';
 
 type Props = {
   navigation: StackNavigationProp<TimersParamList, 'EditScreen'>;
@@ -33,50 +37,16 @@ type TimerPropertiesDraft = {
   description: string;
 };
 
-// Adapted from https://ysfaran.github.io/blog/post/0002-use-state-with-promise/
-const useStateWithPromise = <T extends unknown>(
-  initialState: T
-): [T, (state: T) => Promise<T>] => {
-  const [state, setState] = useState(initialState);
-  const resolverRef = useRef<((state: T) => void) | null>(null);
-
-  useEffect(() => {
-    if (resolverRef.current) {
-      resolverRef.current(state);
-      resolverRef.current = null;
-    }
-    /**
-     * Since a state update could be triggered with the exact same state again,
-     * it's not enough to specify state as the only dependency of this useEffect.
-     * That's why resolverRef.current is also a dependency, because it will guarantee,
-     * that handleSetState was called in previous render
-     */
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resolverRef.current, state]);
-
-  const handleSetState: (state: T) => Promise<T> = useCallback(
-    (stateAction) => {
-      setState(stateAction);
-      return new Promise((resolve) => {
-        resolverRef.current = resolve;
-      });
-    },
-    [setState]
-  );
-
-  return [state, handleSetState];
-};
-
 const EditScreen = ({ navigation, route }: Props) => {
   const dispatch = useAppDispatch();
+  const scheme = useColorScheme();
   const existingTimers = useTimers();
   const { id, serializedFlow } = route.params;
   const timer = useTimer(id || '');
   const isNew = !timer;
-  const [propertiesDraft, setPropertiesDraft] = useState({
-    name: timer?.name || '',
-    description: timer?.description || '',
-  });
+
+  // State
+  const [dirty, setDirty] = useStateWithPromise(false);
   const [addType, setAddType] = useState<ActionType>();
   const [actionToEdit, setActionToEdit] = useState<Action>();
   const [nodes, setNodes] = useState<Action[]>(timer?.flow || []);
@@ -84,8 +54,12 @@ const EditScreen = ({ navigation, route }: Props) => {
   const [totalRuntime, setTotalRuntime] = useState(() =>
     msToViewable(calculateRuntime(nodes))
   );
-  const [dirty, setDirty] = useStateWithPromise(false);
+  const [propertiesDraft, setPropertiesDraft] = useState({
+    name: timer?.name || '',
+    description: timer?.description || '',
+  });
 
+  // We may have been routed to with a flow parameter. Load it
   useEffect(() => {
     if (serializedFlow) {
       const deserialized = deserialize(serializedFlow);
@@ -96,9 +70,6 @@ const EditScreen = ({ navigation, route }: Props) => {
       setNodes(deserialized.flow);
     }
   }, [serializedFlow]);
-
-  const fixIndexes = (nodes: Action[]): Action[] =>
-    nodes.map((n, i) => ({ ...n, index: i }));
 
   const save = useCallback((): Promise<{
     success: boolean;
@@ -168,6 +139,9 @@ const EditScreen = ({ navigation, route }: Props) => {
               // need to increment indexes
               const updatedNode = { ...nodes[i] };
               updatedNode.index++;
+              if (updatedNode.type === ActionType.goTo) {
+                updatedNode.params.targetNode++;
+              }
               newNodes.push(updatedNode);
             } else {
               // we were updating
@@ -186,6 +160,22 @@ const EditScreen = ({ navigation, route }: Props) => {
     [addType, actionToEdit?.type, activeInsertIndex, nodes, setDirty]
   );
 
+  const deleteNode = useCallback(
+    (index: number) => {
+      setNodes(
+        fixIndexes(nodes.filter((_, i) => index !== i)).map((node) => {
+          if (node.type === ActionType.goTo && node.params.targetNode > index) {
+            // We deleted a node. If this go to action was intended to go after it, we need to decrement it
+            node.params.targetNode--;
+          }
+          return node;
+        })
+      );
+    },
+    [nodes]
+  );
+
+  // Set the header options
   useEffect(() => {
     navigation.setOptions({
       headerTitle: isNew ? 'Create' : 'Edit',
@@ -213,11 +203,11 @@ const EditScreen = ({ navigation, route }: Props) => {
     });
   }, [isNew, navigation, save]);
 
+  // Guard against losing unsaved changes
   useEffect(
     () =>
       navigation.addListener('beforeRemove', (e) => {
         if (!dirty) {
-          // If we don't have unsaved changes, then we don't need to do anything
           return;
         }
         e.preventDefault();
@@ -245,14 +235,15 @@ const EditScreen = ({ navigation, route }: Props) => {
     [navigation, dirty, save]
   );
 
+  // If the nodes are changed do some cleanup work like removing go-tos
   useEffect(() => {
     setActiveInsertIndex(nodes.length);
     if (nodes.length > 0 && nodes[0].type === ActionType.goTo) {
       // Remove go-tos at the beginning
-      setNodes(fixIndexes(nodes.filter((_, i) => i !== 0)));
+      deleteNode(0);
     }
     setTotalRuntime(msToViewable(calculateRuntime(nodes)));
-  }, [nodes]);
+  }, [nodes, deleteNode]);
 
   const setPropertiesDraftWrapper = (d: TimerPropertiesDraft) => {
     setDirty(true);
@@ -266,19 +257,22 @@ const EditScreen = ({ navigation, route }: Props) => {
         contentContainerStyle={{ margin: '5%', flexGrow: 1 }}
         stickyHeaderIndices={[2]}
       >
-        <View style={{ flexDirection: 'row' }}>
-          <Input
-            style={{ flex: 3 }}
-            value={propertiesDraft.name}
-            placeholder="Flow Name"
-            onChangeText={(name) => {
-              setPropertiesDraftWrapper({ ...propertiesDraft, name });
-            }}
-          />
-          <View style={{ flex: 1, justifyContent: 'center' }}>
-            <Text style={{ textAlign: 'center' }} category="s1">
-              {totalRuntime}
-            </Text>
+        <View>
+          <View style={{ flexDirection: 'row' }}>
+            <Input
+              style={{ flex: 4 }}
+              value={propertiesDraft.name}
+              placeholder="Flow Name"
+              onChangeText={(name) => {
+                setPropertiesDraftWrapper({ ...propertiesDraft, name });
+              }}
+              keyboardAppearance={scheme}
+            />
+            <View style={{ flex: 1, justifyContent: 'center' }}>
+              <Text style={{ textAlign: 'center' }} category="s1">
+                {totalRuntime}
+              </Text>
+            </View>
           </View>
         </View>
         <Input
@@ -288,12 +282,18 @@ const EditScreen = ({ navigation, route }: Props) => {
           onChangeText={(description) =>
             setPropertiesDraftWrapper({ ...propertiesDraft, description })
           }
+          keyboardAppearance={scheme}
         />
         <ActionSelector
           onInsert={setAddType}
           allowGoTo={
             activeInsertIndex > 0 &&
             nodes[activeInsertIndex - 1]?.type != ActionType.goTo
+          }
+          instruction={
+            nodes.length === 0
+              ? InstructionType.FirstStep
+              : InstructionType.Normal
           }
         />
         <AddNodeOverlay
@@ -315,16 +315,13 @@ const EditScreen = ({ navigation, route }: Props) => {
               setActiveInsertIndex(i);
               setActionToEdit(nodes[i]);
             }}
-            onDeleteNode={(deleteIndex) =>
-              setNodes(fixIndexes(nodes.filter((_, i) => deleteIndex !== i)))
-            }
+            onDeleteNode={deleteNode}
             activeInsertIndex={activeInsertIndex}
             onUpdateActiveInsertIndex={(i) =>
               setActiveInsertIndex(i === activeInsertIndex ? nodes.length : i)
             }
           />
         ) : null}
-
         {nodes.length === 0 ? (
           <EmptyCanvasHelp
             onSetTemplate={(nodes, name, description) => {

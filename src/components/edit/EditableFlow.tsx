@@ -85,10 +85,12 @@ const EditableFlow = ({
             </View>
           </View>
           {i === actions.length - 1 ? (
-            <InsertHereButton
-              isActive={activeInsertIndex === i + 1}
-              onPress={() => onUpdateActiveInsertIndex(i + 1)}
-            />
+            <View style={{ paddingBottom: 50 }}>
+              <InsertHereButton
+                isActive={activeInsertIndex === i + 1}
+                onPress={() => onUpdateActiveInsertIndex(i + 1)}
+              />
+            </View>
           ) : (
             <></>
           )}

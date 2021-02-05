@@ -1,18 +1,18 @@
 import { Action, ActionType } from '../types';
 
-const wait = (time: number) => ({
+export const wait = (time: number) => ({
   type: ActionType.wait,
   params: { time },
 });
-const act = (time: number, name: string) => ({
+export const act = (time: number, name: string) => ({
   type: ActionType.act,
   params: { time, name },
 });
-const sound = (time: number, sound: number) => ({
+export const sound = (time: number, sound: number) => ({
   type: ActionType.sound,
   params: { time, sound },
 });
-const goto = (times: number, targetNode: number) => ({
+export const goto = (times: number, targetNode: number) => ({
   type: ActionType.goTo,
   params: { times, targetNode },
 });
@@ -24,7 +24,7 @@ export const FlowTemplateLibrary: {
 }[] = [
   {
     title: 'HIIT',
-    description: 'Sample High-Intensity Interval Training (HIIT) flow',
+    description: 'High-Intensity Interval Training (HIIT) flow',
     nodes: [
       act(20, 'High Knee Running'),
       sound(5, 0),
@@ -63,7 +63,7 @@ export const FlowTemplateLibrary: {
       sound(10, 6),
       act(300, 'Watch Cat Videos'),
       sound(10, 5),
-      goto(1, 1),
+      goto(2, 0),
     ],
   },
   {

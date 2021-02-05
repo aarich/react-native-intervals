@@ -11,10 +11,14 @@ import React, { useEffect, useState } from 'react';
 
 import { Audio } from 'expo-av';
 import { BaseFormEditProps } from './FormEdit';
-import Input from '../../shared/Input';
+import TimeInput from './TimeInput';
 import { View } from 'react-native';
 
-const FormEditSound = ({ params, setParams }: BaseFormEditProps) => {
+const FormEditSound = ({
+  params,
+  setParams,
+  timeUnitIsSeconds,
+}: BaseFormEditProps) => {
   const [sound, setSound] = useState<Audio.Sound>();
   const [playing, setPlaying] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -89,13 +93,11 @@ const FormEditSound = ({ params, setParams }: BaseFormEditProps) => {
           />
         </View>
       </View>
-      <Input
-        value={params.time || ''}
+      <TimeInput
         label="How long should the tone last?"
-        placeholder="Enter a number"
-        onChangeText={(time) => setParams((params) => ({ ...params, time }))}
-        iconRight="hash-outline"
-        numeric
+        valueInSecs={params.time}
+        onChangeValue={(time) => setParams((params) => ({ ...params, time }))}
+        timeUnitIsSeconds={timeUnitIsSeconds}
       />
     </>
   );

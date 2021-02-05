@@ -1,5 +1,6 @@
 import {
   ActParams,
+  Action,
   ActionType,
   GoToParams,
   ParameterizedAction,
@@ -67,15 +68,22 @@ type ActionInfo<T extends ActionType> = {
   validate: (action: ParameterizedAction<T>, step: number) => void;
 };
 
-const validateDefault = (
-  action: { params: { name?: string; time: number } },
-  step: number
-) => {
+const validateDefault = (action: Action, step: number) => {
   const params = action.params;
-  if (params.name) {
+  if ('name' in params) {
     verifyNonEmptyString(params.name, 'Name', step);
   }
-  verifyPositiveNumber(params.time, 'Time', step);
+  if ('time' in params) {
+    verifyPositiveNumber(params.time, 'Time', step);
+  }
+
+  if (step - 1 !== action.index) {
+    throw new Error(
+      `Step ${step} is misconfigured! The index ${
+        action.index + 1
+      } does not match it's location`
+    );
+  }
 };
 
 const actActionInfo: ActionInfo<ActionType.act> = {
@@ -153,6 +161,13 @@ const gotoActionInfo: ActionInfo<ActionType.goTo> = {
   validate: (action, step) => {
     const params = action.params;
     verifyPositiveNumber(params.times, 'Repetitions', step);
+    if (params.targetNode > action.index) {
+      throw new Error(
+        `Can't go to a later node! (Step ${action.index + 1} is going to step ${
+          params.targetNode + 1
+        })`
+      );
+    }
   },
 };
 

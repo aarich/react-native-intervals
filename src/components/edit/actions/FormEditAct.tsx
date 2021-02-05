@@ -2,8 +2,13 @@ import { BaseFormEditProps } from './FormEdit';
 import Input from '../../shared/Input';
 import React from 'react';
 import { Text } from '@ui-kitten/components';
+import TimeInput from './TimeInput';
 
-const FormEditAct = ({ params, setParams }: BaseFormEditProps) => {
+const FormEditAct = ({
+  params,
+  setParams,
+  timeUnitIsSeconds,
+}: BaseFormEditProps) => {
   return (
     <>
       <Text category="s1" style={{ paddingBottom: 10 }}>
@@ -16,13 +21,16 @@ const FormEditAct = ({ params, setParams }: BaseFormEditProps) => {
         onChangeText={(name) => setParams((params) => ({ ...params, name }))}
         iconRight="text-outline"
       />
-      <Input
-        value={params.time || ''}
-        label="How long to do this action, in seconds?"
-        placeholder="Enter a number"
-        onChangeText={(time) => setParams((params) => ({ ...params, time }))}
-        iconRight="hash-outline"
-        numeric
+      <TimeInput
+        label={`How long is this action?`}
+        valueInSecs={params.time}
+        onChangeValue={(time) =>
+          setParams((params) => ({
+            ...params,
+            time,
+          }))
+        }
+        timeUnitIsSeconds={timeUnitIsSeconds}
       />
     </>
   );

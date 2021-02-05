@@ -12,7 +12,7 @@ import { useSetting } from '../../redux/selectors';
 
 const labels = {
   countUp: 'Timers Count Up',
-  showTotalTime: 'Show Total Running Time',
+  showTotalTime: 'Show Total Time',
   hideDescription: 'Hide Description (saves space)',
 };
 

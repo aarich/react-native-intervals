@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "intervals",
+    "name": "Intervals",
     "slug": "intervals",
     "version": "1.0",
     "orientation": "portrait",
@@ -17,7 +17,7 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "buildNumber": "1.0",
+      "buildNumber": "3.0",
       "supportsTablet": true,
       "config": {
         "googleMobileAdsAppId": "ca-app-pub-6949812709353975~7748559513"
@@ -34,7 +34,7 @@
         "googleMobileAdsAppId": "ca-app-pub-6949812709353975~9033721022"
       },
       "permissions": ["READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"],
-      "package": "com.mrarich.Intevals"
+      "package": "com.mrarich.Intervals"
     },
     "web": {
       "favicon": "./assets/images/favicon.png"

@@ -56,11 +56,7 @@ const FormEditGoTo = ({
     <>
       <Text category="s2" style={{ paddingBottom: 10 }}>
         Go back to a previous node. Use this for repeats. This is the number of
-        times the steps before this will run. A value of{' '}
-        <Text category="s2" style={{ fontWeight: '700' }}>
-          1
-        </Text>{' '}
-        means there are no repetitions.
+        times the steps before this will run.
       </Text>
       <Select
         label="Return to which node?"
@@ -75,7 +71,7 @@ const FormEditGoTo = ({
       <Input
         style={{ paddingTop: 8 }}
         value={params.times || ''}
-        label="How many times?"
+        label="How many times? A value of 1 means there are no repetitions."
         placeholder="Enter a number"
         onChangeText={(times) => setParams((params) => ({ ...params, times }))}
         iconRight="hash-outline"

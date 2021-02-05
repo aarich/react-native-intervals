@@ -7,16 +7,29 @@ import { View } from 'react-native';
 import { getActionTypes } from '../../utils/actions';
 import useColorScheme from '../../hooks/useColorScheme';
 
+export enum InstructionType {
+  FirstStep,
+  Tutorial,
+  Normal,
+}
+
 type Props = {
   onInsert: (actionType: ActionType) => void;
   allowGoTo: boolean;
+  instruction: InstructionType;
 };
 
-const ActionSelector = ({ onInsert, allowGoTo }: Props) => {
+const ActionSelector = ({ onInsert, allowGoTo, instruction }: Props) => {
   const actions = getActionTypes();
   const theme = useTheme();
   const scheme = useColorScheme();
   const basicColor = 'color-basic-' + (scheme === 'dark' ? '700' : '300');
+  const instructionMsg = {
+    [InstructionType.FirstStep]: 'Choose a step to begin the flow',
+    [InstructionType.Normal]: 'Choose a step to add at the selected location',
+    [InstructionType.Tutorial]:
+      'These steps are the building blocks of your flow',
+  }[instruction];
   return (
     <Card
       style={{ backgroundColor: theme[basicColor] }}
@@ -24,8 +37,8 @@ const ActionSelector = ({ onInsert, allowGoTo }: Props) => {
       header={(props) => (
         <View {...props}>
           <Text category="h6">Add a Step</Text>
-          <Text category="s1">
-            Choose a step to add at the selected location
+          <Text category="s1" style={{ paddingTop: 4 }}>
+            {instructionMsg}
           </Text>
         </View>
       )}
@@ -45,7 +58,11 @@ const ActionSelector = ({ onInsert, allowGoTo }: Props) => {
               onPress={() => onInsert(action)}
               type={action}
               size={50}
-              disabled={action === ActionType.goTo && !allowGoTo}
+              disabledMsg={
+                action === ActionType.goTo && !allowGoTo
+                  ? "You can't add this step at this location."
+                  : undefined
+              }
             />
           </View>
         ))}

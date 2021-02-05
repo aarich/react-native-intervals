@@ -28,12 +28,18 @@ export const validateFlow = (actions: Action[]) => {
     const action = actions[i];
     if (action.type === ActionType.goTo) {
       const target = action.params.targetNode;
-
+      if (!actions[target]) {
+        throw new Error(
+          `Step ${i + 1} is trying to go to a step that doesn't exist (${
+            target + 1
+          })!`
+        );
+      }
       if (actions[target].type === ActionType.goTo) {
         throw new Error(
           `Can't go to another Go To. (Step ${i + 1} is returning to step ${
             target + 1
-          }`
+          })`
         );
       }
 
@@ -43,7 +49,7 @@ export const validateFlow = (actions: Action[]) => {
           throw new Error(
             `Can't return past another Go To. (Step ${i + 1} passes step ${
               j + 1
-            }`
+            })`
           );
         }
       }
@@ -213,3 +219,6 @@ export const getShortenedURL = (serializedFlow: string): Promise<string> =>
         return resp.url;
       })
   );
+
+export const fixIndexes = (nodes: Action[]): Action[] =>
+  nodes.map((n, i) => ({ ...n, index: i }));

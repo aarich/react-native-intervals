@@ -42,7 +42,8 @@ const AboutScreen = () => {
         {h3('Ads')}
         {p(
           'App stores charge to host apps. As a hobby project this' +
-            ' app is supported by ads, but you can disable them at any time!'
+            ' app is supported by ads, but you can disable them at any time. ' +
+            'Ads will resume after several days (you can turn them back off), but enjoy the peace in the meantime!'
         )}
         {h3('Acknowledgements')}
         {p(
@@ -54,6 +55,7 @@ const AboutScreen = () => {
             url: 'github.com/bartgryszko/react-native-circular-progress',
           },
           { name: 'Expo', url: 'expo.io' },
+          { name: 'Notification Sounds', url: 'notificationsounds.com' },
           { name: 'React (Native)', url: 'reactnative.dev' },
           { name: 'Stack Overflow', url: 'stackoverflow.com' },
           { name: 'Swiper', url: 'github.com/leecade/react-native-swiper' },
@@ -65,20 +67,16 @@ const AboutScreen = () => {
           <View key={i}>{a(link.name, link.url)}</View>
         ))}
         {h3('Who is building this?')}
-        {p(
-          'The source code for this app is entirely public! You can browse it and if you like, make a contribution!'
-        )}
         <Text category="p1" style={styles.p}>
-          Check it out on {a('GitHub', 'github.com/aarich/intervals')}.
+          The source code for this app is entirely public! You can browse it and
+          if you like, make a contribution! Check it out on{' '}
+          {a('GitHub', 'github.com/aarich/react-native-intervals')}. You can
+          find out more about the developer {a('here', 'mrarich.com/about')}.
         </Text>
-        <Text category="p1" style={styles.p}>
-          You can find out more about the developer{' '}
-          {a('here', 'mrarich.com/about')}.
-        </Text>
-        {p(`© ${new Date().getFullYear()} Alex Rich`)}
         {p(
           `Version ${Constants.nativeAppVersion}-${Constants.manifest.extra.MyVersion}`
         )}
+        {p(`© ${new Date().getFullYear()} Alex Rich`)}
         <Text></Text>
       </ScrollView>
     </Layout>

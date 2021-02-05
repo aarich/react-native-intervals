@@ -1,14 +1,17 @@
-import { Alert, Dimensions, StyleSheet, View } from 'react-native';
+import ActionSelector, {
+  InstructionType,
+} from '../../components/edit/ActionSelector';
+import { Alert, StyleSheet, View } from 'react-native';
 import { Layout, useTheme } from '@ui-kitten/components';
 import React, { useCallback, useState } from 'react';
 
 import ActionIcon from '../../components/shared/ActionIcon';
-import ActionSelector from '../../components/edit/ActionSelector';
 import { ActionType } from '../../types';
+import LayoutConstants from '../../constants/Layout';
 import Swiper from 'react-native-swiper';
 import TutorialScreen from '../../components/more/TutorialScreen';
 
-const { width } = Dimensions.get('window');
+const width = LayoutConstants.window.width;
 
 const styles = StyleSheet.create({
   container: {
@@ -56,9 +59,8 @@ const alerts = [
   'Stop pushing my buttons',
   "I'm gonna tap out soon",
   "You're really pressing things today",
-  '#ThanosDidNothingWrong',
-  'My time is valuable to me, so you must understand that I take no pleasure in designing these messages.',
-  " We all have a limited time on this earth and one shouldn't dawdle on tasks like this. Do I knwo you? Do you know me?",
+  'My time is valuable to me, so you must understand that I take no pleasure in creating these messages.',
+  " We all have a limited time on this Earth and one shouldn't dawdle on tasks like this. Do I know you? Do you know me?",
   " It isn't the case that you're gonna gain any insight from going down this rabbit hole of pushing buttons.",
   ' Heck, you could throw in the hat now and cut it out. Start from the top, re-read everything a bit more carefully.',
   " Maybe you're learning English and this is productive for you. Maybe you just like looking at your phone.",
@@ -95,7 +97,13 @@ const HelpScreen = () => {
         <View style={styles.slide}>
           <TutorialScreen
             title="Add a Step"
-            graphic={<ActionSelector onInsert={showAlert} allowGoTo />}
+            graphic={
+              <ActionSelector
+                onInsert={showAlert}
+                allowGoTo
+                instruction={InstructionType.Tutorial}
+              />
+            }
             subtitle={
               'Flows are made up of steps. In the flow editor you\'ll see a toolbar like this one. Tap on a step to add it to the flow. You can put steps in the middle of the flow using the "Insert Here" option'
             }

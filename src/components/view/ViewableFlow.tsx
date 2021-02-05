@@ -29,11 +29,13 @@ const ViewableFlow = ({
   const scheme = useColorScheme();
 
   useEffect(() => {
-    listRef.current?.scrollToIndex({
-      animated: true,
-      index: activeNodeIndex || 0,
-    });
-  }, [activeNodeIndex]);
+    if (activeNodeIndex && actions.length > activeNodeIndex) {
+      listRef.current?.scrollToIndex({
+        animated: true,
+        index: activeNodeIndex || 0,
+      });
+    }
+  }, [activeNodeIndex, actions]);
   return (
     <View style={[style, { flexGrow: 1 }]}>
       <FlatList
@@ -42,6 +44,7 @@ const ViewableFlow = ({
         keyExtractor={(item) => '' + item.index}
         contentContainerStyle={{ flexGrow: 1 }}
         onScrollToIndexFailed={() =>
+          actions.length > 0 &&
           listRef.current?.scrollToIndex({ animated: true, index: 0 })
         }
         renderItem={({ item: action, index }) => (

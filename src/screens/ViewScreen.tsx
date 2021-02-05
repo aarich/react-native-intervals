@@ -1,14 +1,14 @@
-import { Alert, Platform, Share, StyleSheet, View } from 'react-native';
+import { Alert, StyleSheet, View } from 'react-native';
 import { Button, Icon, Layout, Text } from '@ui-kitten/components';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { activateKeepAwake, deactivateKeepAwake } from 'expo-keep-awake';
-import { getShortenedURL, makeURL, serialize } from '../utils/api';
 
 import { RouteProp } from '@react-navigation/native';
 import RunControls from '../components/view/RunControls';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { TimersParamList } from '../types';
 import ViewableFlow from '../components/view/ViewableFlow';
+import { share } from '../utils/experience';
 import { useSetting } from '../redux/selectors';
 import { useTimer } from '../redux/selectors/TimerSelector';
 
@@ -27,41 +27,6 @@ const ViewScreen = ({ navigation, route }: Props) => {
   const [progress, setProgress] = useState<(number | undefined)[]>([]);
   const [isRunning, setIsRunning] = useState(false);
   const showDescription = !useSetting('hideDescription');
-
-  const share = useCallback(() => {
-    if (!timer) {
-      // shouldn't happen
-      return;
-    }
-
-    const serialized = serialize(timer);
-    const actuallyShareUrl = (urlGetter: (str: string) => Promise<string>) => {
-      urlGetter(serialized).then((url) => {
-        let content;
-        if (Platform.OS === 'ios') {
-          content = { url };
-        } else {
-          content = { message: url, title: 'Flow' };
-        }
-        Share.share(content);
-      });
-    };
-
-    Alert.alert(
-      'Share Flow',
-      "Would you like to generate a short link to this flow? To do that we'll store its contents in our url shortener, and anyone with access to the url will be able to view it.",
-      [
-        {
-          text: 'Share Short Link',
-          onPress: () => actuallyShareUrl(getShortenedURL),
-        },
-        { text: 'Try Full URL', onPress: () => actuallyShareUrl(makeURL) },
-        { text: 'Cancel', style: 'cancel' },
-      ]
-    );
-
-    console.log(encodeURIComponent(serialized));
-  }, [timer]);
 
   useEffect(() => {
     if (isRunning) {
@@ -87,7 +52,7 @@ const ViewScreen = ({ navigation, route }: Props) => {
             appearance="ghost"
             status="basic"
             accessoryLeft={(props) => <Icon {...props} name="share-outline" />}
-            onPress={share}
+            onPress={() => share(timer)}
           />
           <Button
             style={{ paddingHorizontal: 0 }}
@@ -101,7 +66,7 @@ const ViewScreen = ({ navigation, route }: Props) => {
         </View>
       ),
     });
-  }, [id, navigation, share, timer]);
+  }, [id, navigation, timer]);
 
   return (
     <Layout style={styles.container}>
@@ -129,7 +94,6 @@ const ViewScreen = ({ navigation, route }: Props) => {
             />
           </View>
           <ViewableFlow
-            style={{ paddingTop: 10 }}
             actions={timer.flow}
             progress={progress}
             activeNodeIndex={activeNodeIndex}
