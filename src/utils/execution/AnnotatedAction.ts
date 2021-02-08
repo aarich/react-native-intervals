@@ -96,7 +96,7 @@ export default class AnnotatedAction {
 
   public get viewLabel(): string | undefined {
     if (this.action.type === ActionType.goTo) {
-      const more = Math.max(this.action.params.times - this.totalPasses, 0);
+      const more = Math.max(this.action.params.times - this.totalPasses, 1);
       return `Return to step ${
         this.action.params.targetNode + 1
       }. Repeats ${more} more time${more === 1 ? '' : 's'}`;

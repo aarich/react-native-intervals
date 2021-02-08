@@ -1,7 +1,7 @@
 {
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
-    "prod": "expo publish --release-channel=prod",
+    "prod10": "expo publish --release-channel prod-1-0",
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
@@ -17,9 +17,9 @@
     "@expo/vector-icons": "^12.0.0",
     "@react-native-async-storage/async-storage": "^1.13.4",
     "@react-native-community/masked-view": "0.1.10",
-    "@react-navigation/bottom-tabs": "5.11.2",
-    "@react-navigation/native": "~5.8.10",
-    "@react-navigation/stack": "~5.12.8",
+    "@react-navigation/bottom-tabs": "^5.11.7",
+    "@react-navigation/native": "^5.9.2",
+    "@react-navigation/stack": "^5.14.2",
     "@ui-kitten/components": "^5.0.0",
     "@ui-kitten/eva-icons": "^5.0.0",
     "expo": "~40.0.0",

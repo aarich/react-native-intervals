@@ -3,15 +3,6 @@ import { StyleSheet, View } from 'react-native';
 import React from 'react';
 import { Text } from '@ui-kitten/components';
 
-export enum SvgType {
-  Checkboxes,
-  Community,
-  Photo,
-  Setup,
-  List,
-  Activity,
-}
-
 type Props = {
   title: string;
   subtitle: string;

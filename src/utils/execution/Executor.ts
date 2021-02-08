@@ -45,6 +45,7 @@ export default class Executor {
       (this.status === 'running' || isRapid)
     ) {
       const currentNode = this.currentNode;
+      const currentIndex = this.currentNodeIndex as number;
       const nextNodeIndex = currentNode.nextNodeIndex;
 
       currentNode.onLeave();
@@ -52,6 +53,14 @@ export default class Executor {
         // We're at the end;
         this.finish();
       } else {
+        // If it's a go to we need to reset any intermediate go tos
+        if (currentNode.action.type === ActionType.goTo) {
+          for (let i = currentIndex - 1; i >= nextNodeIndex; i--) {
+            if (this.initialFlow[i].type === ActionType.goTo) {
+              this.annotatedFlow[i].totalPasses = 0;
+            }
+          }
+        }
         this.currentNodeIndex = nextNodeIndex;
         this.currentNode.onStart(isRapid);
       }

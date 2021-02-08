@@ -1,5 +1,12 @@
-import { Alert, StyleSheet, View } from 'react-native';
-import { Button, Icon, Layout, Text } from '@ui-kitten/components';
+import { Alert, View } from 'react-native';
+import {
+  Button,
+  Icon,
+  Layout,
+  StyleService,
+  Text,
+  useStyleSheet,
+} from '@ui-kitten/components';
 import React, { useEffect, useState } from 'react';
 import { activateKeepAwake, deactivateKeepAwake } from 'expo-keep-awake';
 
@@ -27,7 +34,7 @@ const ViewScreen = ({ navigation, route }: Props) => {
   const [progress, setProgress] = useState<(number | undefined)[]>([]);
   const [isRunning, setIsRunning] = useState(false);
   const showDescription = !useSetting('hideDescription');
-
+  const styles = useStyleSheet(stylesheet);
   useEffect(() => {
     if (isRunning) {
       activateKeepAwake();
@@ -79,12 +86,13 @@ const ViewScreen = ({ navigation, route }: Props) => {
             flex: 1,
           }}
         >
-          {timer.description && showDescription ? (
-            <Text category="s1" style={{ paddingBottom: 14 }}>
-              {timer.description}
-            </Text>
-          ) : null}
-          <View>
+          <View style={styles.listHeader}>
+            {timer.description && showDescription ? (
+              <Text category="s1" style={styles.description}>
+                {timer.description}
+              </Text>
+            ) : null}
+
             <RunControls
               onRunningStateChange={setIsRunning}
               actions={timer.flow}
@@ -94,6 +102,7 @@ const ViewScreen = ({ navigation, route }: Props) => {
             />
           </View>
           <ViewableFlow
+            style={{ flex: 1 }}
             actions={timer.flow}
             progress={progress}
             activeNodeIndex={activeNodeIndex}
@@ -105,9 +114,15 @@ const ViewScreen = ({ navigation, route }: Props) => {
   );
 };
 
-const styles = StyleSheet.create({
+const stylesheet = StyleService.create({
   container: {
     flex: 1,
+  },
+  description: {
+    paddingBottom: 14,
+  },
+  listHeader: {
+    backgroundColor: 'background-basic-color-1',
   },
 });
 

@@ -42,42 +42,30 @@ export const validateFlow = (actions: Action[]) => {
           })`
         );
       }
-
-      // Check all the nodes between
-      for (let j = target; j < i; j++) {
-        if (actions[j].type === ActionType.goTo) {
-          throw new Error(
-            `Can't return past another Go To. (Step ${i + 1} passes step ${
-              j + 1
-            })`
-          );
-        }
-      }
     }
   }
 };
 
-/** Count backwards for performance [act, act, goto, act, goto] */
+/** TODO re-implement this smartly for performance now that inner loops are allowed */
 export const calculateRuntime = (actions: Action[]) => {
   let total = 0;
-  let activeGoToNode = null;
 
-  for (let index = actions.length - 1; index >= 0; index--) {
-    const action = actions[index];
-
+  let currentIndex = 0;
+  const numPasses = actions.map(() => 0);
+  while (currentIndex < actions.length) {
+    const action = actions[currentIndex];
     if (action.type === ActionType.goTo) {
-      activeGoToNode = action;
-    } else {
-      let multiplier = 1;
-      if (activeGoToNode) {
-        if (index < activeGoToNode.params.targetNode) {
-          // We've gone past it
-          activeGoToNode = null;
-        } else {
-          multiplier = activeGoToNode.params.times;
-        }
+      numPasses[currentIndex]++;
+      if (numPasses[currentIndex] === action.params.times) {
+        // Reset in case we come back to it
+        numPasses[currentIndex] = 0;
+        currentIndex++;
+      } else {
+        currentIndex = action.params.targetNode;
       }
-      total += action.params.time * multiplier;
+    } else {
+      total += action.params.time;
+      currentIndex++;
     }
   }
 

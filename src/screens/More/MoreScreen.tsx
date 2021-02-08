@@ -128,7 +128,7 @@ const MoreScreen = ({ navigation }: Props) => {
         keyExtractor={(_, i) => '' + i}
         renderItem={({ item, index }) => getListItem(item, index)}
       />
-      <PotentialAd unit={AdUnit.library} />
+      <PotentialAd unit={AdUnit.settings} />
     </Layout>
   );
 };

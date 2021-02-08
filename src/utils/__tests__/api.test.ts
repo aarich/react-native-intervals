@@ -11,16 +11,37 @@ import {
 import { FlowTemplateLibrary } from '../templates';
 import each from 'jest-each';
 
+let index: number;
+const WAIT_TIME = 5;
+const GOTO_TIMES = 2;
+
+const goto = (targetNode: number): Action => ({
+  index: index++,
+  type: ActionType.goTo,
+  params: { times: GOTO_TIMES, targetNode },
+});
+const wait = (): Action => ({
+  index: index++,
+  type: ActionType.wait,
+  params: { time: WAIT_TIME },
+});
+
+beforeEach(() => {
+  index = 0;
+});
+
 describe('calculateRuntime', () => {
   it('Calculates for empty flow', () => {
     expect(calculateRuntime([])).toBe(0);
   });
 
+  const oneloop = (30 + 5 + 15 + 30 + 5 + 15) * 3;
   each([
     [0, 2 * 160 * 5 + 20], // Two loops of 160 each 5 times, plus 20 after
     [1, 60 + 300 + 20],
     [2, (1800 + 10 + 300 + 10) * 2], // Repeats twice
     [3, 1200 + 20 + 1 + 600 + 20],
+    [4, 2 * (1 + oneloop + 1 + oneloop + 1)],
   ]).test(
     'Template %s should have %s runtime',
     (templateIndex, expectedRuntime) => {
@@ -29,6 +50,27 @@ describe('calculateRuntime', () => {
       ).toBe(expectedRuntime);
     }
   );
+
+  it('calculates correctly for inner loops', () => {
+    const flow = [wait(), wait(), goto(0), wait(), wait(), goto(0)];
+    const firstLoop = WAIT_TIME * 2 * GOTO_TIMES;
+    const fullLoop = firstLoop + WAIT_TIME * 2;
+    const expectedTotal = fullLoop * GOTO_TIMES * 1000;
+
+    expect(calculateRuntime(flow)).toBe(expectedTotal);
+  });
+
+  it('calculates correctly for partial loops', () => {
+    // This differs from the previous because the last go to goes to node 1
+    const flow = [wait(), wait(), goto(0), wait(), wait(), goto(1)];
+
+    const firstIteration = WAIT_TIME * 2 * GOTO_TIMES + WAIT_TIME * 2;
+    const secondIteration =
+      WAIT_TIME + WAIT_TIME * 2 * (GOTO_TIMES - 1) + WAIT_TIME * 2;
+    const expectedTotal = (firstIteration + secondIteration) * 1000;
+
+    expect(calculateRuntime(flow)).toBe(expectedTotal);
+  });
 });
 
 describe('createNewID', () => {
@@ -56,7 +98,7 @@ describe('createNewID', () => {
 });
 
 describe('serialization', () => {
-  each([0, 1, 2, 3]).test(
+  each([0, 1, 2, 3, 4]).test(
     'template %s should serialize and deserialize',
     (templateIndex) => {
       const flow = FlowTemplateLibrary[templateIndex];
@@ -92,27 +134,12 @@ describe('msToViewable', () => {
 });
 
 describe('validateFlow', () => {
-  each([0, 1, 2, 3]).test(
+  each([0, 1, 2, 3, 4]).test(
     'template %s should pass validation',
     (templateIndex) => {
       validateFlow(FlowTemplateLibrary[templateIndex].nodes);
     }
   );
-  let index: number;
-  beforeEach(() => {
-    index = 0;
-  });
-
-  const goto = (targetNode: number): Action => ({
-    index: index++,
-    type: ActionType.goTo,
-    params: { times: 5, targetNode },
-  });
-  const wait = (): Action => ({
-    index: index++,
-    type: ActionType.wait,
-    params: { time: 5 },
-  });
 
   const validation = (nodes: Action[]) => () => validateFlow(nodes);
 
@@ -139,13 +166,19 @@ describe('validateFlow', () => {
       );
     });
 
-    it(`fails when go tos overlap`, () => {
+    it(`fails when going to a different goto`, () => {
+      expect(validation([wait(), goto(0), wait(), goto(1)])).toThrow(
+        `Can't go to another Go To. (Step 4 is returning to step 2)`
+      );
+    });
+
+    it.skip(`fails when go tos overlap`, () => {
       expect(
         validation([wait(), wait(), wait(), goto(1), wait(), goto(2)])
       ).toThrow("Can't return past another Go To. (Step 6 passes step 4)");
     });
 
-    it(`fails when go tos are inside of each other`, () => {
+    it.skip(`fails when go tos are inside of each other`, () => {
       expect(
         validation([wait(), wait(), wait(), goto(2), wait(), goto(0)])
       ).toThrow("Can't return past another Go To. (Step 6 passes step 4)");

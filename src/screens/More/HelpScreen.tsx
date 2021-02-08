@@ -155,7 +155,7 @@ const HelpScreen = () => {
               />
             }
             subtitle={
-              "The Go To step is unique because it lets you create loops. To use it, put it at the end of a set of steps you'd like to repeat. You can't loop inside of a loop, so calm down, Cobb."
+              "The Go To step lets you create loops. To use this step, put it at the end of a set of steps you'd like to repeat."
             }
           />
         </View>

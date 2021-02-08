@@ -20,6 +20,8 @@ const getNameFromAction = (action: Action) => {
     case ActionType.wait:
       name = getActionInfo(ActionType.wait).getDetails(action);
       break;
+    case ActionType.goTo:
+      name = `Go to step ${action.params.targetNode + 1}`;
   }
 
   return `${step}: ${name}`;
@@ -33,16 +35,16 @@ const FormEditGoTo = ({
 }: BaseFormEditProps) => {
   const [selectedIndex, setSelectedIndex] = useState(new IndexPath(0));
 
-  const reversedActionsBeforeThis = existingActions
+  const availableActions = existingActions
     .filter((_, i) => i < insertIndex)
     .reverse();
 
-  const firstGoToIndex = reversedActionsBeforeThis.findIndex(
-    (action) => action.type === ActionType.goTo
-  );
-  const availableActions = reversedActionsBeforeThis.filter(
-    (_, i) => firstGoToIndex === -1 || i < firstGoToIndex
-  );
+  // const firstGoToIndex = reversedActionsBeforeThis.findIndex(
+  //   (action) => action.type === ActionType.goTo
+  // );
+  // const availableActions = reversedActionsBeforeThis.filter(
+  //   (_, i) => firstGoToIndex === -1 || i < firstGoToIndex
+  // );
 
   useEffect(() => {
     setParams((params) => ({
