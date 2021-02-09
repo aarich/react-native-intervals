@@ -183,7 +183,7 @@ export const deserialize = (
 
 export const makeURL = (serializedFlow: string): Promise<string> => {
   const encoded = encodeURIComponent(serializedFlow);
-  return Promise.resolve(`https://flows.mrarich.com/flow?f=${encoded}`);
+  return Promise.resolve(`https://mrarich.com/flows?f=${encoded}`);
 };
 
 export const getShortenedURL = (serializedFlow: string): Promise<string> =>
