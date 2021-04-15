@@ -1,19 +1,17 @@
-import * as Linking from 'expo-linking';
-
-import { BottomTabParamList, MoreParamList, TimersParamList } from '../types';
-import { Icon, useTheme } from '@ui-kitten/components';
-import React, { useEffect } from 'react';
-
-import AboutScreen from '../screens/More/AboutScreen';
-import { Audio } from 'expo-av';
-import EditScreen from '../screens/EditScreen';
-import FeedbackScreen from '../screens/More/FeedbackScreen';
-import HelpScreen from '../screens/More/HelpScreen';
-import LibraryScreen from '../screens/LibraryScreen';
-import MoreScreen from '../screens/More/MoreScreen';
-import ViewScreen from '../screens/ViewScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
+import { Icon, useTheme } from '@ui-kitten/components';
+import { Audio } from 'expo-av';
+import * as Linking from 'expo-linking';
+import React, { useEffect } from 'react';
+import EditScreen from '../screens/EditScreen';
+import LibraryScreen from '../screens/LibraryScreen';
+import AboutScreen from '../screens/More/AboutScreen';
+import FeedbackScreen from '../screens/More/FeedbackScreen';
+import HelpScreen from '../screens/More/HelpScreen';
+import MoreScreen from '../screens/More/MoreScreen';
+import ViewScreen from '../screens/ViewScreen';
+import { BottomTabParamList, MoreParamList, TimersParamList } from '../types';
 import { navigateToEdit } from './rootNavRef';
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();

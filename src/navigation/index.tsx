@@ -1,20 +1,18 @@
 import * as eva from '@eva-design/eva';
-
-import { ApplicationProvider, IconRegistry } from '@ui-kitten/components';
 import {
   DarkTheme,
   DefaultTheme,
   NavigationContainer,
 } from '@react-navigation/native';
-
-import BottomTabNavigator from './BottomTabNavigator';
+import { ApplicationProvider, IconRegistry } from '@ui-kitten/components';
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
-import LinkingConfiguration from './LinkingConfiguration';
-import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { rootNavRef } from './rootNavRef';
+import React from 'react';
 import { default as theme } from '../../assets/theme.json';
 import useColorScheme from '../hooks/useColorScheme';
+import BottomTabNavigator from './BottomTabNavigator';
+import LinkingConfiguration from './LinkingConfiguration';
+import { rootNavRef } from './rootNavRef';
 
 export default function Navigation() {
   const colorScheme = useColorScheme();
