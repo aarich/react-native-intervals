@@ -7,9 +7,12 @@ import {
 } from '../actions/actionTypes';
 
 export enum AdType {
+  /** @deprecated since 2.0 */
   Personal = 'Personal',
+  /** @deprecated since 2.0 */
   Generic = 'Generic',
   Off = 'Off',
+  On = 'On',
 }
 export enum ThemeType {
   Light = 'Light',

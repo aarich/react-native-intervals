@@ -2,7 +2,7 @@
   "expo": {
     "name": "Intervals",
     "slug": "intervals",
-    "version": "1.0",
+    "version": "2.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "intervals",
@@ -17,13 +17,16 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "buildNumber": "4.0",
+      "buildNumber": "1.0",
       "supportsTablet": true,
       "config": {
         "googleMobileAdsAppId": "ca-app-pub-6949812709353975~7748559513"
       },
       "bundleIdentifier": "com.mrarich.Intervals",
-      "associatedDomains": ["applinks:mrarich.com"]
+      "associatedDomains": ["applinks:mrarich.com"],
+      "infoPlist": {
+        "NSUserTrackingUsageDescription": "We'd like to be able to show relevant ads to you."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -40,7 +43,7 @@
       "favicon": "./assets/images/favicon.png"
     },
     "extra": {
-      "MyVersion": "3"
+      "MyVersion": "4"
     }
   }
 }

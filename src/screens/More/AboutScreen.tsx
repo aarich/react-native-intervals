@@ -74,7 +74,7 @@ const AboutScreen = () => {
           find out more about the developer {a('here', 'mrarich.com/about')}.
         </Text>
         {p(
-          `Version ${Constants.nativeAppVersion}-${Constants.manifest.extra.MyVersion}`
+          `Version ${Constants.nativeAppVersion}-${Constants.manifest.extra?.MyVersion}`
         )}
         {p(`© ${new Date().getFullYear()} Alex Rich`)}
         <Text></Text>
