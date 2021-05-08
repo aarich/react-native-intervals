@@ -1,12 +1,12 @@
 import { Alert, Pressable, StyleSheet, View } from 'react-native';
 import {
-  Button,
   Divider,
   Icon,
   Layout,
   List,
   ListItem,
   Text,
+  TopNavigationAction,
 } from '@ui-kitten/components';
 import React, { useCallback, useEffect } from 'react';
 
@@ -29,10 +29,8 @@ const LibraryScreen = ({ navigation }: Props) => {
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Button
-          appearance="ghost"
-          status="basic"
-          accessoryLeft={(props) => <Icon {...props} name="plus" />}
+        <TopNavigationAction
+          icon={(props) => <Icon {...props} name="plus" />}
           onPress={() =>
             navigation.push('EditScreen', {
               id: undefined,

@@ -8,8 +8,8 @@ import { updateSetting } from '../../redux/actions';
 import { useAppDispatch } from '../../redux/store';
 import { useSetting } from '../../redux/selectors';
 
-//                   ms     s <- m <- h <- d <- 10 days
-const AD_RESET_DELAY_MS = 1000 * 60 * 60 * 24 * 10;
+//                   ms     s <- m <- h <- d <- 14 days
+const AD_RESET_DELAY_MS = 1000 * 60 * 60 * 24 * 14;
 
 const PotentialAd = ({ unit }: { unit: AdUnit }) => {
   const dispatch = useAppDispatch();

@@ -1,10 +1,10 @@
 import { Alert, View } from 'react-native';
 import {
-  Button,
   Icon,
   Layout,
   StyleService,
   Text,
+  TopNavigationAction,
   useStyleSheet,
 } from '@ui-kitten/components';
 import React, { useEffect, useState } from 'react';
@@ -54,18 +54,12 @@ const ViewScreen = ({ navigation, route }: Props) => {
       headerTitle: timer.name,
       headerRight: () => (
         <View style={{ flexDirection: 'row' }}>
-          <Button
-            style={{ paddingHorizontal: 0 }}
-            appearance="ghost"
-            status="basic"
-            accessoryLeft={(props) => <Icon {...props} name="share-outline" />}
+          <TopNavigationAction
+            icon={(props) => <Icon {...props} name="share-outline" />}
             onPress={() => share(timer)}
           />
-          <Button
-            style={{ paddingHorizontal: 0 }}
-            appearance="ghost"
-            status="basic"
-            accessoryLeft={(props) => <Icon {...props} name="edit-outline" />}
+          <TopNavigationAction
+            icon={(props) => <Icon {...props} name="edit-outline" />}
             onPress={() =>
               navigation.push('EditScreen', { id, serializedFlow: undefined })
             }

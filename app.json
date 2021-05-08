@@ -37,13 +37,26 @@
         "googleMobileAdsAppId": "ca-app-pub-6949812709353975~9033721022"
       },
       "permissions": ["READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"],
-      "package": "com.mrarich.Intervals"
+      "package": "com.mrarich.Intervals",
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
     },
+    "hooks": {
+      "postPublish": [
+        {
+          "file": "sentry-expo/upload-sourcemaps",
+          "config": {
+            "organization": "alex-rich",
+            "project": "intervals",
+            "authToken": "SENTRY_AUTH_TOKEN"
+          }
+        }
+      ]
+    },
     "extra": {
-      "MyVersion": "4"
+      "MyVersion": "7"
     }
   }
 }

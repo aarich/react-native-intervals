@@ -3,7 +3,13 @@ import ActionSelector, {
   InstructionType,
 } from '../components/edit/ActionSelector';
 import { Alert, StyleSheet, View } from 'react-native';
-import { Button, Icon, Input, Layout, Text } from '@ui-kitten/components';
+import {
+  Icon,
+  Input,
+  Layout,
+  Text,
+  TopNavigationAction,
+} from '@ui-kitten/components';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   calculateRuntime,
@@ -181,12 +187,8 @@ const EditScreen = ({ navigation, route }: Props) => {
       headerTitle: isNew ? 'Create' : 'Edit',
       headerBackTitle: 'Cancel',
       headerRight: () => (
-        <Button
-          appearance="ghost"
-          status="basic"
-          accessoryLeft={(props) => (
-            <Icon {...props} name="checkmark-outline" />
-          )}
+        <TopNavigationAction
+          icon={(props) => <Icon {...props} name="checkmark-outline" />}
           onPress={() =>
             save().then(({ success, timerId }) => {
               if (success) {

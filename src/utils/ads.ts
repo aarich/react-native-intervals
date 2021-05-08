@@ -12,7 +12,7 @@ const AD_UNIT = {
   },
   settings: {
     ios: 'ca-app-pub-6949812709353975/2778663235',
-    android: '',
+    android: 'ca-app-pub-6949812709353975/5966269595',
   },
 };
 

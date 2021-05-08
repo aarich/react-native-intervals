@@ -13,7 +13,7 @@ const getContactUrl = (message: string) =>
   `${baseMainURL}/contact${message ? '?m=' + message : ''}`;
 
 const makeButton = (title: string, icon: string, onPress: () => void) => (
-  <View style={{ width: '100%', paddingTop: 8 }}>
+  <View style={{ width: '100%' }}>
     <Button
       size="giant"
       appearance="ghost"
@@ -71,7 +71,7 @@ const FeedbackScreen = () => {
           {makeButton('Contact Directly', 'message-circle-outline', () =>
             openURL(getContactUrl('Feedback for Intervals: '))
           )}
-          {makeButton('Send Bug Report', 'github-outline', () =>
+          {makeButton('Create an Issue on GitHub', 'github-outline', () =>
             openURL(issuesUrl)
           )}
         </View>
