@@ -2,7 +2,7 @@
   "expo": {
     "name": "Intervals",
     "slug": "intervals",
-    "version": "2.0",
+    "version": "2.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "intervals",
@@ -56,7 +56,7 @@
       ]
     },
     "extra": {
-      "MyVersion": "7"
+      "MyVersion": "8"
     }
   }
 }

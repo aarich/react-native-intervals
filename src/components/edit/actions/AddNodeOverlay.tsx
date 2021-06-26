@@ -1,6 +1,13 @@
 import { Action, ActionType } from '../../../types';
-import { Button, Card, Modal, Text } from '@ui-kitten/components';
-import { Keyboard, StyleSheet, View } from 'react-native';
+import { Button, Card, Text } from '@ui-kitten/components';
+import {
+  Keyboard,
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  StyleSheet,
+  View,
+} from 'react-native';
 import React, { useEffect, useState } from 'react';
 
 import FormEdit from './FormEdit';
@@ -36,41 +43,49 @@ const AddNodeOverlay = ({
   return (
     <Modal
       visible={isVisible}
-      backdropStyle={styles.backdrop}
-      onBackdropPress={() => Keyboard.dismiss()}
+      onRequestClose={() => Keyboard.dismiss()}
+      animationType="fade"
+      transparent
     >
-      <Card
-        disabled={true}
-        header={(props) => (
-          <View {...props}>
-            <Text category="h5">
-              {`${typeToCreate ? 'Add' : 'Edit'} ${typeLabel}`}
-            </Text>
-          </View>
-        )}
-        footer={(props) => (
-          <View {...props}>
-            <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
-              <Button appearance="ghost" onPress={onCancel}>
-                Cancel
-              </Button>
-              <Button status="primary" onPress={() => onSave(draft)}>
-                {typeToCreate ? 'Add' : 'Save'}
-              </Button>
-            </View>
-          </View>
-        )}
+      <KeyboardAvoidingView
+        style={styles.backdrop}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        {type ? (
-          <FormEdit
-            type={type}
-            params={draft}
-            setParams={setDraft}
-            existingActions={existingActions}
-            insertIndex={actionToEdit?.index || insertIndex}
-          />
-        ) : null}
-      </Card>
+        <Card
+          disabled={true}
+          header={(props) => (
+            <View {...props}>
+              <Text category="h5">
+                {`${typeToCreate ? 'Add' : 'Edit'} ${typeLabel}`}
+              </Text>
+            </View>
+          )}
+          footer={(props) => (
+            <View {...props}>
+              <View
+                style={{ flexDirection: 'row', justifyContent: 'flex-end' }}
+              >
+                <Button appearance="ghost" onPress={onCancel}>
+                  Cancel
+                </Button>
+                <Button status="primary" onPress={() => onSave(draft)}>
+                  {typeToCreate ? 'Add' : 'Save'}
+                </Button>
+              </View>
+            </View>
+          )}
+        >
+          {type ? (
+            <FormEdit
+              type={type}
+              params={draft}
+              setParams={setDraft}
+              existingActions={existingActions}
+              insertIndex={actionToEdit?.index || insertIndex}
+            />
+          ) : null}
+        </Card>
+      </KeyboardAvoidingView>
     </Modal>
   );
 };
@@ -78,6 +93,9 @@ const AddNodeOverlay = ({
 const styles = StyleSheet.create({
   backdrop: {
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

@@ -2,7 +2,13 @@ import { Action, ActionType, TimersParamList } from '../types';
 import ActionSelector, {
   InstructionType,
 } from '../components/edit/ActionSelector';
-import { Alert, StyleSheet, View } from 'react-native';
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  View,
+} from 'react-native';
 import {
   Icon,
   Input,
@@ -254,85 +260,90 @@ const EditScreen = ({ navigation, route }: Props) => {
 
   return (
     <Layout style={styles.container}>
-      <ScrollView
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={{ flex: 1 }}
-        contentContainerStyle={{ margin: '5%', flexGrow: 1 }}
-        stickyHeaderIndices={[2]}
       >
-        <View>
-          <View style={{ flexDirection: 'row' }}>
-            <Input
-              style={{ flex: 4 }}
-              value={propertiesDraft.name}
-              placeholder="Flow Name"
-              onChangeText={(name) => {
-                setPropertiesDraftWrapper({ ...propertiesDraft, name });
-              }}
-              keyboardAppearance={scheme}
-            />
-            <View style={{ flex: 1, justifyContent: 'center' }}>
-              <Text style={{ textAlign: 'center' }} category="s1">
-                {totalRuntime}
-              </Text>
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={{ margin: '5%', flexGrow: 1 }}
+          stickyHeaderIndices={[2]}
+        >
+          <View>
+            <View style={{ flexDirection: 'row' }}>
+              <Input
+                style={{ flex: 4 }}
+                value={propertiesDraft.name}
+                placeholder="Flow Name"
+                onChangeText={(name) => {
+                  setPropertiesDraftWrapper({ ...propertiesDraft, name });
+                }}
+                keyboardAppearance={scheme}
+              />
+              <View style={{ flex: 1, justifyContent: 'center' }}>
+                <Text style={{ textAlign: 'center' }} category="s1">
+                  {totalRuntime}
+                </Text>
+              </View>
             </View>
           </View>
-        </View>
-        <Input
-          style={{ paddingVertical: 10 }}
-          value={propertiesDraft.description}
-          placeholder="Description"
-          onChangeText={(description) =>
-            setPropertiesDraftWrapper({ ...propertiesDraft, description })
-          }
-          keyboardAppearance={scheme}
-        />
-        <ActionSelector
-          onInsert={setAddType}
-          allowGoTo={
-            activeInsertIndex > 0 &&
-            nodes[activeInsertIndex - 1]?.type != ActionType.goTo
-          }
-          instruction={
-            nodes.length === 0
-              ? InstructionType.FirstStep
-              : InstructionType.Normal
-          }
-        />
-        <AddNodeOverlay
-          typeToCreate={addType}
-          actionToEdit={actionToEdit}
-          onSave={saveNodeForm}
-          onCancel={() => {
-            setAddType(undefined);
-            setActionToEdit(undefined);
-          }}
-          existingActions={nodes}
-          insertIndex={activeInsertIndex}
-        />
-        {nodes.length > 0 ? (
-          <EditableFlow
-            style={{ paddingTop: 10 }}
-            actions={nodes}
-            onEditNode={(i) => {
-              setActiveInsertIndex(i);
-              setActionToEdit(nodes[i]);
-            }}
-            onDeleteNode={deleteNode}
-            activeInsertIndex={activeInsertIndex}
-            onUpdateActiveInsertIndex={(i) =>
-              setActiveInsertIndex(i === activeInsertIndex ? nodes.length : i)
+          <Input
+            style={{ paddingVertical: 10 }}
+            value={propertiesDraft.description}
+            placeholder="Description"
+            onChangeText={(description) =>
+              setPropertiesDraftWrapper({ ...propertiesDraft, description })
+            }
+            keyboardAppearance={scheme}
+          />
+          <ActionSelector
+            onInsert={setAddType}
+            allowGoTo={
+              activeInsertIndex > 0 &&
+              nodes[activeInsertIndex - 1]?.type != ActionType.goTo
+            }
+            instruction={
+              nodes.length === 0
+                ? InstructionType.FirstStep
+                : InstructionType.Normal
             }
           />
-        ) : null}
-        {nodes.length === 0 ? (
-          <EmptyCanvasHelp
-            onSetTemplate={(nodes, name, description) => {
-              setNodes(nodes);
-              setPropertiesDraftWrapper({ name, description });
+          <AddNodeOverlay
+            typeToCreate={addType}
+            actionToEdit={actionToEdit}
+            onSave={saveNodeForm}
+            onCancel={() => {
+              setAddType(undefined);
+              setActionToEdit(undefined);
             }}
+            existingActions={nodes}
+            insertIndex={activeInsertIndex}
           />
-        ) : null}
-      </ScrollView>
+          {nodes.length > 0 ? (
+            <EditableFlow
+              style={{ paddingTop: 10 }}
+              actions={nodes}
+              onEditNode={(i) => {
+                setActiveInsertIndex(i);
+                setActionToEdit(nodes[i]);
+              }}
+              onDeleteNode={deleteNode}
+              activeInsertIndex={activeInsertIndex}
+              onUpdateActiveInsertIndex={(i) =>
+                setActiveInsertIndex(i === activeInsertIndex ? nodes.length : i)
+              }
+            />
+          ) : null}
+          {nodes.length === 0 ? (
+            <EmptyCanvasHelp
+              onSetTemplate={(nodes, name, description) => {
+                setNodes(nodes);
+                setPropertiesDraftWrapper({ name, description });
+              }}
+            />
+          ) : null}
+        </ScrollView>
+      </KeyboardAvoidingView>
     </Layout>
   );
 };
