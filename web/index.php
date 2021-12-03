@@ -25,7 +25,7 @@
 
       if (isset($_GET["f"])) {
         // We can set some things
-
+        $flowParam = $_GET["f"];
         $flow = json_decode($flowParam);
         $title = $flow->n;
         $description = $flow->d;

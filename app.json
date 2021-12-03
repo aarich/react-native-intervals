@@ -17,7 +17,7 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "buildNumber": "1",
+      "buildNumber": "5",
       "supportsTablet": true,
       "config": {
         "googleMobileAdsAppId": "ca-app-pub-6949812709353975~7748559513"
@@ -42,7 +42,11 @@
     },
     "web": {
       "favicon": "./assets/images/favicon.png",
-      "build": { "babel": { "include": ["@ui-kitten/components"] } }
+      "build": {
+        "babel": {
+          "include": ["@ui-kitten/components"]
+        }
+      }
     },
     "hooks": {
       "postPublish": [
@@ -52,14 +56,14 @@
             "organization": "alex-rich",
             "project": "intervals",
             "authToken": "SENTRY_AUTH_TOKEN",
-            "release": "9",
+            "release": "10",
             "setCommits": true
           }
         }
       ]
     },
     "extra": {
-      "MyVersion": "9"
+      "MyVersion": "10"
     }
   }
 }

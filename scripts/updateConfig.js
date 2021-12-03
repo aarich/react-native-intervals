@@ -8,18 +8,22 @@ var fs = require('fs');
 // Update release number
 const releaseNum = process.argv[2];
 const appRelease = process.argv[3].replace('-', '.');
+const updateVersions = process.argv[4] === 'Y';
 
 const { expo } = config;
 const { ios, extra, hooks } = expo;
 
-if (expo.version !== appRelease) {
-  // We're on a new version, reset ios build number
-  ios.buildNumber = '1';
+if (updateVersions) {
+  if (expo.version !== appRelease) {
+    // We're on a new version, reset ios build number
+    ios.buildNumber = '1';
+  } else {
+    ios.buildNumber = `${parseInt(config.expo.ios.buildNumber) + 1}`;
+  }
+  console.log('ios.buildNumber set to ' + ios.buildNumber);
 } else {
-  ios.buildNumber = `${parseInt(config.expo.ios.buildNumber) + 1}`;
+  console.log('Not updating iOS buildNumber');
 }
-
-console.log('ios.buildNumber set to ' + ios.buildNumber);
 
 expo.version = appRelease;
 extra.MyVersion = releaseNum;
