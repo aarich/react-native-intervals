@@ -16,6 +16,7 @@ import {
   View,
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
+import * as Sentry from 'sentry-expo';
 import AddNodeOverlay from '../components/edit/actions/AddNodeOverlay';
 import ActionSelector, {
   InstructionType,
@@ -191,38 +192,42 @@ const EditScreen = ({ navigation, route }: Props) => {
   // We may have been routed to with a flow parameter. Load it
   useEffect(() => {
     if (serializedFlow) {
-      const deserialized = deserialize(serializedFlow);
-      setPropertiesDraft({
-        name: deserialized.name,
-        description: deserialized.description || '',
-      });
+      try {
+        const deserialized = deserialize(serializedFlow);
 
-      setNodes(deserialized.flow);
+        const properties = {
+          name: deserialized.name,
+          description: deserialized.description || '',
+        };
 
-      save(
-        id,
-        existingTimers,
-        dispatch,
-        propertiesDraft,
-        deserialized.flow,
-        setDirty
-      ).then(({ success, timerId }) => {
-        if (success) {
-          if (timerId) {
+        setPropertiesDraft(properties);
+
+        setNodes(deserialized.flow);
+
+        save(
+          undefined,
+          existingTimers,
+          dispatch,
+          properties,
+          deserialized.flow,
+          setDirty
+        ).then(({ success, timerId }) => {
+          if (success && timerId) {
             navigation.replace('ViewScreen', { id: timerId });
+          } else {
+            osAlert(
+              'Something went wrong loading this timer. Please try again later.'
+            );
+            navigation.pop();
           }
-        }
-      });
+        });
+      } catch (e) {
+        osAlert("We couldn't load your flow. Please try again later");
+        Sentry.Native.captureException(e, { extra: { serializedFlow } });
+      }
     }
-  }, [
-    dispatch,
-    existingTimers,
-    id,
-    navigation,
-    propertiesDraft,
-    serializedFlow,
-    setDirty,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Set the header options
   useEffect(() => {

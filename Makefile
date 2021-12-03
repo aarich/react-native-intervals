@@ -1,7 +1,7 @@
 .PHONY: git-status build-web build-prep build-finish build-ios publish
 
 app_release = 3-0
-my_release_num = 10
+my_release_num = 16
 release_channel = prod-$(app_release)
 updateIOSVersion = N
 
@@ -41,7 +41,7 @@ build-web: build-prep
 
 build-ios:
 	$(MAKE) build-prep updateIOSVersion=Y
-	expo build:ios -t archive --release-channel $(release_channel) --apple-id arich@hmc.edu
+	expo build:ios -t archive --release-channel $(release_channel) --apple-id arich@hmc.edu --no-publish --no-wait
 	$(MAKE) build-finish
 
 publish: build-prep

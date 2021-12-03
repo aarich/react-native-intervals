@@ -13,11 +13,11 @@
       "backgroundColor": "#ffffff"
     },
     "updates": {
-      "fallbackToCacheTimeout": 3000
+      "fallbackToCacheTimeout": 5000
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "buildNumber": "5",
+      "buildNumber": "6",
       "supportsTablet": true,
       "config": {
         "googleMobileAdsAppId": "ca-app-pub-6949812709353975~7748559513"
@@ -56,14 +56,14 @@
             "organization": "alex-rich",
             "project": "intervals",
             "authToken": "SENTRY_AUTH_TOKEN",
-            "release": "10",
+            "release": "16",
             "setCommits": true
           }
         }
       ]
     },
     "extra": {
-      "MyVersion": "10"
+      "MyVersion": "16"
     }
   }
 }

@@ -8,4 +8,4 @@ var fs = require('fs');
 config.expo.hooks.postPublish[0].config.authToken = 'SENTRY_AUTH_TOKEN';
 
 // write file from root diretory
-fs.writeFileSync('app.json', JSON.stringify(config, null, 4));
+fs.writeFileSync('app.json', JSON.stringify(config, null, 2));
