@@ -1,4 +1,3 @@
-import { AppState, AppStateStatus, View } from 'react-native';
 import { Card, useTheme } from '@ui-kitten/components';
 import React, {
   useCallback,
@@ -7,14 +6,14 @@ import React, {
   useRef,
   useState,
 } from 'react';
-
-import { Action } from '../../types';
-import ControlButtons from './ControlButtons';
-import DoubleTimer from './DoubleTimer';
-import Executor from '../../utils/execution/Executor';
+import { AppState, AppStateStatus, Platform, View } from 'react-native';
+import { useTimer } from '../../hooks/useClock';
 import useColorScheme from '../../hooks/useColorScheme';
 import { useSetting } from '../../redux/selectors';
-import { useTimer } from '../../hooks/useClock';
+import { Action } from '../../types';
+import Executor from '../../utils/execution/Executor';
+import ControlButtons from './ControlButtons';
+import DoubleTimer from './DoubleTimer';
 
 type Props = {
   actions: Action[];
@@ -92,6 +91,10 @@ const RunControls = ({
   );
 
   useEffect(() => {
+    if (Platform.OS === 'web') {
+      return;
+    }
+
     AppState.addEventListener('change', handleAppStateChange);
     return () => AppState.removeEventListener('change', handleAppStateChange);
   }, [handleAppStateChange]);

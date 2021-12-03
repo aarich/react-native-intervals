@@ -1,4 +1,5 @@
-import { Alert, View } from 'react-native';
+import { RouteProp } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import {
   Icon,
   Layout,
@@ -7,17 +8,15 @@ import {
   TopNavigationAction,
   useStyleSheet,
 } from '@ui-kitten/components';
-import React, { useEffect, useState } from 'react';
 import { activateKeepAwake, deactivateKeepAwake } from 'expo-keep-awake';
-
-import { RouteProp } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
+import { Platform, View } from 'react-native';
 import RunControls from '../components/view/RunControls';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { TimersParamList } from '../types';
 import ViewableFlow from '../components/view/ViewableFlow';
-import { share } from '../utils/experience';
 import { useSetting } from '../redux/selectors';
 import { useTimer } from '../redux/selectors/TimerSelector';
+import { TimersParamList } from '../types';
+import { openInApp, osAlert, share } from '../utils/experience';
 
 type Props = {
   navigation: StackNavigationProp<TimersParamList, 'ViewScreen'>;
@@ -46,11 +45,12 @@ const ViewScreen = ({ navigation, route }: Props) => {
 
   useEffect(() => {
     if (!timer) {
-      Alert.alert('Flow not found');
+      osAlert('Flow not found');
       navigation.pop();
       return;
     }
     navigation.setOptions({
+      title: timer.name,
       headerTitle: timer.name,
       headerRight: () => (
         <View style={{ flexDirection: 'row' }}>
@@ -64,6 +64,12 @@ const ViewScreen = ({ navigation, route }: Props) => {
               navigation.push('EditScreen', { id, serializedFlow: undefined })
             }
           />
+          {Platform.OS === 'web' ? (
+            <TopNavigationAction
+              icon={(props) => <Icon {...props} name="external-link-outline" />}
+              onPress={() => openInApp(timer)}
+            />
+          ) : null}
         </View>
       ),
     });

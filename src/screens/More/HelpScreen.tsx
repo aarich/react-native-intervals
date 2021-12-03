@@ -1,15 +1,15 @@
+import { Layout, useTheme } from '@ui-kitten/components';
+import React, { useCallback, useState } from 'react';
+import { Platform, StyleSheet, View } from 'react-native';
+import Swiper from 'react-native-swiper/src';
 import ActionSelector, {
   InstructionType,
 } from '../../components/edit/ActionSelector';
-import { Alert, StyleSheet, View } from 'react-native';
-import { Layout, useTheme } from '@ui-kitten/components';
-import React, { useCallback, useState } from 'react';
-
-import ActionIcon from '../../components/shared/ActionIcon';
-import { ActionType } from '../../types';
-import LayoutConstants from '../../constants/Layout';
-import Swiper from 'react-native-swiper';
 import TutorialScreen from '../../components/more/TutorialScreen';
+import ActionIcon from '../../components/shared/ActionIcon';
+import LayoutConstants from '../../constants/Layout';
+import { ActionType } from '../../types';
+import { osAlert } from '../../utils/experience';
 
 const width = LayoutConstants.window.width;
 
@@ -80,7 +80,7 @@ const HelpScreen = () => {
   const showAlert = useCallback(() => {
     const msg = alerts[alertMessageIndex];
     setAlertMessageIndex((i) => (i + 1) % alerts.length);
-    Alert.alert('Tutorial', msg);
+    osAlert('Tutorial', msg);
   }, [alertMessageIndex]);
 
   return (
@@ -89,9 +89,9 @@ const HelpScreen = () => {
         <View style={styles.slide}>
           <TutorialScreen
             title="Welcome"
-            subtitle={
-              'Create and run highly customizable interval flows.\n\nSwipe to learn how →'
-            }
+            subtitle={`Create and run highly customizable interval flows.\n\n${Platform.select(
+              { web: 'Scroll', default: 'Swipe' }
+            )} to learn how →`}
           />
         </View>
         <View style={styles.slide}>

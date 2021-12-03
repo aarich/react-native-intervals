@@ -2,7 +2,7 @@
   "expo": {
     "name": "Intervals",
     "slug": "intervals",
-    "version": "2.1",
+    "version": "3.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "intervals",
@@ -17,7 +17,7 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "buildNumber": "1.0",
+      "buildNumber": "1",
       "supportsTablet": true,
       "config": {
         "googleMobileAdsAppId": "ca-app-pub-6949812709353975~7748559513"
@@ -41,7 +41,8 @@
       "versionCode": 1
     },
     "web": {
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/favicon.png",
+      "build": { "babel": { "include": ["@ui-kitten/components"] } }
     },
     "hooks": {
       "postPublish": [
@@ -50,13 +51,15 @@
           "config": {
             "organization": "alex-rich",
             "project": "intervals",
-            "authToken": "SENTRY_AUTH_TOKEN"
+            "authToken": "SENTRY_AUTH_TOKEN",
+            "release": "9",
+            "setCommits": true
           }
         }
       ]
     },
     "extra": {
-      "MyVersion": "8"
+      "MyVersion": "9"
     }
   }
 }

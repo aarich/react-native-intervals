@@ -90,13 +90,13 @@ function TimerNavigator() {
       <TimersStack.Screen
         name="LibraryScreen"
         component={LibraryScreen}
-        options={{ headerTitle: 'Flows' }}
+        options={{ headerTitle: 'Flows', title: 'Intervals' }}
       />
       <TimersStack.Screen name="ViewScreen" component={ViewScreen} />
       <TimersStack.Screen
         name="EditScreen"
         component={EditScreen}
-        options={{ headerTitle: 'Edit' }}
+        options={{ headerTitle: 'Edit', title: 'Edit' }}
       />
     </TimersStack.Navigator>
   );
@@ -110,22 +110,22 @@ function MoreNavigator() {
       <MoreStack.Screen
         name="MoreScreen"
         component={MoreScreen}
-        options={{ headerTitle: 'Options' }}
+        options={{ headerTitle: 'Options', title: 'Options' }}
       />
       <MoreStack.Screen
         name="AboutScreen"
         component={AboutScreen}
-        options={{ headerTitle: 'About' }}
+        options={{ headerTitle: 'About', title: 'About' }}
       />
       <MoreStack.Screen
         name="HelpScreen"
         component={HelpScreen}
-        options={{ headerTitle: 'Help' }}
+        options={{ headerTitle: 'Help', title: 'Help' }}
       />
       <MoreStack.Screen
         name="FeedbackScreen"
         component={FeedbackScreen}
-        options={{ headerTitle: 'Feedback' }}
+        options={{ headerTitle: 'Feedback', title: 'Feedback' }}
       />
     </MoreStack.Navigator>
   );

@@ -1,20 +1,19 @@
-import { Alert, StyleSheet, View } from 'react-native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { Divider, Icon, Layout, List, ListItem } from '@ui-kitten/components';
+import React, { useCallback } from 'react';
+import { Alert, Platform, StyleSheet, View } from 'react-native';
+import ListItemAds from '../../components/more/ListItemAds';
+import ListItemTheme from '../../components/more/ListItemTheme';
+import ListItemToggle from '../../components/more/ListItemToggle';
+import PotentialAd from '../../components/shared/ads/PotentialAd';
+import { resetApp } from '../../redux/actions';
 import {
   BooleanSettings,
   SelectSettings,
 } from '../../redux/reducers/settingsReducer';
-import { Divider, Icon, Layout, List, ListItem } from '@ui-kitten/components';
-import React, { useCallback } from 'react';
-
-import { AdUnit } from '../../utils/ads';
-import ListItemAds from '../../components/more/ListItemAds';
-import ListItemTheme from '../../components/more/ListItemTheme';
-import ListItemToggle from '../../components/more/ListItemToggle';
-import { MoreParamList } from '../../types';
-import PotentialAd from '../../components/shared/PotentialAd';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { resetApp } from '../../redux/actions';
 import { useAppDispatch } from '../../redux/store';
+import { MoreParamList } from '../../types';
+import { AdUnit } from '../../utils/ads';
 
 type Props = {
   navigation: StackNavigationProp<MoreParamList, 'MoreScreen'>;
@@ -35,22 +34,20 @@ const MoreScreen = ({ navigation }: Props) => {
   const dispatch = useAppDispatch();
 
   const resetAppAlert = useCallback(() => {
-    Alert.alert(
-      'Are you sure?',
-      'This will clear all saved flows. You cannot undo this action.',
-      [
-        {
-          text: 'Reset',
-          style: 'destructive',
-          onPress: () => {
-            dispatch(resetApp());
-          },
-        },
-        {
-          text: 'Cancel',
-        },
-      ]
-    );
+    const message =
+      'This will clear all saved flows. You cannot undo this action';
+    const doIt = () => dispatch(resetApp());
+
+    if (Platform.OS === 'web') {
+      if (confirm(message)) {
+        doIt();
+      }
+    } else {
+      Alert.alert('Are you sure?', message, [
+        { text: 'Reset', style: 'destructive', onPress: doIt },
+        { text: 'Cancel' },
+      ]);
+    }
   }, [dispatch]);
 
   const listItems: (
@@ -66,26 +63,23 @@ const MoreScreen = ({ navigation }: Props) => {
   ];
   const lastNavListItem = listItems.length - 1;
 
-  const selectables: (keyof SelectSettings)[] = ['theme', 'ads'];
   const booleans: (keyof BooleanSettings)[] = [
     'countUp',
     'showTotalTime',
     'hideDescription',
   ];
+  const selectables: (keyof SelectSettings)[] =
+    Platform.select({
+      web: ['ads'],
+      default: ['theme', 'ads'],
+    }) || [];
 
   booleans.forEach((setting) => listItems.push({ setting, isBoolean: true }));
   selectables.forEach((setting) =>
     listItems.push({ setting, isBoolean: false })
   );
 
-  const getListItem = (
-    listItem:
-      | ListItemNav
-      | ListItemSelectSetting
-      | ListItemAction
-      | ListItemBooleanSetting,
-    index: number
-  ) => {
+  const getListItem = (listItem: typeof listItems[0], index: number) => {
     if ('setting' in listItem) {
       if (listItem.isBoolean) {
         return <ListItemToggle setting={listItem.setting} />;

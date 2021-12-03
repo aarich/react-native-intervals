@@ -8,7 +8,9 @@ npm-debug.*
 *.mobileprovision
 *.orig.*
 web-build/
-keys.txt
+*.bak
+scripts/keys.json
+scripts/copyFiles.sh
 
 # macOS
 .DS_Store

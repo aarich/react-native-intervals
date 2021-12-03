@@ -1,6 +1,5 @@
-import { Action, ActionType, Timer } from '../types';
-
 import { TimersState } from '../redux/reducers/timersReducer';
+import { Action, ActionType, Timer } from '../types';
 import { getActionInfo } from './actions';
 
 export const createNewID = (existingTimers: TimersState) => {
@@ -183,7 +182,7 @@ export const deserialize = (
 
 export const makeURL = (serializedFlow: string): Promise<string> => {
   const encoded = encodeURIComponent(serializedFlow);
-  return Promise.resolve(`https://mrarich.com/flows?f=${encoded}`);
+  return Promise.resolve(`https://projects.mrarich.com/intervals?f=${encoded}`);
 };
 
 export const getShortenedURL = (serializedFlow: string): Promise<string> =>

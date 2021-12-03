@@ -1,4 +1,4 @@
-import { Alert, Pressable, StyleSheet, View } from 'react-native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import {
   Divider,
   Icon,
@@ -9,14 +9,13 @@ import {
   TopNavigationAction,
 } from '@ui-kitten/components';
 import React, { useCallback, useEffect } from 'react';
-
-import { AdUnit } from '../utils/ads';
-import PotentialAd from '../components/shared/PotentialAd';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { TimersParamList } from '../types';
-import { deleteTimer } from '../redux/actions';
+import { Alert, Platform, Pressable, StyleSheet, View } from 'react-native';
 import { useDispatch } from 'react-redux';
+import PotentialAd from '../components/shared/ads/PotentialAd';
+import { deleteTimer } from '../redux/actions';
 import { useTimers } from '../redux/selectors/TimerSelector';
+import { TimersParamList } from '../types';
+import { AdUnit } from '../utils/ads';
 
 type Props = {
   navigation: StackNavigationProp<TimersParamList, 'LibraryScreen'>;
@@ -28,6 +27,7 @@ const LibraryScreen = ({ navigation }: Props) => {
 
   useEffect(() => {
     navigation.setOptions({
+      title: 'Interval Timers',
       headerRight: () => (
         <TopNavigationAction
           icon={(props) => <Icon {...props} name="plus" />}
@@ -44,6 +44,17 @@ const LibraryScreen = ({ navigation }: Props) => {
 
   const deleteTimerAlert = useCallback(
     (id: string) => {
+      const doIt = () => dispatch(deleteTimer(id));
+      if (Platform.OS === 'web') {
+        if (
+          confirm(
+            `Do you really want to delete '${timers[id].name}'?\n\nThis action cannot be undone.`
+          )
+        ) {
+          doIt();
+        }
+        return;
+      }
       Alert.alert(
         'Are you sure?',
         `Do you really want to delete '${timers[id].name}'?\n\nThis action cannot be undone.`,
@@ -51,7 +62,7 @@ const LibraryScreen = ({ navigation }: Props) => {
           {
             text: 'Delete',
             style: 'destructive',
-            onPress: () => dispatch(deleteTimer(id)),
+            onPress: doIt,
           },
           { text: 'Cancel' },
         ]

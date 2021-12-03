@@ -1,11 +1,10 @@
-import * as StoreReview from 'expo-store-review';
-
-import { Button, Icon, Layout, Text } from '@ui-kitten/components';
-import { Platform, StyleSheet, View } from 'react-native';
-import React, { useEffect } from 'react';
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Button, Icon, Layout, Text } from '@ui-kitten/components';
 import { openURL } from 'expo-linking';
+import * as StoreReview from 'expo-store-review';
+import { ReactNode } from 'hoist-non-react-statics/node_modules/@types/react';
+import React, { useEffect } from 'react';
+import { Platform, StyleSheet, View } from 'react-native';
 
 const baseMainURL = 'https://mrarich.com';
 
@@ -28,11 +27,21 @@ const makeButton = (title: string, icon: string, onPress: () => void) => (
 const FeedbackScreen = () => {
   const issuesUrl =
     'https://github.com/aarich/react-native-intervals/issues/new';
-  const storeUrl =
-    Platform.OS === 'ios'
-      ? 'https://apps.apple.com/app/apple-store/id1552160706?ct=inappfeedback&mt=8'
-      : 'https://play.google.com/store/apps/details?id=com.mrarich.Intervals';
-  const app = Platform.OS === 'ios' ? 'App' : 'Play';
+
+  const appStoreUrl =
+    'https://apps.apple.com/app/apple-store/id1552160706?ct=inappfeedback&mt=8';
+  const playStoreUrl =
+    'https://play.google.com/store/apps/details?id=com.mrarich.Intervals';
+  const appStoreButton = makeButton(
+    `Open in the Apple App Store`,
+    'smartphone-outline',
+    () => openURL(appStoreUrl)
+  );
+  const playStoreButton = makeButton(
+    'Open in the Google Play Store',
+    'google-outline',
+    () => openURL(playStoreUrl)
+  );
 
   useEffect(() => {
     const today = new Date();
@@ -61,13 +70,11 @@ const FeedbackScreen = () => {
           app with others?
         </Text>
         <View>
-          {storeUrl ? (
-            makeButton(`Open in the ${app} Store`, 'bulb-outline', () =>
-              openURL(storeUrl)
-            )
-          ) : (
-            <></>
-          )}
+          {Platform.select<ReactNode>({
+            web: [appStoreButton, playStoreButton],
+            ios: appStoreButton,
+            android: playStoreButton,
+          })}
           {makeButton('Contact Directly', 'message-circle-outline', () =>
             openURL(getContactUrl('Feedback for Intervals: '))
           )}

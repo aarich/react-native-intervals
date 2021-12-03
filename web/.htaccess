@@ -1,0 +1,20 @@
+Options -MultiViews
+RewriteEngine On
+
+# Force HTTPS
+RewriteCond %{SERVER_PORT} 80
+RewriteCond ${HTTP_HOST} !^projects.dreamhost.com$
+RewriteRule ^(.*)$ https://projects.mrarich.com/$1 [R=301]
+
+# Rewrite Extension to .php if that exists
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule !.*\.php$ %{REQUEST_FILENAME}.php [QSA,L]
+
+# route all other requests to index.html for React
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.php [QSA,L]
+
+# One month for most static assets
+<filesMatch ".(css|js)$">
+Header set Cache-Control "max-age=2628000, public"
+</filesMatch>

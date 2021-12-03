@@ -1,7 +1,14 @@
+import * as Clipboard from 'expo-clipboard';
+import Constants from 'expo-constants';
+import { openURL } from 'expo-linking';
 import { Alert, Platform, Share } from 'react-native';
+import { Timer } from '../types';
 import { getShortenedURL, makeURL, serialize } from './api';
 
-import { Timer } from '../types';
+export const osAlert = (title: string, message?: string) =>
+  Platform.OS === 'web'
+    ? alert(title + (message ? '\n\n' + message : ''))
+    : Alert.alert(title, message);
 
 export const getCurrentTimeUnit = (timeIsSeconds: boolean) =>
   timeIsSeconds ? 'seconds' : 'minutes';
@@ -77,6 +84,13 @@ export const share = (timer: Timer) => {
     });
   };
 
+  if (Platform.OS === 'web') {
+    if (confirm('Copy URL to clipboard?')) {
+      getShortenedURL(serialized).then(Clipboard.setString);
+    }
+    return;
+  }
+
   Alert.alert(
     'Share Flow',
     "Would you like to generate a short link to this flow? To do that we'll store its contents in our url shortener, and anyone with access to the url will be able to view it.",
@@ -89,4 +103,10 @@ export const share = (timer: Timer) => {
       { text: 'Cancel', style: 'cancel' },
     ]
   );
+};
+
+export const openInApp = (timer: Timer) => {
+  const serialized = serialize(timer);
+  const url = `${Constants.manifest?.scheme}://?f=${serialized}`;
+  openURL(url);
 };

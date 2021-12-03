@@ -1,10 +1,10 @@
-import { Alert, Pressable, View } from 'react-native';
 import { Button, Icon, Text, useTheme } from '@ui-kitten/components';
-
-import { ActionType } from '../../types';
 import React from 'react';
-import { getActionInfo } from '../../utils/actions';
+import { Pressable, View } from 'react-native';
 import useColorScheme from '../../hooks/useColorScheme';
+import { ActionType } from '../../types';
+import { getActionInfo } from '../../utils/actions';
+import { osAlert } from '../../utils/experience';
 
 type Props = {
   type: ActionType;
@@ -32,9 +32,7 @@ const ActionIcon = ({
   const iconSizeProps = iconSize ? { width: iconSize, height: iconSize } : {};
   return (
     <View style={{ alignItems: 'center' }}>
-      <Pressable
-        onPress={disabledMsg ? () => Alert.alert(disabledMsg) : undefined}
-      >
+      <Pressable onPress={disabledMsg ? () => osAlert(disabledMsg) : undefined}>
         <Button
           status={actionInfo.themeStatus}
           onPress={onPress}

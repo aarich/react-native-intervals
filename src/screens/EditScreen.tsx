@@ -1,14 +1,5 @@
-import { Action, ActionType, TimersParamList } from '../types';
-import ActionSelector, {
-  InstructionType,
-} from '../components/edit/ActionSelector';
-import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  StyleSheet,
-  View,
-} from 'react-native';
+import { RouteProp } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import {
   Icon,
   Input,
@@ -18,6 +9,28 @@ import {
 } from '@ui-kitten/components';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  View,
+} from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
+import AddNodeOverlay from '../components/edit/actions/AddNodeOverlay';
+import ActionSelector, {
+  InstructionType,
+} from '../components/edit/ActionSelector';
+import EditableFlow from '../components/edit/EditableFlow';
+import EmptyCanvasHelp from '../components/edit/EmptyCanvasHelp';
+import useColorScheme from '../hooks/useColorScheme';
+import { useStateWithPromise } from '../hooks/useStateWithPromise';
+import { saveTimer } from '../redux/actions';
+import { TimersState } from '../redux/reducers/timersReducer';
+import { useTimer, useTimers } from '../redux/selectors/TimerSelector';
+import { AppDispatch, useAppDispatch } from '../redux/store';
+import { Action, ActionType, TimersParamList } from '../types';
+import { getActionInfo } from '../utils/actions';
+import {
   calculateRuntime,
   createNewID,
   deserialize,
@@ -25,19 +38,7 @@ import {
   msToViewable,
   validateFlow,
 } from '../utils/api';
-import { useTimer, useTimers } from '../redux/selectors/TimerSelector';
-
-import AddNodeOverlay from '../components/edit/actions/AddNodeOverlay';
-import EditableFlow from '../components/edit/EditableFlow';
-import EmptyCanvasHelp from '../components/edit/EmptyCanvasHelp';
-import { RouteProp } from '@react-navigation/native';
-import { ScrollView } from 'react-native-gesture-handler';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { getActionInfo } from '../utils/actions';
-import { saveTimer } from '../redux/actions';
-import { useAppDispatch } from '../redux/store';
-import useColorScheme from '../hooks/useColorScheme';
-import { useStateWithPromise } from '../hooks/useStateWithPromise';
+import { osAlert } from '../utils/experience';
 
 type Props = {
   navigation: StackNavigationProp<TimersParamList, 'EditScreen'>;
@@ -47,6 +48,45 @@ type Props = {
 type TimerPropertiesDraft = {
   name: string;
   description: string;
+};
+
+const save = (
+  id: string | undefined,
+  existingTimers: TimersState,
+  dispatch: AppDispatch,
+  propertiesDraft: { name: string; description: string },
+  nodes: Action[],
+  setDirty: (b: boolean) => Promise<boolean>
+): Promise<{
+  success: boolean;
+  timerId?: string;
+}> => {
+  try {
+    validateFlow(nodes);
+  } catch (e) {
+    osAlert('Error', e instanceof Error ? e.message : '');
+    return Promise.resolve({ success: false });
+  }
+
+  const timerId = id || createNewID(existingTimers);
+  const { name, description } = propertiesDraft;
+  dispatch(
+    saveTimer({
+      name: name || 'Flow ' + timerId,
+      description,
+      id: timerId,
+      flow: nodes,
+    })
+  );
+
+  const setTheState: Promise<{
+    success: boolean;
+    timerId: string;
+  }> = new Promise((resolve) => {
+    setDirty(false).then(() => resolve({ success: true, timerId }));
+  });
+
+  return setTheState;
 };
 
 const EditScreen = ({ navigation, route }: Props) => {
@@ -71,50 +111,6 @@ const EditScreen = ({ navigation, route }: Props) => {
     description: timer?.description || '',
   });
 
-  // We may have been routed to with a flow parameter. Load it
-  useEffect(() => {
-    if (serializedFlow) {
-      const deserialized = deserialize(serializedFlow);
-      setPropertiesDraft({
-        name: deserialized.name,
-        description: deserialized.description || '',
-      });
-      setNodes(deserialized.flow);
-    }
-  }, [serializedFlow]);
-
-  const save = useCallback((): Promise<{
-    success: boolean;
-    timerId?: string;
-  }> => {
-    try {
-      validateFlow(nodes);
-    } catch (e) {
-      Alert.alert('Error', e.message);
-      return Promise.resolve({ success: false });
-    }
-
-    const timerId = id || createNewID(existingTimers);
-    const { name, description } = propertiesDraft;
-    dispatch(
-      saveTimer({
-        name: name || 'Flow ' + timerId,
-        description,
-        id: timerId,
-        flow: nodes,
-      })
-    );
-
-    const setTheState: Promise<{
-      success: boolean;
-      timerId: string;
-    }> = new Promise((resolve) => {
-      setDirty(false).then(() => resolve({ success: true, timerId }));
-    });
-
-    return setTheState;
-  }, [id, existingTimers, dispatch, propertiesDraft, nodes, setDirty]);
-
   const saveNodeForm = useCallback(
     (draft: Record<string, string>) => {
       // One of these will be set
@@ -123,7 +119,7 @@ const EditScreen = ({ navigation, route }: Props) => {
       try {
         action = getActionInfo(type).getAction(draft, activeInsertIndex);
       } catch (e) {
-        Alert.alert('Error', e.message);
+        osAlert('Error', e instanceof Error ? e.message : '');
         return;
       }
       let newNodes = [];
@@ -187,16 +183,58 @@ const EditScreen = ({ navigation, route }: Props) => {
     [nodes]
   );
 
+  const onSave = useCallback(
+    () => save(id, existingTimers, dispatch, propertiesDraft, nodes, setDirty),
+    [dispatch, existingTimers, id, nodes, propertiesDraft, setDirty]
+  );
+
+  // We may have been routed to with a flow parameter. Load it
+  useEffect(() => {
+    if (serializedFlow) {
+      const deserialized = deserialize(serializedFlow);
+      setPropertiesDraft({
+        name: deserialized.name,
+        description: deserialized.description || '',
+      });
+
+      setNodes(deserialized.flow);
+
+      save(
+        id,
+        existingTimers,
+        dispatch,
+        propertiesDraft,
+        deserialized.flow,
+        setDirty
+      ).then(({ success, timerId }) => {
+        if (success) {
+          if (timerId) {
+            navigation.replace('ViewScreen', { id: timerId });
+          }
+        }
+      });
+    }
+  }, [
+    dispatch,
+    existingTimers,
+    id,
+    navigation,
+    propertiesDraft,
+    serializedFlow,
+    setDirty,
+  ]);
+
   // Set the header options
   useEffect(() => {
     navigation.setOptions({
+      title: isNew ? 'Create' : 'Edit',
       headerTitle: isNew ? 'Create' : 'Edit',
       headerBackTitle: 'Cancel',
       headerRight: () => (
         <TopNavigationAction
           icon={(props) => <Icon {...props} name="checkmark-outline" />}
           onPress={() =>
-            save().then(({ success, timerId }) => {
+            onSave().then(({ success, timerId }) => {
               if (success) {
                 if (isNew && timerId) {
                   navigation.replace('ViewScreen', { id: timerId });
@@ -209,7 +247,7 @@ const EditScreen = ({ navigation, route }: Props) => {
         />
       ),
     });
-  }, [isNew, navigation, save]);
+  }, [isNew, navigation, onSave]);
 
   // Guard against losing unsaved changes
   useEffect(
@@ -228,7 +266,7 @@ const EditScreen = ({ navigation, route }: Props) => {
             {
               text: 'Save',
               onPress: () =>
-                save().then(({ success }) =>
+                onSave().then(({ success }) =>
                   success ? navigation.dispatch(e.data.action) : null
                 ),
             },
@@ -240,7 +278,7 @@ const EditScreen = ({ navigation, route }: Props) => {
           ]
         );
       }),
-    [navigation, dirty, save]
+    [navigation, dirty, onSave]
   );
 
   // If the nodes are changed do some cleanup work like removing go-tos

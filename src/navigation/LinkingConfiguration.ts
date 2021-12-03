@@ -1,22 +1,32 @@
-import * as Linking from 'expo-linking';
+import { LinkingOptions } from '@react-navigation/native';
 
-export default {
-  prefixes: [
-    Linking.makeUrl('/'),
-    Linking.makeUrl('https://mrarich.com/flows'),
-  ],
+const options: LinkingOptions = {
+  prefixes: ['https://projects.mrarich.com/intervals/', 'intervals://'],
   config: {
+    initialRouteName: 'Flows',
     screens: {
-      Root: {
+      Flows: {
+        initialRouteName: 'LibraryScreen',
+        path: '/intervals/flows',
         screens: {
-          Timers: {
-            screens: {
-              LibraryScreen: '',
-            },
-          },
+          LibraryScreen: '/all',
+          ViewScreen: '/view',
+          EditScreen: '/edit',
+        },
+      },
+      More: {
+        path: '/intervals/options',
+        initialRouteName: 'MoreScreen',
+        screens: {
+          MoreScreen: '',
+          AboutScreen: 'about',
+          FeedbackScreen: 'feedback',
+          HelpScreen: 'help',
         },
       },
       NotFound: '*',
     },
   },
 };
+
+export default options;

@@ -11,7 +11,7 @@ import React from 'react';
 import { default as theme } from '../../assets/theme.json';
 import useColorScheme from '../hooks/useColorScheme';
 import BottomTabNavigator from './BottomTabNavigator';
-import LinkingConfiguration from './LinkingConfiguration';
+import linkingOptions from './LinkingConfiguration';
 import { rootNavRef } from './rootNavRef';
 
 export default function Navigation() {
@@ -19,7 +19,7 @@ export default function Navigation() {
 
   return (
     <NavigationContainer
-      linking={LinkingConfiguration}
+      linking={linkingOptions}
       theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
       ref={rootNavRef}
     >

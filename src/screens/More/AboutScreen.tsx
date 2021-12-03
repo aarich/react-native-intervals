@@ -1,10 +1,8 @@
-import * as Linking from 'expo-linking';
-
 import { Layout, Text } from '@ui-kitten/components';
-import { ScrollView, StyleSheet, View } from 'react-native';
-
 import Constants from 'expo-constants';
+import * as Linking from 'expo-linking';
 import React from 'react';
+import { Platform, ScrollView, StyleSheet, View } from 'react-native';
 
 const h3 = (text: string) => (
   <Text category="h3" style={styles.h3}>
@@ -27,6 +25,7 @@ const a = (name: string, url: string) => (
 );
 
 const AboutScreen = () => {
+  const myVersion = Constants.manifest?.extra?.MyVersion;
   return (
     <Layout style={{ flex: 1, flexGrow: 1 }}>
       <ScrollView style={{ paddingHorizontal: '5%' }}>
@@ -35,6 +34,9 @@ const AboutScreen = () => {
           "It's simple: this app does not collect any data from you unless we explicitly tell you. All app data is stored on the phone. " +
             'We use ads, and those ad providers have their own privacy policies.'
         )}
+        {Platform.OS === 'web'
+          ? p('This app uses cookies to save your timers and settings.')
+          : null}
         <Text category="p1" style={styles.p}>
           Visit the developer&apos;s {a('website', 'mrarich.com/privacy')} for
           the full policy.
@@ -74,7 +76,10 @@ const AboutScreen = () => {
           find out more about the developer {a('here', 'mrarich.com/about')}.
         </Text>
         {p(
-          `Version ${Constants.nativeAppVersion}-${Constants.manifest.extra?.MyVersion}`
+          `Version ${Platform.select({
+            web: '',
+            default: `${Constants.nativeAppVersion}-`,
+          })}${myVersion}`
         )}
         {p(`© ${new Date().getFullYear()} Alex Rich`)}
         <Text></Text>
