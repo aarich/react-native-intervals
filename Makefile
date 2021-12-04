@@ -1,9 +1,6 @@
-.PHONY: git-status build-web build-prep build-finish build-ios publish
-
-app_release = 3-0
-my_release_num = 16
-release_channel = prod-$(app_release)
-updateIOSVersion = N
+RELEASE_NUM = 3-0
+CHANNEL = prod-$(RELEASE_NUM)
+DEST = NONE
 
 git-status:
 	@status=$$(git status --porcelain); \
@@ -15,15 +12,14 @@ git-status:
 
 build-prep:
 	@echo "***************************"
-	@echo " App Version Number: $(app_release)"
-	@echo " My Version Number: $(my_release_num)"
-	@echo " Release Channel: $(release_channel)"
+	@echo " App Version Number: $(RELEASE_NUM)"
+	@echo " Release Channel: $(CHANNEL)"
 	@echo "***************************"
 	@echo
 
 	@echo "Updating app.json"
 	cp app.json app.json.bak
-	node scripts/updateConfig.js $(my_release_num) $(app_release) $(updateIOSVersion)
+	node scripts/updateConfig.js $(RELEASE_NUM) $(DEST)
 
 build-finish:
 	@echo "Resetting app.json"
@@ -40,10 +36,15 @@ build-web: build-prep
 	$(MAKE) build-finish
 
 build-ios:
-	$(MAKE) build-prep updateIOSVersion=Y
-	expo build:ios -t archive --release-channel $(release_channel) --apple-id arich@hmc.edu --no-publish --no-wait
+	$(MAKE) build-prep DEST=IOS
+	expo build:ios -t archive --release-channel $(CHANNEL) --apple-id arich@hmc.edu --no-wait
+	$(MAKE) build-finish
+
+build-android:
+	$(MAKE) build-prep DEST=ANDROID
+	expo build:android -t app-bundle --release-channel $(CHANNEL) --no-wait
 	$(MAKE) build-finish
 
 publish: build-prep
-	expo publish --release-channel $(release_channel)
+	expo publish --release-channel $(CHANNEL)
 	$(MAKE) build-finish

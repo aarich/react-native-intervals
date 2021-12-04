@@ -38,7 +38,7 @@
       },
       "permissions": ["READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"],
       "package": "com.mrarich.Intervals",
-      "versionCode": 1
+      "versionCode": 9
     },
     "web": {
       "favicon": "./assets/images/favicon.png",

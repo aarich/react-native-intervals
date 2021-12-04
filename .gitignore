@@ -11,6 +11,7 @@ web-build/
 *.bak
 scripts/keys.json
 scripts/copyFiles.sh
+pc-api*.json
 
 # macOS
 .DS_Store
