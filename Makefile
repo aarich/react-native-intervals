@@ -32,6 +32,7 @@ build-web: build-prep
 	mv ./web-build/index.html ./web-build/index.php
 	rm ./web/index.html
 	rm ./web/banner.png
+	@osascript -e 'display notification "Enter password to copy files" with title "Password Required"'
 	bash scripts/copyFiles.sh
 	$(MAKE) build-finish
 

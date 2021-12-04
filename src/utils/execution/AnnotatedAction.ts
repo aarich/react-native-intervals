@@ -1,7 +1,6 @@
-import { AUDIO_FILES, play } from '../audio';
-import { Action, ActionType } from '../../types';
-
 import { Audio } from 'expo-av';
+import { Action, ActionType } from '../../types';
+import { AUDIO_FILES, play } from '../audio';
 
 export default class AnnotatedAction {
   action: Action;
@@ -97,9 +96,9 @@ export default class AnnotatedAction {
   public get viewLabel(): string | undefined {
     if (this.action.type === ActionType.goTo) {
       const more = Math.max(this.action.params.times - this.totalPasses, 1);
-      return `Return to step ${
-        this.action.params.targetNode + 1
-      }. Repeats ${more} more time${more === 1 ? '' : 's'}`;
+      return `Return to step ${this.action.params.targetNode + 1}. Repeats ${
+        more - 1
+      } more time${more - 1 === 1 ? '' : 's'}`;
     }
   }
 }

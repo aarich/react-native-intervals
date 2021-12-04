@@ -2,7 +2,7 @@
   "expo": {
     "name": "Intervals",
     "slug": "intervals",
-    "version": "3.0",
+    "version": "3-0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "intervals",
@@ -15,7 +15,9 @@
     "updates": {
       "fallbackToCacheTimeout": 5000
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "buildNumber": "6",
       "supportsTablet": true,
@@ -23,7 +25,9 @@
         "googleMobileAdsAppId": "ca-app-pub-6949812709353975~7748559513"
       },
       "bundleIdentifier": "com.mrarich.Intervals",
-      "associatedDomains": ["applinks:mrarich.com"],
+      "associatedDomains": [
+        "applinks:mrarich.com"
+      ],
       "infoPlist": {
         "NSUserTrackingUsageDescription": "We'd like to be able to show relevant ads to you."
       }
@@ -36,7 +40,10 @@
       "config": {
         "googleMobileAdsAppId": "ca-app-pub-6949812709353975~9033721022"
       },
-      "permissions": ["READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"],
+      "permissions": [
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ],
       "package": "com.mrarich.Intervals",
       "versionCode": 9
     },
@@ -44,7 +51,9 @@
       "favicon": "./assets/images/favicon.png",
       "build": {
         "babel": {
-          "include": ["@ui-kitten/components"]
+          "include": [
+            "@ui-kitten/components"
+          ]
         }
       }
     },
@@ -56,14 +65,14 @@
             "organization": "alex-rich",
             "project": "intervals",
             "authToken": "SENTRY_AUTH_TOKEN",
-            "release": "16",
+            "release": "18",
             "setCommits": true
           }
         }
       ]
     },
     "extra": {
-      "MyVersion": "16"
+      "MyVersion": "18"
     }
   }
 }

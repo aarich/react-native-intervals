@@ -27,11 +27,11 @@ if (dest === 'IOS') {
   console.log('\nNo version/build number changes made\n');
 }
 
-const newReleaseNum = extra.MyVersion + 1;
+const newReleaseNum = `${parseInt(extra.MyVersion) + 1}`;
 expo.version = appRelease;
 extra.MyVersion = newReleaseNum;
 hooks.postPublish[0].config.release = newReleaseNum;
-console.log(`\nSetting custom release to ${newReleaseNum}\n`);
+console.log(`Setting custom release to ${newReleaseNum}\n`);
 
 // Update sentry token
 hooks.postPublish[0].config.authToken = keys.sentry_auth_token;

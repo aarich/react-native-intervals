@@ -1,6 +1,5 @@
 import { Action, ActionType } from '../../types';
 import { calculateRuntime, msToViewable } from '../api';
-
 import AnnotatedAction from './AnnotatedAction';
 
 export type RunStatus = 'notstarted' | 'running' | 'paused' | 'done';
@@ -9,6 +8,7 @@ export default class Executor {
   public status: RunStatus;
   public currentNodeIndex?: number;
   public totalElapsedMs: number;
+  public lastTickTimeMs: number;
 
   private initialFlow: Action[];
   private annotatedFlow: AnnotatedAction[];
@@ -30,12 +30,14 @@ export default class Executor {
     this.totalElapsedMs = 0;
     this.setLabelOverides = setLabelOverides;
     this.setNodeProgresses = setCurrentNodeProgress;
+    this.lastTickTimeMs = Date.now();
   }
 
   public tick(ms: number, isRapid?: boolean) {
     if (!isRapid && this.status !== 'running') {
       return;
     }
+    this.lastTickTimeMs = Date.now();
     this.totalElapsedMs += ms;
 
     this.currentNode?.tick(ms);
@@ -99,6 +101,7 @@ export default class Executor {
       this.currentNode?.onStart();
     }
     this.status = 'running';
+    this.lastTickTimeMs = Date.now();
   }
   public pause(): void {
     this.status = 'paused';

@@ -7,8 +7,8 @@ import React, {
   useState,
 } from 'react';
 import { AppState, AppStateStatus, Platform, View } from 'react-native';
-import { useTimer } from '../../hooks/useClock';
 import useColorScheme from '../../hooks/useColorScheme';
+import { MS_INTERVAL, useTimer } from '../../hooks/useTimer';
 import { useSetting } from '../../redux/selectors';
 import { Action } from '../../types';
 import Executor from '../../utils/execution/Executor';
@@ -40,7 +40,7 @@ const RunControls = ({
   const scheme = useColorScheme();
   const basicColor = 'color-basic-' + (scheme === 'dark' ? '700' : '300');
 
-  const { timer, interval, ...timerActions } = useTimer();
+  const { timer, ...timerActions } = useTimer();
   const appState = useRef(AppState.currentState);
   const [lastActiveTimeMs, setLastActiveTimeMs] = useState<number>();
 
@@ -57,6 +57,7 @@ const RunControls = ({
   }, [executor.status, onRunningStateChange]);
 
   useEffect(() => {
+    const interval = Date.now() - executor.lastTickTimeMs;
     executor.tick(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timer]);
@@ -71,23 +72,23 @@ const RunControls = ({
         // Only set this if we are going into the background AND the timer is running
         setLastActiveTimeMs(new Date().getTime());
         executor.pause();
-        timerActions.handlePause();
+        timerActions.handlePause(Date.now() - executor.lastTickTimeMs);
       } else if (
         appState.current.match(/inactive|background/) &&
         nextAppState === 'active' &&
         lastActiveTimeMs
       ) {
-        executor.replaySince(lastActiveTimeMs, interval);
+        executor.replaySince(lastActiveTimeMs, MS_INTERVAL);
         setLastActiveTimeMs(undefined);
         if (executor.status !== 'done') {
-          timerActions.handleResume();
           executor.resume();
+          executor.tick(timerActions.handleResume());
         }
       }
 
       appState.current = nextAppState;
     },
-    [executor, interval, lastActiveTimeMs, timerActions]
+    [executor, lastActiveTimeMs, timerActions]
   );
 
   useEffect(() => {
@@ -101,13 +102,17 @@ const RunControls = ({
 
   useEffect(() => {
     onActiveNodeChange(0);
-    return () => timerActions.handlePause();
+    return () => timerActions.handlePause(Date.now() - executor.lastTickTimeMs);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const handlePauseWrapper = useCallback(() => {
+    timerActions.handlePause(Date.now() - executor.lastTickTimeMs);
+  }, [executor.lastTickTimeMs, timerActions]);
+
   return (
     <>
-      <View style={{}}>
+      <View>
         <Card
           style={{
             backgroundColor: theme[basicColor],
@@ -119,7 +124,10 @@ const RunControls = ({
             topText={executor.currentElapsed(countUp)}
             bottomText={executor.totalElapsed(countUp)}
           />
-          <ControlButtons executor={executor} timerActions={timerActions} />
+          <ControlButtons
+            executor={executor}
+            timerActions={{ ...timerActions, handlePause: handlePauseWrapper }}
+          />
         </Card>
       </View>
     </>
