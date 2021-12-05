@@ -94,7 +94,7 @@ const EditScreen = ({ navigation, route }: Props) => {
   const dispatch = useAppDispatch();
   const scheme = useColorScheme();
   const existingTimers = useTimers();
-  const { id, serializedFlow } = route.params;
+  const { id, serializedFlow } = route.params || {};
   const timer = useTimer(id || '');
   const isNew = !timer;
 
@@ -263,25 +263,31 @@ const EditScreen = ({ navigation, route }: Props) => {
         }
         e.preventDefault();
 
-        Alert.alert(
-          'Discard changes?',
-          'You may have unsaved changes. This will discard those changes.',
-          [
-            { text: 'Cancel', style: 'cancel' },
-            {
-              text: 'Save',
-              onPress: () =>
-                onSave().then(({ success }) =>
-                  success ? navigation.dispatch(e.data.action) : null
-                ),
-            },
-            {
-              text: 'Discard',
-              style: 'destructive',
-              onPress: () => navigation.dispatch(e.data.action),
-            },
-          ]
-        );
+        if (Platform.OS === 'web') {
+          if (confirm('Are you sure? You will lose any changes')) {
+            navigation.dispatch(e.data.action);
+          }
+        } else {
+          Alert.alert(
+            'Discard changes?',
+            'You may have unsaved changes. This will discard those changes.',
+            [
+              { text: 'Cancel', style: 'cancel' },
+              {
+                text: 'Save',
+                onPress: () =>
+                  onSave().then(({ success }) =>
+                    success ? navigation.dispatch(e.data.action) : null
+                  ),
+              },
+              {
+                text: 'Discard',
+                style: 'destructive',
+                onPress: () => navigation.dispatch(e.data.action),
+              },
+            ]
+          );
+        }
       }),
     [navigation, dirty, onSave]
   );

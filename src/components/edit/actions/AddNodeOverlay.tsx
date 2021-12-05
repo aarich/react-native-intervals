@@ -1,17 +1,10 @@
+import { Button, Card, Modal, Text } from '@ui-kitten/components';
+import React, { useEffect, useRef, useState } from 'react';
+import { Animated, Easing, Keyboard, StyleSheet, View } from 'react-native';
+import { useKeyboardSize } from '../../../hooks/useKeyboardSize';
 import { Action, ActionType } from '../../../types';
-import { Button, Card, Text } from '@ui-kitten/components';
-import {
-  Keyboard,
-  KeyboardAvoidingView,
-  Modal,
-  Platform,
-  StyleSheet,
-  View,
-} from 'react-native';
-import React, { useEffect, useState } from 'react';
-
-import FormEdit from './FormEdit';
 import { getActionInfo } from '../../../utils/actions';
+import FormEdit from './FormEdit';
 
 type Props = {
   typeToCreate?: ActionType;
@@ -40,17 +33,26 @@ const AddNodeOverlay = ({
   const isVisible = !!(typeToCreate || actionToEdit);
   const type = typeToCreate || actionToEdit?.type;
   const typeLabel = type && getActionInfo(type).label;
+  const keyboardSize = useKeyboardSize();
+
+  const paddingBottom = useRef(new Animated.Value(0)).current;
+
+  React.useEffect(() => {
+    Animated.timing(paddingBottom, {
+      toValue: keyboardSize / 2,
+      duration: 200,
+      useNativeDriver: false,
+      easing: Easing.quad,
+    }).start();
+  }, [keyboardSize, paddingBottom]);
+
   return (
     <Modal
       visible={isVisible}
-      onRequestClose={() => Keyboard.dismiss()}
-      animationType="fade"
-      transparent
+      onBackdropPress={Keyboard.dismiss}
+      backdropStyle={styles.backdrop}
     >
-      <KeyboardAvoidingView
-        style={styles.backdrop}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
+      <Animated.View style={{ paddingBottom }}>
         <Card
           disabled={true}
           header={(props) => (
@@ -85,7 +87,7 @@ const AddNodeOverlay = ({
             />
           ) : null}
         </Card>
-      </KeyboardAvoidingView>
+      </Animated.View>
     </Modal>
   );
 };
@@ -93,9 +95,6 @@ const AddNodeOverlay = ({
 const styles = StyleSheet.create({
   backdrop: {
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 });
 
