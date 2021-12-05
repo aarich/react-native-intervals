@@ -73,7 +73,7 @@ const save = (
   const { name, description } = propertiesDraft;
   dispatch(
     saveTimer({
-      name: name || 'Flow ' + timerId,
+      name: name || `Flow ${timerId}`,
       description,
       id: timerId,
       flow: nodes,

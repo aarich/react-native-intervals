@@ -1,11 +1,10 @@
 import { Card, Text, useTheme } from '@ui-kitten/components';
-
-import ActionIcon from '../shared/ActionIcon';
-import { ActionType } from '../../types';
 import React from 'react';
 import { View } from 'react-native';
-import { getActionTypes } from '../../utils/actions';
 import useColorScheme from '../../hooks/useColorScheme';
+import { ActionType } from '../../types';
+import { getActionTypes } from '../../utils/actions';
+import ActionIcon from '../shared/ActionIcon';
 
 export enum InstructionType {
   FirstStep,
@@ -23,7 +22,7 @@ const ActionSelector = ({ onInsert, allowGoTo, instruction }: Props) => {
   const actions = getActionTypes();
   const theme = useTheme();
   const scheme = useColorScheme();
-  const basicColor = 'color-basic-' + (scheme === 'dark' ? '700' : '300');
+  const basicColor = `color-basic-${scheme === 'dark' ? '700' : '300'}`;
   const instructionMsg = {
     [InstructionType.FirstStep]: 'Choose a step to begin the flow',
     [InstructionType.Normal]: 'Choose a step to add at the selected location',

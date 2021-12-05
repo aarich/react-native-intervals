@@ -15,19 +15,19 @@ const getFancyTimeName = (s: number) => {
   const sInHour = 60 * 60;
   const h = Math.trunc(s / sInHour);
   if (h > 0) {
-    portions.push(h + ' hour' + (h > 1 ? 's' : ''));
+    portions.push(`${h} hour${h > 1 ? 's' : ''}`);
     s = s - h * sInHour;
   }
 
   const sInMinute = 60;
   const m = Math.trunc(s / sInMinute);
   if (m > 0) {
-    portions.push(m + ' minute' + (m > 1 ? 's' : ''));
+    portions.push(`${m} minute${m > 1 ? 's' : ''}`);
     s = s - m * sInMinute;
   }
 
   if (s > 0) {
-    portions.push(s + ' second' + (s > 1 ? 's' : ''));
+    portions.push(`${s} second${s > 1 ? 's' : ''}`);
   }
 
   return portions.join(', ');
@@ -199,27 +199,27 @@ const getCheckedTypes = (
   const returnVal: Record<string, string | number> = {};
   expectedVars.forEach((varName) => {
     if (!Object.keys(actual).includes(varName)) {
-      throw new Error('Please specify ' + varName);
+      throw new Error(`Please specify ${varName}`);
     }
     const val = actual[varName];
     if (expected[varName] === paramType.str) {
       if (!val || val.length === 0) {
-        throw new Error('Please specify ' + varName);
+        throw new Error(`Please specify ${varName}`);
       }
       returnVal[varName] = val;
     } else if (expected[varName] === paramType.int) {
       if (typeof val === 'undefined') {
-        throw new Error('Please Specify ' + varName);
+        throw new Error(`Please specify ${varName}`);
       }
 
       try {
         const n = Number.parseInt(val);
         if (isNaN(n)) {
-          throw new Error('Must be a number: ' + varName);
+          throw new Error(`Must be a number: ${varName}`);
         }
         returnVal[varName] = n;
       } catch (e) {
-        throw new Error('Must be a number: ' + varName);
+        throw new Error(`Must be a number: ${varName}`);
       }
     }
   });

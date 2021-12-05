@@ -18,7 +18,7 @@ const a = (name: string, url: string) => (
   <Text
     status="primary"
     style={styles.p}
-    onPress={() => Linking.openURL('https://' + url)}
+    onPress={() => Linking.openURL(`https://${url}`)}
   >
     {name}
   </Text>

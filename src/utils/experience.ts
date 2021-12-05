@@ -3,11 +3,11 @@ import Constants from 'expo-constants';
 import { openURL } from 'expo-linking';
 import { Alert, Platform, Share } from 'react-native';
 import { Timer } from '../types';
-import { getShortenedURL, makeURL, serialize } from './api';
+import { getShortenedURL, serialize } from './api';
 
 export const osAlert = (title: string, message?: string) =>
   Platform.OS === 'web'
-    ? alert(title + (message ? '\n\n' + message : ''))
+    ? alert(title + (message ? `\n\n${message}` : ''))
     : Alert.alert(title, message);
 
 export const getCurrentTimeUnit = (timeIsSeconds: boolean) =>
@@ -72,8 +72,13 @@ export const share = (timer: Timer) => {
   }
 
   const serialized = serialize(timer);
-  const actuallyShareUrl = (urlGetter: (str: string) => Promise<string>) => {
-    urlGetter(serialized).then((url) => {
+
+  if (Platform.OS === 'web') {
+    if (confirm('Copy URL to clipboard?')) {
+      getShortenedURL(serialized).then(Clipboard.setString);
+    }
+  } else {
+    getShortenedURL(serialized).then((url) => {
       let content;
       if (Platform.OS === 'ios') {
         content = { url };
@@ -82,27 +87,7 @@ export const share = (timer: Timer) => {
       }
       Share.share(content);
     });
-  };
-
-  if (Platform.OS === 'web') {
-    if (confirm('Copy URL to clipboard?')) {
-      getShortenedURL(serialized).then(Clipboard.setString);
-    }
-    return;
   }
-
-  Alert.alert(
-    'Share Flow',
-    "Would you like to generate a short link to this flow? To do that we'll store its contents in our url shortener, and anyone with access to the url will be able to view it.",
-    [
-      {
-        text: 'Share Short Link',
-        onPress: () => actuallyShareUrl(getShortenedURL),
-      },
-      { text: 'Try Full URL', onPress: () => actuallyShareUrl(makeURL) },
-      { text: 'Cancel', style: 'cancel' },
-    ]
-  );
 };
 
 export const openInApp = (timer: Timer) => {

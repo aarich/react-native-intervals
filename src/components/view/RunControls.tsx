@@ -38,7 +38,7 @@ const RunControls = ({
   const countUp = useSetting('countUp');
   const theme = useTheme();
   const scheme = useColorScheme();
-  const basicColor = 'color-basic-' + (scheme === 'dark' ? '700' : '300');
+  const basicColor = `color-basic-${scheme === 'dark' ? '700' : '300'}`;
 
   const { timer, ...timerActions } = useTimer();
   const appState = useRef(AppState.currentState);

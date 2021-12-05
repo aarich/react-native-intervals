@@ -41,7 +41,7 @@ const ActionIcon = ({
             height: size,
             borderWidth: active ? 4 : 0,
             borderColor:
-              theme['color-basic-' + (scheme === 'dark' ? '100' : '700')],
+              theme[`color-basic-${scheme === 'dark' ? '100' : '700'}`],
           }}
           accessoryLeft={(props) => (
             <Icon {...props} name={actionInfo.icon} {...iconSizeProps} />

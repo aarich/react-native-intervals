@@ -1,8 +1,7 @@
-import { StyleSheet, View } from 'react-native';
-
-import React from 'react';
-import useColorScheme from '../../hooks/useColorScheme';
 import { useTheme } from '@ui-kitten/components';
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
+import useColorScheme from '../../hooks/useColorScheme';
 
 type Props = {
   progress: number;
@@ -11,8 +10,8 @@ type Props = {
 const ProgressBar = ({ progress }: Props) => {
   const theme = useTheme();
   const scheme = useColorScheme();
-  const backgroundColor = 'color-basic-' + (scheme === 'dark' ? '700' : '300');
-  const barColor = 'color-basic-' + (scheme === 'dark' ? '400' : '600');
+  const backgroundColor = `color-basic-${scheme === 'dark' ? '700' : '300'}`;
+  const barColor = `color-basic-${scheme === 'dark' ? '400' : '600'}`;
   return (
     <View
       style={[
