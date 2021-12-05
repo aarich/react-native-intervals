@@ -1,9 +1,9 @@
-import { Action, ActionType } from '../../../types';
-import React, { useCallback, useEffect, useState } from 'react';
-
 import { Accelerometer } from 'expo-sensors';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Action, ActionType } from '../../../types';
 import FormEditAct from './FormEditAct';
 import FormEditGoTo from './FormEditGoTo';
+import FormEditPause from './FormEditPause';
 import FormEditSound from './FormEditSound';
 import FormEditWait from './FormEditWait';
 
@@ -33,6 +33,7 @@ const comps = {
   [ActionType.goTo]: FormEditGoTo,
   [ActionType.wait]: FormEditWait,
   [ActionType.sound]: FormEditSound,
+  [ActionType.pause]: FormEditPause,
 };
 
 const THREHSOlD = 80;

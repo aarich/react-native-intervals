@@ -1,13 +1,13 @@
 import {
-  ActParams,
   Action,
   ActionType,
+  ActParams,
   GoToParams,
   ParameterizedAction,
+  PauseParams,
   SoundParams,
   WaitParams,
 } from '../types';
-
 import { AUDIO_FILES } from './audio';
 
 const getFancyTimeName = (s: number) => {
@@ -171,6 +171,22 @@ const gotoActionInfo: ActionInfo<ActionType.goTo> = {
   },
 };
 
+const pauseActionInfo: ActionInfo<ActionType.pause> = {
+  type: ActionType.pause,
+  label: 'Pause',
+  themeStatus: '',
+  icon: 'pause-circle-outline',
+  getAction: (draftParams, index) => {
+    const params = getCheckedTypes(draftParams, {
+      name: paramType.str,
+    }) as PauseParams;
+
+    return { params, index, type: ActionType.pause };
+  },
+  getDetails: (action) => action.params.name,
+  validate: validateDefault,
+};
+
 enum paramType {
   str,
   int,
@@ -219,6 +235,7 @@ export const getActionInfo = <T extends ActionType>(
     waitActionInfo,
     soundActionInfo,
     gotoActionInfo,
+    pauseActionInfo,
   ].find((info) => info.type === actionType);
   if (!ret) {
     throw new Error('No type found');

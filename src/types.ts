@@ -3,6 +3,7 @@ export enum ActionType {
   act = 'act',
   wait = 'wait',
   goTo = 'goTo',
+  pause = 'pause',
 }
 
 export type BottomTabParamList = {
@@ -39,20 +40,21 @@ type ActAction = {
   type: ActionType.act;
   params: ActParams;
 };
-
 export type WaitAction = {
   type: ActionType.wait;
   params: WaitParams;
 };
-
 type SoundAction = {
   type: ActionType.sound;
   params: SoundParams;
 };
-
 type GoToAction = {
   type: ActionType.goTo;
   params: GoToParams;
+};
+type PauseAction = {
+  type: ActionType.pause;
+  params: PauseParams;
 };
 
 // PARAMS
@@ -61,17 +63,18 @@ export type SoundParams = {
   sound: number;
   time: number;
 };
-
 export type GoToParams = {
   targetNode: number;
   times: number;
 };
-
 export type WaitParams = {
   time: number;
 };
 export type ActParams = {
   time: number;
+  name: string;
+};
+export type PauseParams = {
   name: string;
 };
 
@@ -80,8 +83,15 @@ export type ParameterizedAction<T extends ActionType> = (
   | WaitAction
   | SoundAction
   | GoToAction
+  | PauseAction
 ) &
   BaseAction & { type: T };
 
-export type Action = (ActAction | WaitAction | SoundAction | GoToAction) &
+export type Action = (
+  | ActAction
+  | WaitAction
+  | SoundAction
+  | GoToAction
+  | PauseAction
+) &
   BaseAction;

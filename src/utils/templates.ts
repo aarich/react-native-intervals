@@ -16,6 +16,10 @@ export const goto = (times: number, targetNode: number) => ({
   type: ActionType.goTo,
   params: { times, targetNode },
 });
+export const pause = (name: string) => ({
+  type: ActionType.pause,
+  params: { name },
+});
 
 export const FlowTemplateLibrary: {
   title: string;
@@ -32,7 +36,7 @@ export const FlowTemplateLibrary: {
       act(20, 'Diagonal Jump-ups'),
       sound(5, 0),
       wait(15),
-      act(20, 'Burpees'),
+      pause('20 Burpees'),
       sound(5, 0),
       wait(55),
       goto(5, 0),
@@ -40,7 +44,7 @@ export const FlowTemplateLibrary: {
       act(20, 'Ankle Touches'),
       sound(5, 0),
       wait(15),
-      act(20, 'Squat Jumps'),
+      pause('20 Squat Jumps'),
       sound(5, 0),
       wait(15),
       act(20, 'Push-Ups'),
@@ -72,7 +76,7 @@ export const FlowTemplateLibrary: {
     nodes: [
       act(1200, 'Cook at 350'),
       sound(20, 2),
-      act(1, "Don't forget to remove the foil"),
+      pause('Remove the foil'),
       act(600, 'Cook at 300'),
       sound(20, 2),
     ],

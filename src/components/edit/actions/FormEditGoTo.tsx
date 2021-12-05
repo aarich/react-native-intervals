@@ -1,11 +1,10 @@
-import { Action, ActionType } from '../../../types';
 import { IndexPath, Select, SelectItem, Text } from '@ui-kitten/components';
 import React, { useEffect, useState } from 'react';
-
-import { AUDIO_FILES } from '../../../utils/audio';
-import { BaseFormEditProps } from './FormEdit';
-import Input from '../../shared/Input';
+import { Action, ActionType } from '../../../types';
 import { getActionInfo } from '../../../utils/actions';
+import { AUDIO_FILES } from '../../../utils/audio';
+import Input from '../../shared/Input';
+import { BaseFormEditProps } from './FormEdit';
 
 const getNameFromAction = (action: Action) => {
   const step = action.index + 1;
@@ -15,6 +14,7 @@ const getNameFromAction = (action: Action) => {
       name = `Play ${AUDIO_FILES[action.params.sound].name}`;
       break;
     case ActionType.act:
+    case ActionType.pause:
       name = action.params.name;
       break;
     case ActionType.wait:
@@ -22,6 +22,7 @@ const getNameFromAction = (action: Action) => {
       break;
     case ActionType.goTo:
       name = `Go to step ${action.params.targetNode + 1}`;
+      break;
   }
 
   return `${step}: ${name}`;

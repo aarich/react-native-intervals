@@ -55,16 +55,18 @@ export default class Executor {
         // We're at the end;
         this.finish();
       } else {
-        // If it's a go to we need to reset any intermediate go tos
+        // If it's a go to we need to reset any intermediate go tos and pauses
         if (currentNode.action.type === ActionType.goTo) {
           for (let i = currentIndex - 1; i >= nextNodeIndex; i--) {
             if (this.initialFlow[i].type === ActionType.goTo) {
               this.annotatedFlow[i].totalPasses = 0;
+            } else if (this.initialFlow[i].type === ActionType.pause) {
+              this.annotatedFlow[i].hasResumed = false;
             }
           }
         }
         this.currentNodeIndex = nextNodeIndex;
-        this.currentNode.onStart(isRapid);
+        this.currentNode.onStart(this, isRapid);
       }
     }
 
@@ -97,11 +99,11 @@ export default class Executor {
     this.setNodeProgresses(this.initialFlow.map(() => undefined));
   }
   public start(): void {
-    if (this.totalElapsedMs === 0) {
-      this.currentNode?.onStart();
-    }
     this.status = 'running';
     this.lastTickTimeMs = Date.now();
+    if (this.totalElapsedMs === 0) {
+      this.currentNode?.onStart(this);
+    }
   }
   public pause(): void {
     this.status = 'paused';

@@ -62,6 +62,8 @@ export const calculateRuntime = (actions: Action[]) => {
       } else {
         currentIndex = action.params.targetNode;
       }
+    } else if (action.type === ActionType.pause) {
+      currentIndex++;
     } else {
       total += action.params.time;
       currentIndex++;
@@ -98,7 +100,7 @@ type SerializableAction = {
   /** params */
   p: {
     /** time or times */
-    t: number;
+    t?: number;
     /** name or targetNode */
     n?: number | string;
     /** sound */
@@ -120,6 +122,7 @@ const actionIndices = [
   ActionType.goTo,
   ActionType.sound,
   ActionType.wait,
+  ActionType.pause,
 ];
 
 export const serialize = (timer: Timer): string => {
@@ -137,6 +140,9 @@ export const serialize = (timer: Timer): string => {
         break;
       case ActionType.sound:
         p = { t: action.params.time, s: action.params.sound };
+        break;
+      case ActionType.pause:
+        p = { n: action.params.name };
         break;
     }
     return {
@@ -174,6 +180,8 @@ export const deserialize = (
           return { index, type, params: { time: p.t, sound: p.s } };
         case ActionType.wait:
           return { index, type, params: { time: p.t } };
+        case ActionType.pause:
+          return { index, type, params: { name: p.n } };
       }
     }
   );

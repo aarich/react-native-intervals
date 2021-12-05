@@ -73,6 +73,46 @@ const alerts = [
   'Heading back to the top now!',
 ];
 
+const makeActionGraphic = (
+  types: ActionType | ActionType[] | undefined,
+  onPress: VoidFunction
+) => {
+  if (types == null) {
+    return (
+      <ActionSelector
+        onInsert={onPress}
+        allowGoTo
+        instruction={InstructionType.Tutorial}
+      />
+    );
+  } else if (Array.isArray(types)) {
+    return (
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-around',
+        }}
+      >
+        {types.map((t) => (
+          <View style={{ flex: 1 }} key={t}>
+            <ActionIcon type={t} size={110} iconSize={80} onPress={onPress} />
+          </View>
+        ))}
+      </View>
+    );
+  } else {
+    return (
+      <ActionIcon
+        type={types}
+        size={200}
+        iconSize={150}
+        showLabel={false}
+        onPress={onPress}
+      />
+    );
+  }
+};
+
 const HelpScreen = () => {
   const theme = useTheme();
   const [alertMessageIndex, setAlertMessageIndex] = useState(0);
@@ -82,6 +122,20 @@ const HelpScreen = () => {
     setAlertMessageIndex((i) => (i + 1) % alerts.length);
     osAlert('Tutorial', msg);
   }, [alertMessageIndex]);
+
+  const makeScreen = (
+    title: string,
+    subtitle: string,
+    types?: ActionType | ActionType[]
+  ) => (
+    <View style={styles.slide}>
+      <TutorialScreen
+        title={title}
+        subtitle={subtitle}
+        graphic={makeActionGraphic(types, showAlert)}
+      />
+    </View>
+  );
 
   return (
     <Layout level="1" style={{ flex: 1 }}>
@@ -94,86 +148,30 @@ const HelpScreen = () => {
             )} to learn how →`}
           />
         </View>
-        <View style={styles.slide}>
-          <TutorialScreen
-            title="Add a Step"
-            graphic={
-              <ActionSelector
-                onInsert={showAlert}
-                allowGoTo
-                instruction={InstructionType.Tutorial}
-              />
-            }
-            subtitle={
-              'Flows are made up of steps. In the flow editor you\'ll see a toolbar like this one. Tap on a step to add it to the flow. You can put steps in the middle of the flow using the "Insert Here" option'
-            }
-          />
-        </View>
-        <View style={styles.slide}>
-          <TutorialScreen
-            title="Actions and Waiting"
-            graphic={
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-around',
-                }}
-              >
-                <View style={{ flex: 1 }}>
-                  <ActionIcon
-                    type={ActionType.act}
-                    size={110}
-                    iconSize={80}
-                    onPress={showAlert}
-                  />
-                </View>
-                <View style={{ flex: 1 }}>
-                  <ActionIcon
-                    type={ActionType.wait}
-                    size={110}
-                    iconSize={80}
-                    onPress={showAlert}
-                  />
-                </View>
-              </View>
-            }
-            subtitle={
-              'Action steps let you specify something to do for a period of time. A common thing to do in an interval flow is wait, so the Wait step is its own thing.'
-            }
-          />
-        </View>
-        <View style={styles.slide}>
-          <TutorialScreen
-            title='"Go To"'
-            graphic={
-              <ActionIcon
-                type={ActionType.goTo}
-                size={200}
-                iconSize={150}
-                showLabel={false}
-                onPress={showAlert}
-              />
-            }
-            subtitle={
-              "The Go To step lets you create loops. To use this step, put it at the end of a set of steps you'd like to repeat."
-            }
-          />
-        </View>
-        <View style={styles.slide}>
-          <TutorialScreen
-            title="Sounds"
-            graphic={
-              <ActionIcon
-                type={ActionType.sound}
-                size={200}
-                iconSize={150}
-                showLabel={false}
-                onPress={showAlert}
-              />
-            }
-            subtitle="Play an alert of your choosing for a specific amount of time. Note sounds will not play if the app is in the background, though the timer will continue to run."
-          />
-        </View>
+        {makeScreen(
+          'Add a Step',
+          'Flows are made up of steps. In the flow editor you\'ll see a toolbar like this one. Tap on a step to add it to the flow. You can put steps in the middle of the flow using the "Insert Here" option'
+        )}
+        {makeScreen(
+          'Actions and Waiting',
+          'Action steps let you specify something to do for a period of time. A common thing to do in an interval flow is wait, so the Wait step is its own thing.',
+          [ActionType.act, ActionType.wait]
+        )}
+        {makeScreen(
+          'Go To',
+          "The Go To step lets you create loops. To use this step, put it at the end of a set of steps you'd like to repeat.",
+          ActionType.goTo
+        )}
+        {makeScreen(
+          'Sounds',
+          'Play an alert for a specific amount of time. Sounds will not play if the app is in the background, though the timer will continue to run.',
+          ActionType.sound
+        )}
+        {makeScreen(
+          'Pause',
+          'When this step starts, the flow is immediately paused. This lets you do something in the flow unbound by time, like "Run around the block" or "Wait for the soup to boil"',
+          ActionType.pause
+        )}
       </Swiper>
     </Layout>
   );

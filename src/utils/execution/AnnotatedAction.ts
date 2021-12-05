@@ -1,6 +1,7 @@
 import { Audio } from 'expo-av';
 import { Action, ActionType } from '../../types';
 import { AUDIO_FILES, play } from '../audio';
+import Executor from './Executor';
 
 export default class AnnotatedAction {
   action: Action;
@@ -10,11 +11,14 @@ export default class AnnotatedAction {
   totalPasses: number;
   // For Sound
   private playingSound?: Audio.Sound;
+  // For Pause
+  hasResumed: boolean;
 
   constructor(action: Action) {
     this.action = action;
     this.elapsedMs = 0;
     this.totalPasses = 0;
+    this.hasResumed = false;
   }
 
   public tick(ms: number) {
@@ -24,6 +28,8 @@ export default class AnnotatedAction {
   public get isFinished(): boolean {
     if (this.action.type === ActionType.goTo) {
       return true;
+    } else if (this.action.type === ActionType.pause) {
+      return this.hasResumed;
     } else {
       return this.action.params.time * 1000 <= this.elapsedMs;
     }
@@ -41,14 +47,17 @@ export default class AnnotatedAction {
   }
 
   public get progress(): number | undefined {
-    if (this.action.type === ActionType.goTo) {
+    if (this.action.type === ActionType.pause) {
+      return this.hasResumed ? 1 : 0.5;
+    } else if (this.action.type === ActionType.goTo) {
       return (100 * this.totalPasses) / this.action.params.times;
     }
     return (100 * this.elapsedMs) / (this.action.params.time * 1000);
   }
 
   public get time(): number {
-    return this.action.type === ActionType.goTo
+    return this.action.type === ActionType.goTo ||
+      this.action.type === ActionType.pause
       ? 0
       : this.action.params.time * 1000;
   }
@@ -65,12 +74,16 @@ export default class AnnotatedAction {
     }
   }
 
-  public onStart(isRapid?: boolean) {
+  public onStart(executor: Executor, isRapid?: boolean) {
     this.elapsedMs = 0;
     if (!isRapid && this.action.type === ActionType.sound) {
       play(AUDIO_FILES[this.action.params.sound], {
         isLooping: true,
       }).then((sound) => (this.playingSound = sound));
+    }
+
+    if (this.action.type === ActionType.pause) {
+      executor.pause();
     }
   }
 
@@ -85,6 +98,7 @@ export default class AnnotatedAction {
   }
 
   public onResume() {
+    this.hasResumed = true;
     if (this.action.type === ActionType.sound) {
       play(AUDIO_FILES[this.action.params.sound], {
         isLooping: true,

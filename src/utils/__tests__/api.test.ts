@@ -1,3 +1,4 @@
+import each from 'jest-each';
 import { Action, ActionType, Timer } from '../../types';
 import {
   calculateRuntime,
@@ -7,9 +8,7 @@ import {
   serialize,
   validateFlow,
 } from '../api';
-
 import { FlowTemplateLibrary } from '../templates';
-import each from 'jest-each';
 
 let index: number;
 const WAIT_TIME = 5;
@@ -24,6 +23,11 @@ const wait = (): Action => ({
   index: index++,
   type: ActionType.wait,
   params: { time: WAIT_TIME },
+});
+const pause = (): Action => ({
+  index: index++,
+  type: ActionType.pause,
+  params: { name: '' },
 });
 
 beforeEach(() => {
@@ -52,7 +56,7 @@ describe('calculateRuntime', () => {
   );
 
   it('calculates correctly for inner loops', () => {
-    const flow = [wait(), wait(), goto(0), wait(), wait(), goto(0)];
+    const flow = [wait(), wait(), goto(0), wait(), pause(), wait(), goto(0)];
     const firstLoop = WAIT_TIME * 2 * GOTO_TIMES;
     const fullLoop = firstLoop + WAIT_TIME * 2;
     const expectedTotal = fullLoop * GOTO_TIMES * 1000;
@@ -62,7 +66,7 @@ describe('calculateRuntime', () => {
 
   it('calculates correctly for partial loops', () => {
     // This differs from the previous because the last go to goes to node 1
-    const flow = [wait(), wait(), goto(0), wait(), wait(), goto(1)];
+    const flow = [wait(), wait(), goto(0), wait(), pause(), wait(), goto(1)];
 
     const firstIteration = WAIT_TIME * 2 * GOTO_TIMES + WAIT_TIME * 2;
     const secondIteration =
