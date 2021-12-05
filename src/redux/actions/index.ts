@@ -1,21 +1,20 @@
+import { Timer } from '../../types';
 import {
-  AnyBooleanSetting,
   AnySetting,
+  BooleanSettings,
   SettingsState,
 } from '../reducers/settingsReducer';
 import {
   AppActionTypes,
   DELETE_TIMER,
   RESET,
+  SettingsActionTypes,
   SET_SETTINGS,
   SET_TIMERS,
-  SettingsActionTypes,
   TimerActionTypes,
   UPDATE_SETTING,
   UPSERT_TIMER,
 } from './actionTypes';
-
-import { Timer } from '../../types';
 
 export const resetApp = (): AppActionTypes => ({ type: RESET });
 
@@ -41,7 +40,7 @@ export const updateSetting = (update: AnySetting): SettingsActionTypes => ({
   payload: update,
 });
 export const updateBooleanSetting = (
-  update: AnyBooleanSetting
+  update: BooleanSettings
 ): SettingsActionTypes => ({
   type: UPDATE_SETTING,
   payload: update,

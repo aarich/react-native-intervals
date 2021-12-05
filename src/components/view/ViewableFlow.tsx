@@ -1,13 +1,12 @@
+import { Text, useTheme } from '@ui-kitten/components';
 import React, { useEffect, useRef } from 'react';
 import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
-import { Text, useTheme } from '@ui-kitten/components';
-
-import { Action } from '../../types';
-import ActionIcon from '../shared/ActionIcon';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { FlatList } from 'react-native-gesture-handler';
-import { getActionInfo } from '../../utils/actions';
 import useColorScheme from '../../hooks/useColorScheme';
+import { Action } from '../../types';
+import { getActionInfo } from '../../utils/actions';
+import ActionIcon from '../shared/ActionIcon';
 
 type Props = {
   actions: Action[];
@@ -39,6 +38,7 @@ const ViewableFlow = ({
 
   return (
     <FlatList
+      // @ts-ignore
       ref={listRef}
       style={style}
       data={actions}

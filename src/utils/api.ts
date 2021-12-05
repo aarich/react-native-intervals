@@ -118,11 +118,11 @@ type SerializableTimer = {
 };
 
 const actionIndices = [
-  ActionType.act,
-  ActionType.goTo,
   ActionType.sound,
+  ActionType.act,
   ActionType.wait,
   ActionType.pause,
+  ActionType.goTo,
 ];
 
 export const serialize = (timer: Timer): string => {

@@ -41,10 +41,10 @@ describe('calculateRuntime', () => {
 
   const oneloop = (30 + 5 + 15 + 30 + 5 + 15) * 3;
   each([
-    [0, 2 * 160 * 5 + 20], // Two loops of 160 each 5 times, plus 20 after
+    [0, 2 * 140 * 5 + 20], // two loops of 140 each 5 times plus 20 at the end
     [1, 60 + 300 + 20],
     [2, (1800 + 10 + 300 + 10) * 2], // Repeats twice
-    [3, 1200 + 20 + 1 + 600 + 20],
+    [3, 1200 + 20 + 600 + 20],
     [4, 2 * (1 + oneloop + 1 + oneloop + 1)],
   ]).test(
     'Template %s should have %s runtime',

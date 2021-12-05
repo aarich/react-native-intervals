@@ -2,8 +2,8 @@ export enum ActionType {
   sound = 'sound',
   act = 'act',
   wait = 'wait',
-  goTo = 'goTo',
   pause = 'pause',
+  goTo = 'goTo',
 }
 
 export type BottomTabParamList = {

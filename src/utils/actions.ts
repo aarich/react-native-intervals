@@ -106,7 +106,7 @@ const actActionInfo: ActionInfo<ActionType.act> = {
 const waitActionInfo: ActionInfo<ActionType.wait> = {
   type: ActionType.wait,
   label: 'Wait',
-  themeStatus: 'info',
+  themeStatus: 'control',
   icon: 'clock-outline',
   getAction: (draftParams, index) => {
     const params = getCheckedTypes(draftParams, {
@@ -122,7 +122,7 @@ const waitActionInfo: ActionInfo<ActionType.wait> = {
 const soundActionInfo: ActionInfo<ActionType.sound> = {
   type: ActionType.sound,
   label: 'Sound',
-  themeStatus: 'danger',
+  themeStatus: 'info',
   icon: 'bell-outline',
   getAction: (draftParams, index) => {
     const params = getCheckedTypes(draftParams, {
@@ -174,7 +174,7 @@ const gotoActionInfo: ActionInfo<ActionType.goTo> = {
 const pauseActionInfo: ActionInfo<ActionType.pause> = {
   type: ActionType.pause,
   label: 'Pause',
-  themeStatus: '',
+  themeStatus: 'danger',
   icon: 'pause-circle-outline',
   getAction: (draftParams, index) => {
     const params = getCheckedTypes(draftParams, {
