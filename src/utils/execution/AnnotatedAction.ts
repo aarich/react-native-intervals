@@ -46,15 +46,18 @@ export default class AnnotatedAction {
     return this.action.index + 1;
   }
 
-  public get progress(): number | undefined {
-    if (this.action.type === ActionType.pause) {
-      return this.hasResumed ? 1 : 0.5;
-    } else if (this.action.type === ActionType.goTo) {
-      return (100 * this.totalPasses) / this.action.params.times;
+  public get progress(): number {
+    switch (this.action.type) {
+      case ActionType.pause:
+        return this.hasResumed ? 1 : 0.5;
+      case ActionType.goTo:
+        return (100 * this.totalPasses) / this.action.params.times;
+      default:
+        return (100 * this.elapsedMs) / this.time;
     }
-    return (100 * this.elapsedMs) / (this.action.params.time * 1000);
   }
 
+  /** @returns total time in ms */
   public get time(): number {
     return this.action.type === ActionType.goTo ||
       this.action.type === ActionType.pause
@@ -104,6 +107,18 @@ export default class AnnotatedAction {
         isLooping: true,
         positionMillis: this.elapsedMs,
       }).then((sound) => (this.playingSound = sound));
+    }
+  }
+
+  public skip() {
+    switch (this.action.type) {
+      case ActionType.act:
+      case ActionType.wait:
+      case ActionType.sound:
+        this.elapsedMs = this.action.params.time * 1000;
+        break;
+      default:
+        break;
     }
   }
 

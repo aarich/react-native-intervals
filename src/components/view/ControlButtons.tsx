@@ -22,7 +22,7 @@ const makeButton = (title: string, icon: string, onPress: () => void) => (
 );
 
 const ControlButtons = ({ executor, timerActions }: Props) => {
-  const { showStart, showPause, showResume, showReset } = executor;
+  const { showStart, showPause, showResume, showReset, showSkip } = executor;
   const buttons = [];
   if (showStart) {
     buttons.push(
@@ -54,6 +54,13 @@ const ControlButtons = ({ executor, timerActions }: Props) => {
       makeButton('Reset', 'refresh-outline', () => {
         timerActions.handleReset();
         executor.reset();
+      })
+    );
+  }
+  if (showSkip) {
+    buttons.push(
+      makeButton('Skip', 'skip-forward-outline', () => {
+        executor.skipNode();
       })
     );
   }

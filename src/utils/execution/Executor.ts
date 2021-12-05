@@ -42,6 +42,13 @@ export default class Executor {
 
     this.currentNode?.tick(ms);
 
+    this.handleNodeFinish(isRapid);
+
+    this.setLabelOverides(this.getLabelOverrides());
+    this.setNodeProgresses(this.getNodeProgresses());
+  }
+
+  private handleNodeFinish(isRapid?: boolean) {
     while (
       this.currentNode?.isFinished &&
       (this.status === 'running' || isRapid)
@@ -69,9 +76,6 @@ export default class Executor {
         this.currentNode.onStart(this, isRapid);
       }
     }
-
-    this.setLabelOverides(this.getLabelOverrides());
-    this.setNodeProgresses(this.getNodeProgresses());
   }
 
   public replaySince(lastActiveTimeMs: number, msInterval: number) {
@@ -87,6 +91,10 @@ export default class Executor {
   private finish() {
     this.status = 'done';
     this.currentNodeIndex = undefined;
+  }
+
+  public skipNode() {
+    this.currentNode?.skip();
   }
 
   public reset() {
@@ -144,13 +152,18 @@ export default class Executor {
   public get showPause(): boolean {
     return this.status === 'running';
   }
-
   public get showReset(): boolean {
     return ['done', 'paused'].includes(this.status);
   }
-
   public get showResume(): boolean {
     return this.status === 'paused';
+  }
+  public get showSkip(): boolean {
+    return (
+      this.status === 'running' &&
+      this.currentNodeIndex !== undefined &&
+      this.currentNodeIndex < this.annotatedFlow.length - 1
+    );
   }
 
   private getLabelOverrides() {

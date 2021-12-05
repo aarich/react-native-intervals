@@ -5,9 +5,8 @@ var config = require('../app.json');
 var keys = require('./keys.json');
 var fs = require('fs');
 
-// Update release number
-const appRelease = process.argv[2];
-const dest = process.argv[3];
+const appRelease = process.argv[2]; // app version, e.g. 3.0
+const dest = process.argv[3]; // build destination, e.g. WEB/ANDROID/IOS/NONE
 
 const { expo } = config;
 const { ios, android, extra, hooks } = expo;
@@ -27,11 +26,15 @@ if (dest === 'IOS') {
   console.log('\nNo version/build number changes made\n');
 }
 
-const newReleaseNum = `${parseInt(extra.MyVersion) + 1}`;
-expo.version = appRelease;
-extra.MyVersion = newReleaseNum;
-hooks.postPublish[0].config.release = newReleaseNum;
-console.log(`Setting custom release to ${newReleaseNum}\n`);
+if (dest !== 'WEB') {
+  const newReleaseNum = `${parseInt(extra.MyVersion) + 1}`;
+  expo.version = appRelease;
+  extra.MyVersion = newReleaseNum;
+  hooks.postPublish[0].config.release = newReleaseNum;
+  console.log(`Setting custom release to ${newReleaseNum}\n`);
+} else {
+  console.log(`Not updating custom release number (${extra.MyVersion})`);
+}
 
 // Update sentry token
 hooks.postPublish[0].config.authToken = keys.sentry_auth_token;
