@@ -1,4 +1,4 @@
-import { RouteProp } from '@react-navigation/native';
+import { RouteProp, useLinkTo } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import {
   Icon,
@@ -34,6 +34,7 @@ const ViewScreen = ({ navigation, route }: Props) => {
   const [isRunning, setIsRunning] = useState(false);
   const showDescription = !useSetting('hideDescription');
   const styles = useStyleSheet(stylesheet);
+  const linkTo = useLinkTo();
   useEffect(() => {
     if (isRunning) {
       activateKeepAwake();
@@ -65,15 +66,19 @@ const ViewScreen = ({ navigation, route }: Props) => {
             }
           />
           {Platform.OS === 'web' ? (
-            <TopNavigationAction
-              icon={(props) => <Icon {...props} name="external-link-outline" />}
-              onPress={() => openInApp(timer)}
-            />
+            <span title="Open In App">
+              <TopNavigationAction
+                icon={(props) => (
+                  <Icon {...props} name="external-link-outline" />
+                )}
+                onPress={() => openInApp(timer)}
+              />
+            </span>
           ) : null}
         </View>
       ),
     });
-  }, [id, navigation, timer]);
+  }, [id, linkTo, navigation, timer]);
 
   return (
     <Layout style={styles.container}>

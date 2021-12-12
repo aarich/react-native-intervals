@@ -1,6 +1,6 @@
 import { LinkingOptions } from '@react-navigation/native';
 
-const options: LinkingOptions = {
+export const linkingConfig = {
   prefixes: ['https://projects.mrarich.com/intervals/', 'intervals://'],
   config: {
     initialRouteName: 'Flows',
@@ -28,5 +28,7 @@ const options: LinkingOptions = {
     },
   },
 };
+
+const options: LinkingOptions = linkingConfig;
 
 export default options;

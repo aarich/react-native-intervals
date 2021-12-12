@@ -76,7 +76,9 @@ const LibraryScreen = ({ navigation }: Props) => {
       <List
         style={{ flex: 1, width: '100%' }}
         ItemSeparatorComponent={Divider}
-        data={Object.values(timers).sort((a, b) => (a.id < b.id ? -1 : 1))}
+        data={Object.values(timers).sort((a, b) =>
+          parseInt(a.id) < parseInt(b.id) ? -1 : 1
+        )}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <ListItem

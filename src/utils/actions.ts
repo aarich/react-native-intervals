@@ -65,6 +65,9 @@ type ActionInfo<T extends ActionType> = {
     index: number
   ) => ParameterizedAction<T>;
   getDetails: (action: ParameterizedAction<T>) => string;
+  getActiveDetails: (
+    action: ParameterizedAction<T>
+  ) => { title: string; subtitle: string } | undefined;
   validate: (action: ParameterizedAction<T>, step: number) => void;
 };
 
@@ -100,6 +103,10 @@ const actActionInfo: ActionInfo<ActionType.act> = {
   },
   getDetails: (action) =>
     `${getFancyTimeName(action.params.time)} | ${action.params.name}`,
+  getActiveDetails: (action) => ({
+    title: action.params.name,
+    subtitle: getFancyTimeName(action.params.time),
+  }),
   validate: validateDefault,
 };
 
@@ -116,6 +123,10 @@ const waitActionInfo: ActionInfo<ActionType.wait> = {
     return { params, index, type: ActionType.wait };
   },
   getDetails: (action) => `Wait ${getFancyTimeName(action.params.time)}`,
+  getActiveDetails: (action) => ({
+    title: 'Wait',
+    subtitle: getFancyTimeName(action.params.time),
+  }),
   validate: validateDefault,
 };
 
@@ -136,6 +147,10 @@ const soundActionInfo: ActionInfo<ActionType.sound> = {
     `Play ${AUDIO_FILES[action.params.sound].name} for ${getFancyTimeName(
       action.params.time
     )}`,
+  getActiveDetails: (action) => ({
+    title: AUDIO_FILES[action.params.sound].name,
+    subtitle: getFancyTimeName(action.params.time),
+  }),
   validate: validateDefault,
 };
 
@@ -158,6 +173,7 @@ const gotoActionInfo: ActionInfo<ActionType.goTo> = {
         ? ' once'
         : `. These steps repeat ${action.params.times} times`
     }`,
+  getActiveDetails: () => undefined,
   validate: (action, step) => {
     const params = action.params;
     verifyPositiveNumber(params.times, 'Repetitions', step);
@@ -184,6 +200,7 @@ const pauseActionInfo: ActionInfo<ActionType.pause> = {
     return { params, index, type: ActionType.pause };
   },
   getDetails: (action) => action.params.name,
+  getActiveDetails: () => undefined,
   validate: validateDefault,
 };
 

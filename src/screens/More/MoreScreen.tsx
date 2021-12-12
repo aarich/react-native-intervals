@@ -68,11 +68,7 @@ const MoreScreen = ({ navigation }: Props) => {
     'showTotalTime',
     'hideDescription',
   ];
-  const selectables: (keyof SelectSettings)[] =
-    Platform.select({
-      web: ['ads'],
-      default: ['theme', 'ads'],
-    }) || [];
+  const selectables: (keyof SelectSettings)[] = ['theme', 'ads'];
 
   booleans.forEach((setting) => listItems.push({ setting, isBoolean: true }));
   selectables.forEach((setting) =>

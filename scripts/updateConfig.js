@@ -33,7 +33,7 @@ if (dest !== 'WEB') {
   hooks.postPublish[0].config.release = newReleaseNum;
   console.log(`Setting custom release to ${newReleaseNum}\n`);
 } else {
-  console.log(`Not updating custom release number (${extra.MyVersion})`);
+  console.log(`Not updating custom release number (${extra.MyVersion})\n`);
 }
 
 // Update sentry token

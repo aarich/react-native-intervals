@@ -56,14 +56,14 @@
             "organization": "alex-rich",
             "project": "intervals",
             "authToken": "SENTRY_AUTH_TOKEN",
-            "release": "23",
+            "release": "25",
             "setCommits": true
           }
         }
       ]
     },
     "extra": {
-      "MyVersion": "23"
+      "MyVersion": "25"
     }
   }
 }

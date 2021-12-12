@@ -2,8 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Button, Icon, Layout, Text } from '@ui-kitten/components';
 import { openURL } from 'expo-linking';
 import * as StoreReview from 'expo-store-review';
-import { ReactNode } from 'hoist-non-react-statics/node_modules/@types/react';
-import React, { useEffect } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 
 const baseMainURL = 'https://mrarich.com';
@@ -12,7 +11,7 @@ const getContactUrl = (message: string) =>
   `${baseMainURL}/contact${message ? '?m=' + message : ''}`;
 
 const makeButton = (title: string, icon: string, onPress: () => void) => (
-  <View style={{ width: '100%' }}>
+  <View style={{ width: '100%' }} key={icon}>
     <Button
       size="giant"
       appearance="ghost"
@@ -25,6 +24,7 @@ const makeButton = (title: string, icon: string, onPress: () => void) => (
 );
 
 const FeedbackScreen = () => {
+  const [storeReviewAvailable, setStoreReviewAvailable] = useState(false);
   const issuesUrl =
     'https://github.com/aarich/react-native-intervals/issues/new';
 
@@ -43,23 +43,28 @@ const FeedbackScreen = () => {
     () => openURL(playStoreUrl)
   );
 
-  useEffect(() => {
-    const today = new Date();
+  const requestReview = () => {
+    AsyncStorage.setItem('REVIEW', 'asked');
+    StoreReview.requestReview();
+  };
 
-    if (today.getDate() === 1) {
-      StoreReview.isAvailableAsync()
-        .then((available) => {
-          if (available) {
-            AsyncStorage.getItem('REVIEW').then((val) => {
-              if (!val) {
-                AsyncStorage.setItem('REVIEW', 'asked');
-                StoreReview.requestReview();
-              }
-            });
+  useEffect(() => {
+    StoreReview.isAvailableAsync().then((available) => {
+      setStoreReviewAvailable(available);
+      if (available) {
+        StoreReview.hasAction().then((hasAction) => {
+          if (!hasAction) {
+            setStoreReviewAvailable(false);
+            return;
           }
-        })
-        .catch(console.log);
-    }
+          AsyncStorage.getItem('REVIEW').then((val) => {
+            if (!val) {
+              requestReview();
+            }
+          });
+        });
+      }
+    });
   }, []);
 
   return (
@@ -81,6 +86,9 @@ const FeedbackScreen = () => {
           {makeButton('Create an Issue on GitHub', 'github-outline', () =>
             openURL(issuesUrl)
           )}
+          {storeReviewAvailable
+            ? makeButton('Rate the App', 'star-outline', requestReview)
+            : null}
         </View>
       </View>
     </Layout>
