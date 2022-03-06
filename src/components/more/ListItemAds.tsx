@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 import { ListItem, Toggle } from '@ui-kitten/components';
 
 import { AdType } from '../../redux/reducers/settingsReducer';

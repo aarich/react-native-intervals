@@ -1,5 +1,5 @@
 import { IndexPath, Select, SelectItem, Text } from '@ui-kitten/components';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Action, ActionType } from '../../../types';
 import { getActionInfo } from '../../../utils/actions';
 import { AUDIO_FILES } from '../../../utils/audio';

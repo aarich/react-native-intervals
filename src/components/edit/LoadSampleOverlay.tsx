@@ -7,7 +7,7 @@ import {
   SelectItem,
   Text,
 } from '@ui-kitten/components';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { Action } from '../../types';

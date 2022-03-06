@@ -7,7 +7,7 @@ import {
   Text,
   TopNavigationAction,
 } from '@ui-kitten/components';
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   Alert,
   KeyboardAvoidingView,

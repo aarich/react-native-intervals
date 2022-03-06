@@ -20,7 +20,8 @@
       "buildNumber": "7",
       "supportsTablet": true,
       "config": {
-        "googleMobileAdsAppId": "ca-app-pub-6949812709353975~7748559513"
+        "googleMobileAdsAppId": "ca-app-pub-6949812709353975~7748559513",
+        "usesNonExemptEncryption": false
       },
       "bundleIdentifier": "com.mrarich.Intervals",
       "associatedDomains": ["applinks:mrarich.com"],

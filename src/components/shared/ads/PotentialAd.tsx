@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { updateSetting } from '../../../redux/actions';
 import { AdType, initialState } from '../../../redux/reducers/settingsReducer';
 import { useSetting } from '../../../redux/selectors';

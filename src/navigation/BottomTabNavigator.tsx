@@ -3,7 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { Icon, useTheme } from '@ui-kitten/components';
 import { Audio } from 'expo-av';
 import * as Linking from 'expo-linking';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import EditScreen from '../screens/EditScreen';
 import LibraryScreen from '../screens/LibraryScreen';
 import AboutScreen from '../screens/More/AboutScreen';

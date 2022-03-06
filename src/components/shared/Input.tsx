@@ -1,7 +1,6 @@
 import { Icon, Input as UIKInput } from '@ui-kitten/components';
 import { StyleProp, TextStyle, View } from 'react-native';
 
-import React from 'react';
 import useColorScheme from '../../hooks/useColorScheme';
 
 type Props = {

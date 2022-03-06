@@ -1,5 +1,5 @@
 import { Layout, useTheme } from '@ui-kitten/components';
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 import Swiper from 'react-native-swiper/src';
 import ActionSelector, {

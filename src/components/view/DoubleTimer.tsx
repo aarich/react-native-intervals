@@ -1,7 +1,6 @@
-import { StyleProp, View, ViewStyle } from 'react-native';
-
-import React from 'react';
 import { Text } from '@ui-kitten/components';
+import { ReactElement } from 'react';
+import { StyleProp, View, ViewStyle } from 'react-native';
 import { useSetting } from '../../redux/selectors';
 
 type Props = {
@@ -10,7 +9,7 @@ type Props = {
   style: StyleProp<ViewStyle>;
 };
 
-const wrapHorizontalCenter = (content: React.ReactElement) => (
+const wrapHorizontalCenter = (content: ReactElement) => (
   <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
     {content}
   </View>

@@ -9,7 +9,7 @@ import {
   useStyleSheet,
 } from '@ui-kitten/components';
 import { activateKeepAwake, deactivateKeepAwake } from 'expo-keep-awake';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Platform, View } from 'react-native';
 import RunControls from '../components/view/RunControls';
 import ViewableFlow from '../components/view/ViewableFlow';

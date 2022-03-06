@@ -1,7 +1,6 @@
 import { Layout, Text } from '@ui-kitten/components';
 import Constants from 'expo-constants';
 import * as Linking from 'expo-linking';
-import React from 'react';
 import { Platform, ScrollView, StyleSheet, View } from 'react-native';
 
 const h3 = (text: string) => (

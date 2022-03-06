@@ -1,11 +1,5 @@
 import { Card, useTheme } from '@ui-kitten/components';
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AppState, AppStateStatus, Platform, View } from 'react-native';
 import useColorScheme from '../../hooks/useColorScheme';
 import { MS_INTERVAL, useTimer } from '../../hooks/useTimer';

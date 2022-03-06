@@ -4,7 +4,6 @@ import { StyleProp, View, ViewStyle } from 'react-native';
 import { Action } from '../../types';
 import ActionIcon from '../shared/ActionIcon';
 import InsertHereButton from './InsertHereButton';
-import React from 'react';
 import { getActionInfo } from '../../utils/actions';
 
 type Props = {

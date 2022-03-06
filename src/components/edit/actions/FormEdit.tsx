@@ -1,5 +1,5 @@
 import { Accelerometer } from 'expo-sensors';
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Action, ActionType } from '../../../types';
 import FormEditAct from './FormEditAct';
 import FormEditGoTo from './FormEditGoTo';

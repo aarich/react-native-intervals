@@ -1,7 +1,6 @@
-import { StyleSheet, View, ViewProps, ViewStyle } from 'react-native';
-
 import { ButtonElement } from '@ui-kitten/components';
-import React from 'react';
+import { Children, cloneElement } from 'react';
+import { StyleSheet, View, ViewProps, ViewStyle } from 'react-native';
 
 interface ButtonSwitchProps extends ViewProps {
   fullWidth?: boolean;
@@ -28,7 +27,7 @@ const ButtonPicker = ({
   style,
   ...viewProps
 }: ButtonSwitchProps) => {
-  const childCount = React.Children.count(children);
+  const childCount = Children.count(children);
 
   const getBorderStyleForPosition = (index: number) => {
     switch (index) {
@@ -42,12 +41,12 @@ const ButtonPicker = ({
   };
 
   const renderComponentChildren = (children: ButtonElement[]) => {
-    return React.Children.map(
+    return Children.map(
       children,
       (element: ButtonElement, index: number): ButtonElement => {
         const borderStyle: ViewStyle = getBorderStyleForPosition(index);
 
-        return React.cloneElement(element, {
+        return cloneElement(element, {
           style: [
             element.props.style,
             borderStyle,

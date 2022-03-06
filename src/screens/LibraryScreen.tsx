@@ -8,7 +8,7 @@ import {
   Text,
   TopNavigationAction,
 } from '@ui-kitten/components';
-import React, { useCallback, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { Alert, Platform, Pressable, StyleSheet, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import PotentialAd from '../components/shared/ads/PotentialAd';

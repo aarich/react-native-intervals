@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Button, Icon, Layout, Text } from '@ui-kitten/components';
 import { openURL } from 'expo-linking';
 import * as StoreReview from 'expo-store-review';
-import React, { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 
 const baseMainURL = 'https://mrarich.com';

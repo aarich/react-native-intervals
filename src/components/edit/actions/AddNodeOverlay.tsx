@@ -1,5 +1,5 @@
 import { Button, Card, Modal, Text } from '@ui-kitten/components';
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, Keyboard, StyleSheet, View } from 'react-native';
 import { useKeyboardSize } from '../../../hooks/useKeyboardSize';
 import { Action, ActionType } from '../../../types';
@@ -37,7 +37,7 @@ const AddNodeOverlay = ({
 
   const paddingBottom = useRef(new Animated.Value(0)).current;
 
-  React.useEffect(() => {
+  useEffect(() => {
     Animated.timing(paddingBottom, {
       toValue: keyboardSize / 2,
       duration: 200,

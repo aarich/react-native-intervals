@@ -1,6 +1,6 @@
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Divider, Icon, Layout, List, ListItem } from '@ui-kitten/components';
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { Alert, Platform, StyleSheet, View } from 'react-native';
 import ListItemAds from '../../components/more/ListItemAds';
 import ListItemTheme from '../../components/more/ListItemTheme';

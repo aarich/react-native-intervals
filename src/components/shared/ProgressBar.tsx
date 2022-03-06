@@ -1,5 +1,4 @@
 import { useTheme } from '@ui-kitten/components';
-import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import useColorScheme from '../../hooks/useColorScheme';
 

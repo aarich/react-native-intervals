@@ -3,7 +3,7 @@ RewriteEngine On
 
 # Force HTTPS
 RewriteCond %{SERVER_PORT} 80
-RewriteCond ${HTTP_HOST} !^projects.dreamhost.com$
+RewriteCond ${HTTP_HOST} !^projects.mrarich.com$
 RewriteRule ^(.*)$ https://projects.mrarich.com/$1 [R=301]
 
 # Rewrite Extension to .php if that exists

@@ -1,5 +1,5 @@
 import * as AdMob from 'expo-ads-admob';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppDispatch } from '../../../redux/store';
 import { AdUnit, getAdId } from '../../../utils/ads';
 

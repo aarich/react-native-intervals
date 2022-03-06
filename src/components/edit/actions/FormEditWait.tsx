@@ -1,5 +1,4 @@
 import { BaseFormEditProps } from './FormEdit';
-import React from 'react';
 import { Text } from '@ui-kitten/components';
 import TimeInput from './TimeInput';
 

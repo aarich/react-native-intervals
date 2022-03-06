@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { Action } from '../../types';

@@ -7,7 +7,6 @@ import {
 import { ApplicationProvider, IconRegistry } from '@ui-kitten/components';
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
 import { default as theme } from '../../assets/theme.json';
 import useColorScheme from '../hooks/useColorScheme';
 import BottomTabNavigator from './BottomTabNavigator';

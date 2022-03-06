@@ -1,5 +1,4 @@
 import { Button, Icon, Text, useTheme } from '@ui-kitten/components';
-import React from 'react';
 import { Pressable, View } from 'react-native';
 import useColorScheme from '../../hooks/useColorScheme';
 import { ActionType } from '../../types';

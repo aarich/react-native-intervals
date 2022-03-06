@@ -7,7 +7,7 @@ import {
   SelectItem,
   Text,
 } from '@ui-kitten/components';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Audio } from 'expo-av';
 import { BaseFormEditProps } from './FormEdit';

@@ -1,5 +1,4 @@
 import { Button, ButtonGroup, Icon } from '@ui-kitten/components';
-import React from 'react';
 import { View } from 'react-native';
 import { TimerActions } from '../../hooks/useTimer';
 import Executor from '../../utils/execution/Executor';

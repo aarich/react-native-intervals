@@ -1,5 +1,4 @@
 import { Text, useTheme } from '@ui-kitten/components';
-import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import useColorScheme from '../../hooks/useColorScheme';

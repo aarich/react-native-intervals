@@ -1,6 +1,5 @@
 import { Button, Divider, Icon } from '@ui-kitten/components';
 
-import React from 'react';
 import { View } from 'react-native';
 
 type Props = {
