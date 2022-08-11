@@ -1,9 +1,10 @@
 /* eslint-disable no-undef */
 /* eslint-disable @typescript-eslint/no-var-requires */
 
-var config = require('../app.json');
-var keys = require('./keys.json');
-var fs = require('fs');
+const config = require('../app.json');
+const easConfig = require('../eas.json');
+const keys = require('./keys.json');
+const fs = require('fs');
 
 const appRelease = process.argv[2]; // app version, e.g. 3.0
 const dest = process.argv[3]; // build destination, e.g. WEB/ANDROID/IOS/NONE
@@ -26,15 +27,12 @@ if (dest === 'IOS') {
   console.log('\nNo version/build number changes made\n');
 }
 
-if (dest !== 'WEB') {
-  const newReleaseNum = `${parseInt(extra.MyVersion) + 1}`;
-  expo.version = appRelease;
-  extra.MyVersion = newReleaseNum;
-  hooks.postPublish[0].config.release = newReleaseNum;
-  console.log(`Setting custom release to ${newReleaseNum}\n`);
-} else {
-  console.log(`Not updating custom release number (${extra.MyVersion})\n`);
-}
+expo.version = appRelease;
+
+easConfig.build.production.releaseChannel = 'prod-' + appReleaseDashed;
+
+const newReleaseNum = `${parseInt(extra.MyVersion) + 1}`;
+extra.MyVersion = newReleaseNum;
 
 // Update sentry token
 hooks.postPublish[0].config.authToken = keys.sentry_auth_token;
