@@ -65,6 +65,7 @@
     },
     "extra": {
       "MyVersion": "25"
-    }
+    },
+    "plugins": ["sentry-expo"]
   }
 }

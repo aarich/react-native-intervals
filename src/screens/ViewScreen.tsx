@@ -41,8 +41,10 @@ const ViewScreen = ({ navigation, route }: Props) => {
     } else {
       deactivateKeepAwake();
     }
-    return () => deactivateKeepAwake();
-  });
+    return () => {
+      deactivateKeepAwake();
+    };
+  }, [isRunning]);
 
   useEffect(() => {
     if (!timer) {
