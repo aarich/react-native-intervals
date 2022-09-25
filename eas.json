@@ -10,9 +10,20 @@
     "preview": {
       "distribution": "internal"
     },
-    "production": {}
+    "production": {
+      "releaseChannel": "prod-4-0"
+    }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "android": {
+        "serviceAccountKeyPath": "pc-api-5006870031383457262-101-4afc423a918f.json"
+      },
+      "ios": {
+        "appleId": "arich@hmc.edu",
+        "ascAppId": "1552160706",
+        "appleTeamId": "8H27F27VW9"
+      }
+    }
   }
 }

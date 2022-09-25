@@ -1,0 +1,77 @@
+{
+  "expo": {
+    "name": "Intervals",
+    "slug": "intervals",
+    "version": "4.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "intervals",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 5000
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "buildNumber": "1",
+      "supportsTablet": true,
+      "config": {
+        "usesNonExemptEncryption": false
+      },
+      "bundleIdentifier": "com.mrarich.Intervals",
+      "associatedDomains": ["applinks:mrarich.com"],
+      "infoPlist": {
+        "NSUserTrackingUsageDescription": "We'd like to show relevant ads."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      "permissions": ["READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"],
+      "package": "com.mrarich.Intervals",
+      "versionCode": 9
+    },
+    "web": {
+      "favicon": "./assets/images/favicon.png",
+      "build": {
+        "babel": {
+          "include": ["@ui-kitten/components"]
+        }
+      }
+    },
+    "hooks": {
+      "postPublish": [
+        {
+          "file": "sentry-expo/upload-sourcemaps",
+          "config": {
+            "organization": "alex-rich",
+            "project": "intervals",
+            "authToken": "SENTRY_AUTH_TOKEN",
+            "setCommits": true
+          }
+        }
+      ]
+    },
+    "extra": {
+      "MyVersion": "26",
+      "eas": {
+        "projectId": "2b6d1444-cdad-44b6-82b5-58ca17788482"
+      }
+    },
+    "plugins": [
+      "sentry-expo",
+      [
+        "expo-tracking-transparency",
+        {
+          "userTrackingPermission": "We'd like to show relevant ads."
+        }
+      ]
+    ]
+  }
+}

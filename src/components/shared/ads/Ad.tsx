@@ -1,5 +1,10 @@
-import * as AdMob from 'expo-ads-admob';
+import {
+  PermissionStatus,
+  requestTrackingPermissionsAsync,
+} from 'expo-tracking-transparency';
 import { useEffect, useState } from 'react';
+import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
+
 import { useAppDispatch } from '../../../redux/store';
 import { AdUnit, getAdId } from '../../../utils/ads';
 
@@ -8,22 +13,19 @@ const Ad = ({ unit, onFail }: { unit: AdUnit; onFail: VoidFunction }) => {
   const [showPersonalized, setShowPersonalized] = useState(false);
 
   useEffect(() => {
-    AdMob.getPermissionsAsync().then(async (resp) => {
-      if (resp.status === AdMob.PermissionStatus.GRANTED) {
+    requestTrackingPermissionsAsync().then(async (resp) => {
+      if (resp.status === PermissionStatus.GRANTED) {
         setShowPersonalized(true);
-      } else if (resp.status === AdMob.PermissionStatus.UNDETERMINED) {
-        resp = await AdMob.requestPermissionsAsync();
-        setShowPersonalized(resp.status === AdMob.PermissionStatus.GRANTED);
       }
     });
   }, [dispatch]);
 
   return (
-    <AdMob.AdMobBanner
-      bannerSize="smartBannerPortrait"
-      adUnitID={getAdId(unit)}
-      servePersonalizedAds={showPersonalized}
-      onDidFailToReceiveAdWithError={onFail}
+    <BannerAd
+      size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+      unitId={getAdId(unit)}
+      requestOptions={{ requestNonPersonalizedAdsOnly: !showPersonalized }}
+      onAdFailedToLoad={onFail}
     />
   );
 };

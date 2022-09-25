@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
+
 import { Action } from '../../types';
 import ViewableFlowItem from './ViewableFlowItem';
 
@@ -25,7 +26,7 @@ const ViewableFlow = ({
     if (activeNodeIndex && actions.length > activeNodeIndex) {
       listRef.current?.scrollToIndex({
         animated: true,
-        index: activeNodeIndex || 0,
+        index: activeNodeIndex,
       });
     }
   }, [activeNodeIndex, actions]);

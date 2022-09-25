@@ -1,4 +1,4 @@
-RELEASE_NUM = 3-0
+RELEASE_NUM = 4-0
 CHANNEL = prod-$(RELEASE_NUM)
 DEST = NONE
 
@@ -39,12 +39,14 @@ build-web:
 
 build-ios:
 	$(MAKE) build-prep DEST=IOS
-	-expo build:ios -t archive --release-channel $(CHANNEL) --apple-id arich@hmc.edu --no-wait
+	# eas build -p ios --profile production --auto-submit --non-interactive --no-wait
+	eas build -p ios --profile production --auto-submit --no-wait
 	$(MAKE) build-finish
 
 build-android:
-	$(MAKE) build-prep DEST=ANDROID
-	-expo build:android -t app-bundle --release-channel $(CHANNEL) --no-wait
+	# $(MAKE) build-prep DEST=ANDROID
+	# eas build -p android --profile production --auto-submit --non-interactive --no-wait
+	eas build -p android --profile production --auto-submit --no-wait
 	$(MAKE) build-finish
 
 publish: build-prep

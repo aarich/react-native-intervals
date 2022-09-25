@@ -1,12 +1,3 @@
-import { RouteProp } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import {
-  Icon,
-  Input,
-  Layout,
-  Text,
-  TopNavigationAction,
-} from '@ui-kitten/components';
 import { useCallback, useEffect, useState } from 'react';
 import {
   Alert,
@@ -17,6 +8,17 @@ import {
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import * as Sentry from 'sentry-expo';
+
+import { RouteProp } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import {
+  Icon,
+  Input,
+  Layout,
+  Text,
+  TopNavigationAction,
+} from '@ui-kitten/components';
+
 import AddNodeOverlay from '../components/edit/actions/AddNodeOverlay';
 import ActionSelector, {
   InstructionType,
@@ -125,15 +127,13 @@ const EditScreen = ({ navigation, route }: Props) => {
       }
       let newNodes = [];
 
-      const index = addType ? activeInsertIndex : activeInsertIndex;
-
-      if (index === nodes.length) {
+      if (activeInsertIndex === nodes.length) {
         // We're adding at the end
         newNodes = [...nodes, action];
       } else {
         let added = false;
         for (let i = 0; i < nodes.length; i++) {
-          if (i === index) {
+          if (i === activeInsertIndex) {
             newNodes.push(action);
             added = true;
             if (addType) {
@@ -141,7 +141,6 @@ const EditScreen = ({ navigation, route }: Props) => {
               const updatedNode = { ...nodes[i] };
               updatedNode.index++;
               newNodes.push(updatedNode);
-              added = true;
             }
           } else {
             if (added) {

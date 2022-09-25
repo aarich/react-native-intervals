@@ -1,7 +1,9 @@
-import { Layout, Text } from '@ui-kitten/components';
+import Application from 'expo-application';
 import Constants from 'expo-constants';
 import * as Linking from 'expo-linking';
 import { Platform, ScrollView, StyleSheet, View } from 'react-native';
+
+import { Layout, Text } from '@ui-kitten/components';
 
 const h3 = (text: string) => (
   <Text category="h3" style={styles.h3}>
@@ -77,7 +79,7 @@ const AboutScreen = () => {
         {p(
           `Version ${Platform.select({
             web: '',
-            default: `${Constants.nativeAppVersion}-`,
+            default: `${Application.nativeApplicationVersion}-`,
           })}${myVersion}`
         )}
         {p(`© ${new Date().getFullYear()} Alex Rich`)}

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-// Adapted from https://ysfaran.github.io/blog/post/0002-use-state-with-promise/
-export const useStateWithPromise = <T extends unknown>(
+// Adapted from https://ysfaran.github.io/blog/2020/04/06/await-use-state
+export const useStateWithPromise = <T>(
   initialState: T
 ): [T, (state: T) => Promise<T>] => {
   const [state, setState] = useState(initialState);

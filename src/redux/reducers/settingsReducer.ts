@@ -47,7 +47,7 @@ export type SettingsState = SelectSettings &
   adLastResetSetting;
 
 export const initialState: SettingsState = {
-  ads: AdType.Generic,
+  ads: AdType.On,
   theme: ThemeType.System,
   countUp: true,
   showTotalTime: true,

@@ -1,5 +1,7 @@
-import { IndexPath, Select, SelectItem, Text } from '@ui-kitten/components';
 import { useEffect, useState } from 'react';
+
+import { IndexPath, Select, SelectItem, Text } from '@ui-kitten/components';
+
 import { Action, ActionType } from '../../../types';
 import { getActionInfo } from '../../../utils/actions';
 import { AUDIO_FILES } from '../../../utils/audio';
@@ -39,13 +41,6 @@ const FormEditGoTo = ({
   const availableActions = existingActions
     .filter((_, i) => i < insertIndex)
     .reverse();
-
-  // const firstGoToIndex = reversedActionsBeforeThis.findIndex(
-  //   (action) => action.type === ActionType.goTo
-  // );
-  // const availableActions = reversedActionsBeforeThis.filter(
-  //   (_, i) => firstGoToIndex === -1 || i < firstGoToIndex
-  // );
 
   useEffect(() => {
     setParams((params) => ({

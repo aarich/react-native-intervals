@@ -1,12 +1,13 @@
 /* eslint-disable no-undef */
 /* eslint-disable @typescript-eslint/no-var-requires */
 
-const config = require('../app.json');
+const config = require('../app.config.json');
 const easConfig = require('../eas.json');
 const keys = require('./keys.json');
 const fs = require('fs');
 
-const appRelease = process.argv[2]; // app version, e.g. 3.0
+const appReleaseDashed = process.argv[2]; // app version, e.g. 3-0
+const appRelease = appReleaseDashed.replace('-', '.');
 const dest = process.argv[3]; // build destination, e.g. WEB/ANDROID/IOS/NONE
 
 const { expo } = config;
@@ -38,4 +39,5 @@ extra.MyVersion = newReleaseNum;
 hooks.postPublish[0].config.authToken = keys.sentry_auth_token;
 
 // write file from root diretory
-fs.writeFileSync('app.json', JSON.stringify(config, null, 2));
+fs.writeFileSync('app.config.json', JSON.stringify(config, null, 2));
+fs.writeFileSync('eas.json', JSON.stringify(easConfig, null, 2));

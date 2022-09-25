@@ -1,9 +1,11 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator } from '@react-navigation/stack';
-import { Icon, useTheme } from '@ui-kitten/components';
 import { Audio } from 'expo-av';
 import * as Linking from 'expo-linking';
 import { useEffect } from 'react';
+
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
+import { Icon, useTheme } from '@ui-kitten/components';
+
 import EditScreen from '../screens/EditScreen';
 import LibraryScreen from '../screens/LibraryScreen';
 import AboutScreen from '../screens/More/AboutScreen';
@@ -27,7 +29,7 @@ export default function BottomTabNavigator() {
 
   const handleURL = (url: string) => {
     const parsed = Linking.parse(url);
-    if (parsed.queryParams?.f) {
+    if (parsed.queryParams?.f && typeof parsed.queryParams.f === 'string') {
       navigateToEdit(parsed.queryParams.f);
     }
   };
@@ -40,8 +42,8 @@ export default function BottomTabNavigator() {
     });
 
     const handleUrlEvent = (e: Linking.EventType) => handleURL(e.url);
-    Linking.addEventListener('url', handleUrlEvent);
-    return () => Linking.removeEventListener('url', handleUrlEvent);
+    const subscription = Linking.addEventListener('url', handleUrlEvent);
+    return () => subscription.remove();
   }, []);
 
   return (
