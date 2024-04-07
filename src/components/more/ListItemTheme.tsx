@@ -1,11 +1,12 @@
+import { useDispatch } from 'react-redux';
+
 import ListWithOptions from '../shared/ListWithOptions';
 import { ThemeType } from '../../redux/reducers/settingsReducer';
 import { updateSetting } from '../../redux/actions';
-import { useAppDispatch } from '../../redux/store';
 import { useSetting } from '../../redux/selectors';
 
 const ListItemTheme = () => {
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
   const setting = useSetting('theme');
   const options = Object.values(ThemeType);
   const selectedIndex = options.indexOf(setting);

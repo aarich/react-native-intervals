@@ -49,9 +49,10 @@ export default function BottomTabNavigator() {
   return (
     <BottomTab.Navigator
       initialRouteName="Flows"
-      tabBarOptions={{
-        activeTintColor: theme['color-primary-500'],
-        labelPosition: 'below-icon',
+      screenOptions={{
+        tabBarActiveTintColor: theme['color-primary-500'],
+        tabBarLabelPosition: 'below-icon',
+        headerShown: false
       }}
     >
       <BottomTab.Screen

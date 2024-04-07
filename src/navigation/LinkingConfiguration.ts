@@ -1,6 +1,7 @@
 import { LinkingOptions } from '@react-navigation/native';
+import { BottomTabParamList } from '../types';
 
-export const linkingConfig = {
+export const linkingConfig: LinkingOptions<BottomTabParamList> = {
   prefixes: ['https://projects.mrarich.com/intervals/', 'intervals://'],
   config: {
     initialRouteName: 'Flows',
@@ -29,6 +30,4 @@ export const linkingConfig = {
   },
 };
 
-const options: LinkingOptions = linkingConfig;
-
-export default options;
+export default linkingConfig;

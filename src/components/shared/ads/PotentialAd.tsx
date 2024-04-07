@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+
 import { updateSetting } from '../../../redux/actions';
 import { AdType, initialState } from '../../../redux/reducers/settingsReducer';
 import { useSetting } from '../../../redux/selectors';
-import { useAppDispatch } from '../../../redux/store';
 import { AdUnit } from '../../../utils/ads';
 import Ad from './Ad';
 
@@ -10,7 +11,7 @@ import Ad from './Ad';
 const AD_RESET_DELAY_MS = 1000 * 60 * 60 * 24 * 14;
 
 const PotentialAd = ({ unit }: { unit: AdUnit }) => {
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
   const adSetting = useSetting('ads');
   const adLastReset = useSetting('adLastReset');
   const [showAd, setShowAd] = useState(AdType.Off !== adSetting);

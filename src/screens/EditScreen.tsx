@@ -3,11 +3,11 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
   StyleSheet,
   View,
 } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
-import * as Sentry from 'sentry-expo';
+import * as Sentry from '@sentry/react-native';
 
 import { RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -18,6 +18,8 @@ import {
   Text,
   TopNavigationAction,
 } from '@ui-kitten/components';
+import { Dispatch } from 'redux';
+import { useDispatch } from 'react-redux';
 
 import AddNodeOverlay from '../components/edit/actions/AddNodeOverlay';
 import ActionSelector, {
@@ -30,7 +32,6 @@ import { useStateWithPromise } from '../hooks/useStateWithPromise';
 import { saveTimer } from '../redux/actions';
 import { TimersState } from '../redux/reducers/timersReducer';
 import { useTimer, useTimers } from '../redux/selectors/TimerSelector';
-import { AppDispatch, useAppDispatch } from '../redux/store';
 import { Action, ActionType, TimersParamList } from '../types';
 import { getActionInfo } from '../utils/actions';
 import {
@@ -56,7 +57,7 @@ type TimerPropertiesDraft = {
 const save = (
   id: string | undefined,
   existingTimers: TimersState,
-  dispatch: AppDispatch,
+  dispatch: Dispatch,
   propertiesDraft: { name: string; description: string },
   nodes: Action[],
   setDirty: (b: boolean) => Promise<boolean>
@@ -93,7 +94,7 @@ const save = (
 };
 
 const EditScreen = ({ navigation, route }: Props) => {
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
   const scheme = useColorScheme();
   const existingTimers = useTimers();
   const { id, serializedFlow } = route.params || {};
@@ -222,7 +223,7 @@ const EditScreen = ({ navigation, route }: Props) => {
         });
       } catch (e) {
         osAlert("We couldn't load your flow. Please try again later");
-        Sentry.Native.captureException(e, { extra: { serializedFlow } });
+        Sentry.captureException(e, { extra: { serializedFlow } });
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -1,11 +1,11 @@
+import { ListItem, Toggle } from '@ui-kitten/components';
+import { useDispatch } from 'react-redux';
+
 import {
   AnySetting,
   BooleanSettings,
 } from '../../redux/reducers/settingsReducer';
-import { ListItem, Toggle } from '@ui-kitten/components';
-
 import { updateSetting } from '../../redux/actions';
-import { useAppDispatch } from '../../redux/store';
 import { useSetting } from '../../redux/selectors';
 
 const labels = {
@@ -15,7 +15,7 @@ const labels = {
 };
 
 const ListItemToggle = ({ setting }: { setting: keyof BooleanSettings }) => {
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
   const on = useSetting(setting);
 
   return (

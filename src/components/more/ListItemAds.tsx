@@ -1,12 +1,12 @@
 import { ListItem, Toggle } from '@ui-kitten/components';
+import { useDispatch } from 'react-redux';
 
 import { AdType } from '../../redux/reducers/settingsReducer';
 import { updateSetting } from '../../redux/actions';
-import { useAppDispatch } from '../../redux/store';
 import { useSetting } from '../../redux/selectors';
 
 const ListItemAds = () => {
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
   const setting = useSetting('ads');
 
   return (

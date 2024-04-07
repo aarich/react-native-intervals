@@ -14,7 +14,7 @@ type Props = {
 };
 
 const Input = ({ value, iconRight, numeric = false, ...otherProps }: Props) => {
-  const type = numeric || typeof value === 'number' ? 'numeric' : 'default';
+  const inputMode = (numeric || typeof value === 'number') ? 'numeric' : undefined;
   const scheme = useColorScheme();
   return (
     <View style={{ paddingTop: 5 }}>
@@ -26,7 +26,7 @@ const Input = ({ value, iconRight, numeric = false, ...otherProps }: Props) => {
             ? (props) => <Icon {...props} name={iconRight} />
             : undefined
         }
-        keyboardType={type}
+        inputMode={inputMode}
         keyboardAppearance={scheme}
       />
     </View>

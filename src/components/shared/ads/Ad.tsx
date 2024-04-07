@@ -4,12 +4,11 @@ import {
 } from 'expo-tracking-transparency';
 import { useEffect, useState } from 'react';
 import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
-
-import { useAppDispatch } from '../../../redux/store';
+import { useDispatch } from 'react-redux';
 import { AdUnit, getAdId } from '../../../utils/ads';
 
 const Ad = ({ unit, onFail }: { unit: AdUnit; onFail: VoidFunction }) => {
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
   const [showPersonalized, setShowPersonalized] = useState(false);
 
   useEffect(() => {

@@ -2,6 +2,8 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { Divider, Icon, Layout, List, ListItem } from '@ui-kitten/components';
 import { useCallback } from 'react';
 import { Alert, Platform, StyleSheet, View } from 'react-native';
+import { useDispatch } from 'react-redux';
+
 import ListItemAds from '../../components/more/ListItemAds';
 import ListItemTheme from '../../components/more/ListItemTheme';
 import ListItemToggle from '../../components/more/ListItemToggle';
@@ -11,7 +13,6 @@ import {
   BooleanSettings,
   SelectSettings,
 } from '../../redux/reducers/settingsReducer';
-import { useAppDispatch } from '../../redux/store';
 import { MoreParamList } from '../../types';
 import { AdUnit } from '../../utils/ads';
 
@@ -31,7 +32,7 @@ type ListItemSelectSetting = {
 };
 
 const MoreScreen = ({ navigation }: Props) => {
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
 
   const resetAppAlert = useCallback(() => {
     const message =

@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { StyleProp, ViewStyle } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
+import { StyleProp, ViewStyle, FlatList } from 'react-native';
 
 import { Action } from '../../types';
 import ViewableFlowItem from './ViewableFlowItem';

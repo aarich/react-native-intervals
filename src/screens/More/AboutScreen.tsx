@@ -1,4 +1,4 @@
-import Application from 'expo-application';
+import * as Application from 'expo-application';
 import Constants from 'expo-constants';
 import * as Linking from 'expo-linking';
 import { Platform, ScrollView, StyleSheet, View } from 'react-native';
@@ -26,7 +26,7 @@ const a = (name: string, url: string) => (
 );
 
 const AboutScreen = () => {
-  const myVersion = Constants.manifest?.extra?.MyVersion;
+  const myVersion = Constants.expoConfig?.extra?.MyVersion;
   return (
     <Layout style={{ flex: 1, flexGrow: 1 }}>
       <ScrollView style={{ paddingHorizontal: '5%' }}>

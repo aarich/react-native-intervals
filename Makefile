@@ -1,5 +1,4 @@
-RELEASE_NUM = 4-0
-CHANNEL = prod-$(RELEASE_NUM)
+RELEASE_NUM = 5-0-0
 DEST = NONE
 
 git-status:
@@ -18,12 +17,7 @@ build-prep:
 	@echo
 
 	@echo "Updating app.json"
-	cp app.json app.json.bak
 	node scripts/updateConfig.js $(RELEASE_NUM) $(DEST)
-
-build-finish:
-	@echo "Resetting app.json"
-	node scripts/resetConfig.js
 
 build-web:
 	$(MAKE) build-prep DEST=WEB
@@ -35,20 +29,17 @@ build-web:
 	rm ./web/banner.png
 	@osascript -e 'display notification "Enter password to copy files" with title "Password Required"'
 	-bash scripts/copyFiles.sh
-	$(MAKE) build-finish
 
 build-ios:
 	$(MAKE) build-prep DEST=IOS
-	# eas build -p ios --profile production --auto-submit --non-interactive --no-wait
 	eas build -p ios --profile production --auto-submit --no-wait
-	$(MAKE) build-finish
 
 build-android:
 	# $(MAKE) build-prep DEST=ANDROID
-	# eas build -p android --profile production --auto-submit --non-interactive --no-wait
 	eas build -p android --profile production --auto-submit --no-wait
-	$(MAKE) build-finish
 
-publish: build-prep
-	expo publish --release-channel $(CHANNEL)
-	$(MAKE) build-finish
+publish-dev: build-prep
+	eas update --channel development
+
+publish-prod: build-prep
+	eas update --channel production

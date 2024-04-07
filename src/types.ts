@@ -1,3 +1,5 @@
+import { NavigatorScreenParams } from "@react-navigation/native";
+
 export enum ActionType {
   sound = 'sound',
   act = 'act',
@@ -7,8 +9,9 @@ export enum ActionType {
 }
 
 export type BottomTabParamList = {
-  Flows: undefined;
-  More: undefined;
+  Flows: NavigatorScreenParams<TimersParamList>;
+  More: NavigatorScreenParams<MoreParamList>;
+  NotFound: undefined;
 };
 
 export type TimersParamList = {

@@ -8,7 +8,7 @@ import {
   TopNavigationAction,
   useStyleSheet,
 } from '@ui-kitten/components';
-import { activateKeepAwake, deactivateKeepAwake } from 'expo-keep-awake';
+import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 import { useEffect, useState } from 'react';
 import { Platform, View } from 'react-native';
 import RunControls from '../components/view/RunControls';
@@ -37,7 +37,7 @@ const ViewScreen = ({ navigation, route }: Props) => {
   const linkTo = useLinkTo();
   useEffect(() => {
     if (isRunning) {
-      activateKeepAwake();
+      (async () => await activateKeepAwakeAsync())();
     } else {
       deactivateKeepAwake();
     }

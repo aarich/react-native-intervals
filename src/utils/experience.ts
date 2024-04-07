@@ -92,6 +92,6 @@ export const share = (timer: Timer) => {
 
 export const openInApp = (timer: Timer) => {
   const serialized = serialize(timer);
-  const url = `${Constants.manifest?.scheme}://?f=${serialized}`;
+  const url = `${Constants.expoConfig?.scheme}://?f=${serialized}`;
   openURL(url);
 };
