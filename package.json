@@ -76,5 +76,10 @@
   "resolutions": {
     "@types/react": "^18.0.0"
   },
+  "prettier": {
+    "bracketSpacing": true,
+    "jsxBracketSameLine": true,
+    "singleQuote": true
+  },
   "private": true
 }

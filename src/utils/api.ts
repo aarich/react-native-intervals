@@ -1,6 +1,7 @@
 import { TimersState } from '../redux/reducers/timersReducer';
 import { Action, ActionType, Timer } from '../types';
 import { getActionInfo } from './actions';
+import AnnotatedAction from './execution/AnnotatedAction';
 
 export const createNewID = (existingTimers: TimersState) => {
   if (Object.keys(existingTimers).length === 0) {
@@ -71,6 +72,47 @@ export const calculateRuntime = (actions: Action[]) => {
   }
 
   return total * 1000;
+};
+
+export const calculateRuntimeToNextSound = (
+  currentIndex: number,
+  actions: AnnotatedAction[]
+) => {
+  console.log('calculateRuntimeToNextSound');
+
+  const msToRemove = actions[currentIndex].elapsedMs;
+  let total = 0;
+
+  const numPasses = actions.map((a) => a.totalPasses);
+  while (currentIndex < actions.length) {
+    const { action } = actions[currentIndex];
+    switch (action.type) {
+      case ActionType.sound:
+        console.log('calculateRuntimeToNextSoundFinished');
+        // We found the next sound. Return right away
+        return total * 1000 - msToRemove;
+      case ActionType.pause:
+        // The timer will stop here, meaning there won't be a sound
+        return -1;
+      case ActionType.goTo:
+        numPasses[currentIndex]++;
+        if (numPasses[currentIndex] === action.params.times) {
+          // Reset in case we come back to it
+          numPasses[currentIndex] = 0;
+          currentIndex++;
+        } else {
+          currentIndex = action.params.targetNode;
+        }
+        break;
+      default:
+        total += action.params.time;
+        currentIndex++;
+        break;
+    }
+  }
+
+  // No sound was found
+  return -1;
 };
 
 export const msToViewable = (duration: number) => {
