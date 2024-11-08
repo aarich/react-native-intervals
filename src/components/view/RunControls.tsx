@@ -14,7 +14,6 @@ type Props = {
   onActiveNodeChange: (index: number | undefined) => void;
   onLabelOverridesChange: (overrides: (string | undefined)[]) => void;
   onProgressChange: (progress: (number | undefined)[]) => void;
-  onRunningStateChange: (isRunning: boolean) => void;
 };
 
 const RunControls = ({
@@ -22,7 +21,6 @@ const RunControls = ({
   onActiveNodeChange,
   onLabelOverridesChange,
   onProgressChange,
-  onRunningStateChange,
 }: Props) => {
   const executor = useMemo(
     () => new Executor(actions, onLabelOverridesChange, onProgressChange),
@@ -41,14 +39,6 @@ const RunControls = ({
   useEffect(() => {
     onActiveNodeChange(executor.currentNodeIndex);
   }, [executor.currentNodeIndex, onActiveNodeChange]);
-
-  useEffect(() => {
-    if (executor.status === 'running') {
-      onRunningStateChange(true);
-    } else {
-      onRunningStateChange(false);
-    }
-  }, [executor.status, onRunningStateChange]);
 
   useEffect(() => {
     const interval = Date.now() - executor.lastTickTimeMs;
@@ -114,8 +104,7 @@ const RunControls = ({
           style={{
             backgroundColor: theme[basicColor],
             borderColor: theme['color-basic-500'],
-          }}
-        >
+          }}>
           <DoubleTimer
             style={{ paddingBottom: 10 }}
             topText={executor.currentElapsed(countUp)}

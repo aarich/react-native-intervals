@@ -8,7 +8,7 @@ import {
   TopNavigationAction,
   useStyleSheet,
 } from '@ui-kitten/components';
-import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
+import { useKeepAwake } from 'expo-keep-awake';
 import { useEffect, useState } from 'react';
 import { Platform, View } from 'react-native';
 import RunControls from '../components/view/RunControls';
@@ -31,20 +31,12 @@ const ViewScreen = ({ navigation, route }: Props) => {
     []
   );
   const [progress, setProgress] = useState<(number | undefined)[]>([]);
-  const [isRunning, setIsRunning] = useState(false);
   const showDescription = !useSetting('hideDescription');
   const styles = useStyleSheet(stylesheet);
   const linkTo = useLinkTo();
-  useEffect(() => {
-    if (isRunning) {
-      (async () => await activateKeepAwakeAsync())();
-    } else {
-      deactivateKeepAwake();
-    }
-    return () => {
-      deactivateKeepAwake();
-    };
-  }, [isRunning]);
+
+  // Keep screen awake whether the timer is playing or not
+  useKeepAwake();
 
   useEffect(() => {
     if (!timer) {
@@ -91,8 +83,7 @@ const ViewScreen = ({ navigation, route }: Props) => {
             marginHorizontal: '5%',
             flexGrow: 1,
             flex: 1,
-          }}
-        >
+          }}>
           <View style={styles.listHeader}>
             {timer.description && showDescription ? (
               <Text category="s1" style={styles.description}>
@@ -101,7 +92,6 @@ const ViewScreen = ({ navigation, route }: Props) => {
             ) : null}
 
             <RunControls
-              onRunningStateChange={setIsRunning}
               actions={timer.flow}
               onActiveNodeChange={setActiveNodeIndex}
               onLabelOverridesChange={setLabelOverrides}

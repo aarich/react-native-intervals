@@ -3,9 +3,19 @@ import {
   requestTrackingPermissionsAsync,
 } from 'expo-tracking-transparency';
 import { useEffect, useState } from 'react';
-import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
+import mobileAds, {
+  BannerAd,
+  BannerAdSize,
+  MaxAdContentRating,
+} from 'react-native-google-mobile-ads';
 import { useDispatch } from 'react-redux';
 import { AdUnit, getAdId } from '../../../utils/ads';
+
+mobileAds()
+  .setRequestConfiguration({
+    maxAdContentRating: MaxAdContentRating.PG,
+  })
+  .then(() => mobileAds().initialize());
 
 const Ad = ({ unit, onFail }: { unit: AdUnit; onFail: VoidFunction }) => {
   const dispatch = useDispatch();

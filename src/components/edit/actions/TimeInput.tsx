@@ -25,13 +25,13 @@ const TimeInput = ({
   const shakeMsg =
     Platform.OS === 'web'
       ? ''
-      : `Shake for ${getCouldBeTimeUnit(timeUnitIsSeconds)}`;
+      : `. Shake for ${getCouldBeTimeUnit(timeUnitIsSeconds)}`;
   return (
     <Input
       value={getTimeAsChosenUnitStr(valueInSecs, timeUnitIsSeconds, suffix)}
       label={`${label} (In ${getCurrentTimeUnit(
         timeUnitIsSeconds
-      )}.${shakeMsg})`}
+      )}${shakeMsg})`}
       placeholder={`Enter ${getCurrentTimeUnit(timeUnitIsSeconds)}`}
       onChangeText={(str) =>
         onChangeValue(getTimeAsSeconds(str, timeUnitIsSeconds, setSuffix))

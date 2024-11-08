@@ -6,6 +6,7 @@ import FormEditGoTo from './FormEditGoTo';
 import FormEditPause from './FormEditPause';
 import FormEditSound from './FormEditSound';
 import FormEditWait from './FormEditWait';
+import { Platform } from 'react-native';
 
 type Props = {
   type: ActionType;
@@ -83,8 +84,10 @@ const FormEdit = ({
   }, [timeToStopShaking]);
 
   useEffect(() => {
-    addListener(deviceOnTheMoveCallback);
-    return () => Accelerometer.removeAllListeners();
+    if (Platform.OS !== 'web') {
+      addListener(deviceOnTheMoveCallback);
+      return () => Accelerometer.removeAllListeners();
+    }
   }, [deviceOnTheMoveCallback]);
 
   const props = {

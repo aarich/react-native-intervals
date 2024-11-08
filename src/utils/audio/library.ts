@@ -8,6 +8,22 @@ export type AudioInfo = {
 
 export const AUDIO_FILES: AudioInfo[] = [
   {
+    file: require('../../../assets/audio/alarm-clock-90867.mp3'),
+    name: 'Beeps',
+  },
+  {
+    file: require('../../../assets/audio/ringtone-89218.mp3'),
+    name: 'Ringtone',
+  },
+  {
+    file: require('../../../assets/audio/ringtone2-39981.mp3'),
+    name: 'Phone Call',
+  },
+  {
+    file: require('../../../assets/audio/sleigh_bells-99843.mp3'),
+    name: 'Sleigh Bells',
+  },
+  {
     file: require('../../../assets/audio/applauses-356.mp3'),
     name: 'Applause',
   },
