@@ -1,6 +1,6 @@
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Divider, Icon, Layout, List, ListItem } from '@ui-kitten/components';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { Alert, Platform, StyleSheet, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -14,7 +14,7 @@ import {
   SelectSettings,
 } from '../../redux/reducers/settingsReducer';
 import { MoreParamList } from '../../types';
-import { AdUnit } from '../../utils/ads';
+import { AdUnit, useSettingsRewardedAd } from '../../utils/ads';
 
 type Props = {
   navigation: StackNavigationProp<MoreParamList, 'MoreScreen'>;
@@ -33,6 +33,7 @@ type ListItemSelectSetting = {
 
 const MoreScreen = ({ navigation }: Props) => {
   const dispatch = useDispatch();
+  const rewarded = useSettingsRewardedAd();
 
   const resetAppAlert = useCallback(() => {
     const message =
@@ -51,32 +52,39 @@ const MoreScreen = ({ navigation }: Props) => {
     }
   }, [dispatch]);
 
-  const listItems: (
-    | ListItemNav
-    | ListItemSelectSetting
-    | ListItemAction
-    | ListItemBooleanSetting
-  )[] = [
-    { label: 'Help', destination: 'HelpScreen' },
-    { label: 'About', destination: 'AboutScreen' },
-    { label: 'Feedback', destination: 'FeedbackScreen' },
-    { label: 'Reset', action: resetAppAlert },
-  ];
+  const listItems = useMemo(() => {
+    const items: (
+      | ListItemNav
+      | ListItemSelectSetting
+      | ListItemAction
+      | ListItemBooleanSetting
+    )[] = [
+      { label: 'Help', destination: 'HelpScreen' },
+      { label: 'About', destination: 'AboutScreen' },
+      { label: 'Feedback', destination: 'FeedbackScreen' },
+      { label: 'Reset', action: resetAppAlert },
+    ];
+
+    if (Platform.OS !== 'web' && rewarded.isLoaded) {
+      items.push({ label: '❤️', action: rewarded.show });
+    }
+
+    const booleans: (keyof BooleanSettings)[] = [
+      'countUp',
+      'showTotalTime',
+      'hideDescription',
+    ];
+    const selectables: (keyof SelectSettings)[] = ['theme', 'ads'];
+
+    booleans.forEach((setting) => items.push({ setting, isBoolean: true }));
+    selectables.forEach((setting) => items.push({ setting, isBoolean: false }));
+
+    return items;
+  }, [resetAppAlert, rewarded.isLoaded, rewarded.show]);
+
   const lastNavListItem = listItems.length - 1;
 
-  const booleans: (keyof BooleanSettings)[] = [
-    'countUp',
-    'showTotalTime',
-    'hideDescription',
-  ];
-  const selectables: (keyof SelectSettings)[] = ['theme', 'ads'];
-
-  booleans.forEach((setting) => listItems.push({ setting, isBoolean: true }));
-  selectables.forEach((setting) =>
-    listItems.push({ setting, isBoolean: false })
-  );
-
-  const getListItem = (listItem: typeof listItems[0], index: number) => {
+  const renderListItem = (listItem: (typeof listItems)[0], index: number) => {
     if ('setting' in listItem) {
       if (listItem.isBoolean) {
         return <ListItemToggle setting={listItem.setting} />;
@@ -117,7 +125,7 @@ const MoreScreen = ({ navigation }: Props) => {
         ItemSeparatorComponent={Divider}
         data={listItems}
         keyExtractor={(_, i) => '' + i}
-        renderItem={({ item, index }) => getListItem(item, index)}
+        renderItem={({ item, index }) => renderListItem(item, index)}
       />
       <PotentialAd unit={AdUnit.settings} />
     </Layout>

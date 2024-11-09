@@ -1,4 +1,4 @@
-import { NavigatorScreenParams } from "@react-navigation/native";
+import { NavigatorScreenParams } from '@react-navigation/native';
 
 export enum ActionType {
   sound = 'sound',
@@ -98,3 +98,14 @@ export type Action = (
   | PauseAction
 ) &
   BaseAction;
+
+export type AdUnitIds = {
+  ios: string;
+  android: string;
+  test: string;
+};
+
+export type RewardedInterOp = {
+  isLoaded: boolean;
+  show: VoidFunction;
+};

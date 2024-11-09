@@ -9,7 +9,8 @@ import mobileAds, {
   MaxAdContentRating,
 } from 'react-native-google-mobile-ads';
 import { useDispatch } from 'react-redux';
-import { AdUnit, getAdId } from '../../../utils/ads';
+import { getAdId } from '../../../utils/ads';
+import { AdUnitIds } from '../../../types';
 
 mobileAds()
   .setRequestConfiguration({
@@ -17,7 +18,7 @@ mobileAds()
   })
   .then(() => mobileAds().initialize());
 
-const Ad = ({ unit, onFail }: { unit: AdUnit; onFail: VoidFunction }) => {
+const Ad = ({ unit, onFail }: { unit: AdUnitIds; onFail: VoidFunction }) => {
   const dispatch = useDispatch();
   const [showPersonalized, setShowPersonalized] = useState(false);
 

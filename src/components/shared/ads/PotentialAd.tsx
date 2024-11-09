@@ -4,13 +4,13 @@ import { useDispatch } from 'react-redux';
 import { updateSetting } from '../../../redux/actions';
 import { AdType, initialState } from '../../../redux/reducers/settingsReducer';
 import { useSetting } from '../../../redux/selectors';
-import { AdUnit } from '../../../utils/ads';
+import { AdUnitIds } from '../../../types';
 import Ad from './Ad';
 
 //                   ms     s <- m <- h <- d <- 14 days
 const AD_RESET_DELAY_MS = 1000 * 60 * 60 * 24 * 14;
 
-const PotentialAd = ({ unit }: { unit: AdUnit }) => {
+const PotentialAd = ({ unit }: { unit: AdUnitIds }) => {
   const dispatch = useDispatch();
   const adSetting = useSetting('ads');
   const adLastReset = useSetting('adLastReset');
