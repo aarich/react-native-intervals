@@ -65,10 +65,6 @@ const MoreScreen = ({ navigation }: Props) => {
       { label: 'Reset', action: resetAppAlert },
     ];
 
-    if (Platform.OS !== 'web' && rewarded.isLoaded) {
-      items.push({ label: '❤️', action: rewarded.show });
-    }
-
     const booleans: (keyof BooleanSettings)[] = [
       'countUp',
       'showTotalTime',
@@ -78,6 +74,10 @@ const MoreScreen = ({ navigation }: Props) => {
 
     booleans.forEach((setting) => items.push({ setting, isBoolean: true }));
     selectables.forEach((setting) => items.push({ setting, isBoolean: false }));
+
+    if (Platform.OS !== 'web' && rewarded.isLoaded) {
+      items.push({ label: '❤️', action: rewarded.show });
+    }
 
     return items;
   }, [resetAppAlert, rewarded.isLoaded, rewarded.show]);

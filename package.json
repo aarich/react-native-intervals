@@ -5,7 +5,8 @@
     "lint": "eslint .",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "build-ios": "eas build -p ios --profile production --auto-submit --no-wait"
+    "build-ios": "eas build -p ios --profile production --auto-submit --no-wait",
+    "build-android": "eas build -p android --profile production --auto-submit --no-wait"
   },
   "homepage": "/intervals",
   "jest": {

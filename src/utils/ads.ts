@@ -1,9 +1,8 @@
 import { Alert, Platform } from 'react-native';
 import {
   TestIds,
-  RewardedAd,
-  RewardedAdEventType,
   AdEventType,
+  InterstitialAd,
 } from 'react-native-google-mobile-ads';
 import { AdUnitIds, RewardedInterOp } from '../types';
 import { useCallback, useEffect, useState } from 'react';
@@ -19,10 +18,10 @@ export const AdUnit = {
     android: 'ca-app-pub-6949812709353975/5966269595',
     test: TestIds.BANNER,
   },
-  settings_rewarded: {
-    ios: 'ca-app-pub-6949812709353975/6055196556',
-    android: 'ca-app-pub-6949812709353975/8845011424',
-    test: TestIds.REWARDED,
+  settings_interstitial: {
+    ios: 'ca-app-pub-6949812709353975/2807050832',
+    android: 'ca-app-pub-6949812709353975/1009488089',
+    test: TestIds.INTERSTITIAL,
   },
 };
 
@@ -33,8 +32,8 @@ export const getAdId = (unit: AdUnitIds): string => {
   return Platform.select(unit) as string;
 };
 
-const rewarded = RewardedAd.createForAdRequest(
-  getAdId(AdUnit.settings_rewarded)
+const settingsInterstitial = InterstitialAd.createForAdRequest(
+  getAdId(AdUnit.settings_interstitial)
 );
 
 export const useSettingsRewardedAd = (): RewardedInterOp => {
@@ -42,22 +41,20 @@ export const useSettingsRewardedAd = (): RewardedInterOp => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    const unsubscribeLoaded = rewarded.addAdEventListener(
-      RewardedAdEventType.LOADED,
-      () => {
-        return setIsLoaded(true);
-      }
+    const unsubscribeLoaded = settingsInterstitial.addAdEventListener(
+      AdEventType.LOADED,
+      () => setIsLoaded(true)
     );
-    const unsubscribeEarned = rewarded.addAdEventListener(
+    const unsubscribeEarned = settingsInterstitial.addAdEventListener(
       AdEventType.CLOSED,
       () => {
         Alert.alert('Thank you for your support!');
-        rewarded.load();
+        settingsInterstitial.load();
         setIsLoaded(false);
       }
     );
 
-    rewarded.load();
+    settingsInterstitial.load();
 
     return () => {
       unsubscribeEarned();
@@ -67,7 +64,7 @@ export const useSettingsRewardedAd = (): RewardedInterOp => {
 
   const show = useCallback(() => {
     if (hasShownInfo) {
-      rewarded.show();
+      settingsInterstitial.show();
     } else {
       Alert.alert(
         'Support the Developer',
@@ -76,7 +73,7 @@ export const useSettingsRewardedAd = (): RewardedInterOp => {
           {
             text: 'Check it out',
             onPress: () => {
-              rewarded.show();
+              settingsInterstitial.show();
               setHasShownInfo(true);
             },
           },
