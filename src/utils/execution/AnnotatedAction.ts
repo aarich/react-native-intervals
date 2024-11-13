@@ -1,6 +1,6 @@
 import { Audio } from 'expo-av';
 import { Action, ActionType } from '../../types';
-import { AUDIO_FILES, play } from '../audio';
+import { getAudioInfo, play } from '../audio';
 import Executor from './Executor';
 
 export default class AnnotatedAction {
@@ -80,7 +80,7 @@ export default class AnnotatedAction {
   public onStart(executor: Executor, isRapid?: boolean) {
     this.elapsedMs = 0;
     if (!isRapid && this.action.type === ActionType.sound) {
-      play(AUDIO_FILES[this.action.params.sound], {
+      play(getAudioInfo(this.action.params.sound), {
         isLooping: true,
       }).then((sound) => (this.playingSound = sound));
     }
@@ -103,7 +103,7 @@ export default class AnnotatedAction {
   public onResume() {
     this.hasResumed = true;
     if (this.action.type === ActionType.sound) {
-      play(AUDIO_FILES[this.action.params.sound], {
+      play(getAudioInfo(this.action.params.sound), {
         isLooping: true,
         positionMillis: this.elapsedMs,
       }).then((sound) => (this.playingSound = sound));

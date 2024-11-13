@@ -4,7 +4,7 @@ import { IndexPath, Select, SelectItem, Text } from '@ui-kitten/components';
 
 import { Action, ActionType } from '../../../types';
 import { getActionInfo } from '../../../utils/actions';
-import { AUDIO_FILES } from '../../../utils/audio';
+import { getAudioInfo } from '../../../utils/audio';
 import Input from '../../shared/Input';
 import { BaseFormEditProps } from './FormEdit';
 
@@ -13,7 +13,7 @@ const getNameFromAction = (action: Action) => {
   let name;
   switch (action.type) {
     case ActionType.sound:
-      name = `Play ${AUDIO_FILES[action.params.sound].name}`;
+      name = `Play ${getAudioInfo(action.params.sound).name}`;
       break;
     case ActionType.act:
     case ActionType.pause:
@@ -60,8 +60,7 @@ const FormEditGoTo = ({
         label="Return to which node?"
         selectedIndex={selectedIndex}
         onSelect={(i) => setSelectedIndex(i as IndexPath)}
-        value={getNameFromAction(availableActions[selectedIndex.row])}
-      >
+        value={getNameFromAction(availableActions[selectedIndex.row])}>
         {availableActions.map((action, i) => (
           <SelectItem title={getNameFromAction(action)} key={i} />
         ))}

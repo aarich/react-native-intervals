@@ -9,10 +9,11 @@ npm-debug.*
 *.orig.*
 web-build/
 *.bak
-scripts/keys.json
-scripts/copyFiles.sh
 pc-api*.json
 ios/*
+*.pem
+credentials.json
+dist/*
 
 # macOS
 .DS_Store

@@ -8,7 +8,7 @@ import {
   SoundParams,
   WaitParams,
 } from '../types';
-import { AUDIO_FILES } from './audio';
+import { getAudioInfo } from './audio';
 
 const getFancyTimeName = (s: number) => {
   const portions: string[] = [];
@@ -144,11 +144,11 @@ const soundActionInfo: ActionInfo<ActionType.sound> = {
     return { params, index, type: ActionType.sound };
   },
   getDetails: (action) =>
-    `Play ${AUDIO_FILES[action.params.sound].name} for ${getFancyTimeName(
+    `Play ${getAudioInfo(action.params.sound).name} for ${getFancyTimeName(
       action.params.time
     )}`,
   getActiveDetails: (action) => ({
-    title: AUDIO_FILES[action.params.sound].name,
+    title: getAudioInfo(action.params.sound).name,
     subtitle: getFancyTimeName(action.params.time),
   }),
   validate: validateDefault,

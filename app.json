@@ -2,7 +2,7 @@
   "expo": {
     "name": "Intervals",
     "slug": "intervals",
-    "version": "5.0.0",
+    "version": "5.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "intervals",
@@ -48,6 +48,9 @@
           "include": ["@ui-kitten/components", "@ui-kitten/eva-icons"]
         }
       }
+    },
+    "experiments": {
+      "baseUrl": "/intervals"
     },
     "extra": {
       "MyVersion": "34",

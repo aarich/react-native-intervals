@@ -1,4 +1,4 @@
-import { AUDIO_FILES, load } from '../../../utils/audio';
+import { AUDIO_FILES, getAudioInfo, load } from '../../../utils/audio';
 import {
   Button,
   Icon,
@@ -21,15 +21,15 @@ const FormEditSound = ({
 }: BaseFormEditProps) => {
   const [sound, setSound] = useState<Audio.Sound>();
   const [playing, setPlaying] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedAudioId, setSelectedAudioId] = useState(0);
 
   useEffect(() => {
-    const index = typeof params.sound === 'number' ? params.sound : 0;
-    setSelectedIndex(index);
+    const id = typeof params.sound === 'number' ? params.sound : 0;
+    setSelectedAudioId(id);
     if (!params.sound) {
-      setParams((params) => ({ ...params, sound: index }));
+      setParams((params) => ({ ...params, sound: id }));
     }
-    load(AUDIO_FILES[index]).then(({ sound }) => setSound(sound));
+    load(getAudioInfo(id)).then(({ sound }) => setSound(sound));
   }, [params.sound, setParams]);
 
   useEffect(() => {
@@ -58,17 +58,20 @@ const FormEditSound = ({
       <View style={{ flexDirection: 'row' }}>
         <View style={{ flex: 4 }}>
           <Select
-            selectedIndex={new IndexPath(selectedIndex)}
+            selectedIndex={
+              new IndexPath(
+                AUDIO_FILES.findIndex((ai) => ai.id === selectedAudioId)
+              )
+            }
             onSelect={(i) =>
               setParams((params) => ({
                 ...params,
-                sound: (i as IndexPath).row,
+                sound: AUDIO_FILES[(i as IndexPath).row].id,
               }))
             }
-            value={AUDIO_FILES[selectedIndex].name}
-          >
-            {AUDIO_FILES.map((soundInfo, i) => (
-              <SelectItem title={soundInfo.name} key={i} />
+            value={getAudioInfo(selectedAudioId).name}>
+            {AUDIO_FILES.map((soundInfo) => (
+              <SelectItem title={soundInfo.name} key={soundInfo.id} />
             ))}
           </Select>
         </View>

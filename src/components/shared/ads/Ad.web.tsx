@@ -31,11 +31,11 @@ const Ad = () => {
         <ins
           className="adsbygoogle"
           style={{ display: 'block' }}
-          data-ad-format="fluid"
+          data-ad-format="auto"
           data-ad-layout-key="-h6-1+16-3y+52"
           data-ad-client="ca-pub-6949812709353975"
-          data-ad-slot="5143106383"
-        ></ins>
+          data-ad-slot="2555443822"
+          data-full-width-responsive="true"></ins>
       </div>
     </>
   );
