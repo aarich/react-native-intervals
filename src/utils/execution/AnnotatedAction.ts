@@ -82,7 +82,7 @@ export default class AnnotatedAction {
     if (!isRapid && this.action.type === ActionType.sound) {
       play(getAudioInfo(this.action.params.sound), {
         isLooping: true,
-      }).then((sound) => (this.playingSound = sound));
+      }).then(sound => this.handleNewlyPlayedSound(sound));
     }
 
     if (this.action.type === ActionType.pause) {
@@ -106,7 +106,7 @@ export default class AnnotatedAction {
       play(getAudioInfo(this.action.params.sound), {
         isLooping: true,
         positionMillis: this.elapsedMs,
-      }).then((sound) => (this.playingSound = sound));
+      }).then(sound => this.handleNewlyPlayedSound(sound));
     }
   }
 
@@ -128,6 +128,23 @@ export default class AnnotatedAction {
       return `Return to step ${this.action.params.targetNode + 1}. Repeats ${
         more - 1
       } more time${more - 1 === 1 ? '' : 's'}`;
+    }
+  }
+
+  /**
+   * For start and resume, check if we've already exited the action. This avoids a race condition
+   * where the sound node is skipped out of before the sound has been loaded. This way, as soon as the
+   * sound is loaded we check to make sure we haven't already exited the action.
+   */
+  private handleNewlyPlayedSound(sound: Audio.Sound) {
+    this.playingSound = sound;
+    if (this.totalPasses > 0) {
+      console.log('already passed')
+      // it means we already exited. Stop the sound
+      sound
+        .setStatusAsync({ shouldPlay: false })
+        .then(() => sound.unloadAsync())
+        .then(() => (this.playingSound = undefined));
     }
   }
 }

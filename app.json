@@ -16,14 +16,18 @@
       "fallbackToCacheTimeout": 5000,
       "url": "https://u.expo.dev/2b6d1444-cdad-44b6-82b5-58ca17788482"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "config": {
         "usesNonExemptEncryption": false
       },
       "bundleIdentifier": "com.mrarich.Intervals",
-      "associatedDomains": ["applinks:mrarich.com"],
+      "associatedDomains": [
+        "applinks:mrarich.com"
+      ],
       "infoPlist": {
         "NSUserTrackingUsageDescription": "We'd like to show relevant ads.",
         "NSMicrophoneUsageDescription": "We'll play alerts for your intervals."
@@ -45,7 +49,10 @@
       "favicon": "./assets/images/favicon.png",
       "build": {
         "babel": {
-          "include": ["@ui-kitten/components", "@ui-kitten/eva-icons"]
+          "include": [
+            "@ui-kitten/components",
+            "@ui-kitten/eva-icons"
+          ]
         }
       }
     },
@@ -53,7 +60,7 @@
       "baseUrl": "/intervals"
     },
     "extra": {
-      "MyVersion": "34",
+      "MyVersion": "35",
       "eas": {
         "projectId": "2b6d1444-cdad-44b6-82b5-58ca17788482"
       }

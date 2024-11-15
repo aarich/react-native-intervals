@@ -8,19 +8,19 @@ import Navigation from './src/navigation';
 import { persistor, store } from './src/redux/store';
 
 Sentry.init({
-  dsn: 'https://52cedabf65b0457c9f373fd935fe218e@o583200.ingest.sentry.io/5755214',
+  dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
   debug: __DEV__,
   autoSessionTracking: true,
 });
 
 export default Sentry.wrap(function App() {
   return (
-      <SafeAreaProvider>
-        <Provider store={store}>
-          <PersistGate loading={null} persistor={persistor}>
-            <Navigation />
-          </PersistGate>
-        </Provider>
-      </SafeAreaProvider>
+    <SafeAreaProvider>
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <Navigation />
+        </PersistGate>
+      </Provider>
+    </SafeAreaProvider>
   );
 });

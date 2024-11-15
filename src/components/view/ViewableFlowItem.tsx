@@ -25,10 +25,10 @@ const ViewableFlowItem = ({
     theme[{ dark: 'color-info-200', light: 'color-info-700' }[scheme]];
   const progressBackgroundColor =
     theme[
-      {
-        dark: 'color-info-transparent-600',
-        light: 'color-info-transparent-300',
-      }[scheme]
+    {
+      dark: 'color-info-transparent-600',
+      light: 'color-info-transparent-300',
+    }[scheme]
     ];
 
   let label = labelOverride;
@@ -45,7 +45,7 @@ const ViewableFlowItem = ({
     }
   }
   return (
-    <View>
+    <View style={{ height: 60 }}>
       <View style={styles.nodeRow}>
         <View style={styles.actionIcon}>
           <View style={{ flex: 1, justifyContent: 'center' }}>
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignContent: 'center',
-    paddingVertical: 10,
+    paddingVertical: 5,
   },
   text: {
     flex: 4,

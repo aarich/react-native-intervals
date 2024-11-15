@@ -32,10 +32,10 @@ const ViewableFlow = ({
 
   return (
     <FlatList
-      // @ts-ignore
       ref={listRef}
       style={style}
       data={actions}
+      showsVerticalScrollIndicator={false}
       keyExtractor={({ index }) => `${index}-${index === activeNodeIndex}`}
       onScrollToIndexFailed={() =>
         actions.length > 0 &&

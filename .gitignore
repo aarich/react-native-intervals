@@ -14,6 +14,7 @@ ios/*
 *.pem
 credentials.json
 dist/*
+.env
 
 # macOS
 .DS_Store
