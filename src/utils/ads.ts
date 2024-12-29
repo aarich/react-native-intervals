@@ -4,7 +4,7 @@ import {
   AdEventType,
   InterstitialAd,
 } from 'react-native-google-mobile-ads';
-import { AdUnitIds, RewardedInterOp } from '../types';
+import { AdUnitIds, SupportMeSuggestion } from '../types';
 import { useCallback, useEffect, useState } from 'react';
 
 export const AdUnit = {
@@ -36,7 +36,7 @@ const settingsInterstitial = InterstitialAd.createForAdRequest(
   getAdId(AdUnit.settings_interstitial)
 );
 
-export const useSettingsRewardedAd = (): RewardedInterOp => {
+export const useSupportMeSuggestion = (): SupportMeSuggestion => {
   const [hasShownInfo, setHasShownInfo] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -68,7 +68,7 @@ export const useSettingsRewardedAd = (): RewardedInterOp => {
     } else {
       Alert.alert(
         'Support the Developer',
-        'This is a hobby project. There are, however costs associated with publishing apps. If you like this app, please open this brief ad to support me! Thanks!',
+        'This is a hobby project. There is, however, a cost to publish apps. If you like this tool, please open this brief ad to support me! Thanks!',
         [
           {
             text: 'Check it out',

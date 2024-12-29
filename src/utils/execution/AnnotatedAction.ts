@@ -6,6 +6,7 @@ import Executor from './Executor';
 export default class AnnotatedAction {
   action: Action;
   elapsedMs: number;
+  private isCurrentlyPlayingAction: boolean;
 
   // For GoTo
   totalPasses: number;
@@ -19,6 +20,7 @@ export default class AnnotatedAction {
     this.elapsedMs = 0;
     this.totalPasses = 0;
     this.hasResumed = false;
+    this.isCurrentlyPlayingAction = false;
   }
 
   public tick(ms: number) {
@@ -67,6 +69,7 @@ export default class AnnotatedAction {
 
   public onLeave() {
     this.totalPasses++;
+    this.isCurrentlyPlayingAction = false;
     if (this.playingSound) {
       const sound = this.playingSound;
 
@@ -78,11 +81,12 @@ export default class AnnotatedAction {
   }
 
   public onStart(executor: Executor, isRapid?: boolean) {
+    this.isCurrentlyPlayingAction = true;
     this.elapsedMs = 0;
     if (!isRapid && this.action.type === ActionType.sound) {
       play(getAudioInfo(this.action.params.sound), {
         isLooping: true,
-      }).then(sound => this.handleNewlyPlayedSound(sound));
+      }).then((sound) => this.handleNewlyPlayedSound(sound));
     }
 
     if (this.action.type === ActionType.pause) {
@@ -91,6 +95,7 @@ export default class AnnotatedAction {
   }
 
   public onPause() {
+    this.isCurrentlyPlayingAction = false;
     if (this.playingSound) {
       const sound = this.playingSound;
 
@@ -101,12 +106,13 @@ export default class AnnotatedAction {
   }
 
   public onResume() {
+    this.isCurrentlyPlayingAction = true;
     this.hasResumed = true;
     if (this.action.type === ActionType.sound) {
       play(getAudioInfo(this.action.params.sound), {
         isLooping: true,
         positionMillis: this.elapsedMs,
-      }).then(sound => this.handleNewlyPlayedSound(sound));
+      }).then((sound) => this.handleNewlyPlayedSound(sound));
     }
   }
 
@@ -138,8 +144,7 @@ export default class AnnotatedAction {
    */
   private handleNewlyPlayedSound(sound: Audio.Sound) {
     this.playingSound = sound;
-    if (this.totalPasses > 0) {
-      console.log('already passed')
+    if (!this.isCurrentlyPlayingAction) {
       // it means we already exited. Stop the sound
       sound
         .setStatusAsync({ shouldPlay: false })

@@ -30,12 +30,9 @@ const Ad = () => {
       <div ref={divRef}>
         <ins
           className="adsbygoogle"
-          style={{ display: 'block' }}
-          data-ad-format="auto"
-          data-ad-layout-key="-h6-1+16-3y+52"
+          style={{ display: 'block', width: 728, height: 90 }}
           data-ad-client="ca-pub-6949812709353975"
-          data-ad-slot="2555443822"
-          data-full-width-responsive="true"></ins>
+          data-ad-slot="2555443822"></ins>
       </div>
     </>
   );

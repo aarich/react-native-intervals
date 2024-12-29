@@ -105,7 +105,7 @@ export type AdUnitIds = {
   test: string;
 };
 
-export type RewardedInterOp = {
+export type SupportMeSuggestion = {
   isLoaded: boolean;
   show: VoidFunction;
 };

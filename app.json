@@ -2,7 +2,7 @@
   "expo": {
     "name": "Intervals",
     "slug": "intervals",
-    "version": "5.0.1",
+    "version": "5.0.2",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "intervals",
@@ -16,18 +16,14 @@
       "fallbackToCacheTimeout": 5000,
       "url": "https://u.expo.dev/2b6d1444-cdad-44b6-82b5-58ca17788482"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "config": {
         "usesNonExemptEncryption": false
       },
       "bundleIdentifier": "com.mrarich.Intervals",
-      "associatedDomains": [
-        "applinks:mrarich.com"
-      ],
+      "associatedDomains": ["applinks:mrarich.com"],
       "infoPlist": {
         "NSUserTrackingUsageDescription": "We'd like to show relevant ads.",
         "NSMicrophoneUsageDescription": "We'll play alerts for your intervals."
@@ -49,10 +45,7 @@
       "favicon": "./assets/images/favicon.png",
       "build": {
         "babel": {
-          "include": [
-            "@ui-kitten/components",
-            "@ui-kitten/eva-icons"
-          ]
+          "include": ["@ui-kitten/components", "@ui-kitten/eva-icons"]
         }
       }
     },
@@ -60,7 +53,7 @@
       "baseUrl": "/intervals"
     },
     "extra": {
-      "MyVersion": "35",
+      "MyVersion": "36",
       "eas": {
         "projectId": "2b6d1444-cdad-44b6-82b5-58ca17788482"
       }
@@ -70,7 +63,8 @@
         "@sentry/react-native/expo",
         {
           "organization": "alex-rich",
-          "project": "intervals"
+          "project": "intervals",
+          "url": "https://sentry.io/"
         }
       ],
       [

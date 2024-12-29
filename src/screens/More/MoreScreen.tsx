@@ -14,7 +14,7 @@ import {
   SelectSettings,
 } from '../../redux/reducers/settingsReducer';
 import { MoreParamList } from '../../types';
-import { AdUnit, useSettingsRewardedAd } from '../../utils/ads';
+import { AdUnit, useSupportMeSuggestion } from '../../utils/ads';
 
 type Props = {
   navigation: StackNavigationProp<MoreParamList, 'MoreScreen'>;
@@ -33,7 +33,7 @@ type ListItemSelectSetting = {
 
 const MoreScreen = ({ navigation }: Props) => {
   const dispatch = useDispatch();
-  const rewarded = useSettingsRewardedAd();
+  const supportMe = useSupportMeSuggestion();
 
   const resetAppAlert = useCallback(() => {
     const message =
@@ -59,28 +59,28 @@ const MoreScreen = ({ navigation }: Props) => {
       | ListItemAction
       | ListItemBooleanSetting
     )[] = [
-      { label: 'Help', destination: 'HelpScreen' },
-      { label: 'About', destination: 'AboutScreen' },
-      { label: 'Feedback', destination: 'FeedbackScreen' },
-      { label: 'Reset', action: resetAppAlert },
-    ];
+        { label: 'Help', destination: 'HelpScreen' },
+        { label: 'About', destination: 'AboutScreen' },
+        { label: 'Feedback', destination: 'FeedbackScreen' },
+        { label: 'Reset', action: resetAppAlert },
+      ];
 
     const booleans: (keyof BooleanSettings)[] = [
       'countUp',
       'showTotalTime',
       'hideDescription',
     ];
-    const selectables: (keyof SelectSettings)[] = ['theme', 'ads'];
+    const selectables: (keyof SelectSettings)[] = ['theme', ...(Platform.select({ web: [], default: ['ads' as const] }))];
 
     booleans.forEach((setting) => items.push({ setting, isBoolean: true }));
     selectables.forEach((setting) => items.push({ setting, isBoolean: false }));
 
-    if (Platform.OS !== 'web' && rewarded.isLoaded) {
-      items.push({ label: '❤️', action: rewarded.show });
+    if (supportMe.isLoaded) {
+      items.push({ label: '❤️', action: supportMe.show });
     }
 
     return items;
-  }, [resetAppAlert, rewarded.isLoaded, rewarded.show]);
+  }, [resetAppAlert, supportMe.isLoaded, supportMe.show]);
 
   const lastNavListItem = listItems.length - 1;
 

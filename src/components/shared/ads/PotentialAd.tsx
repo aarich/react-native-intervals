@@ -6,6 +6,7 @@ import { AdType, initialState } from '../../../redux/reducers/settingsReducer';
 import { useSetting } from '../../../redux/selectors';
 import { AdUnitIds } from '../../../types';
 import Ad from './Ad';
+import { Platform } from 'react-native';
 
 //                   ms     s <- m <- h <- d <- 14 days
 const AD_RESET_DELAY_MS = 1000 * 60 * 60 * 24 * 14;
@@ -24,7 +25,7 @@ const PotentialAd = ({ unit }: { unit: AdUnitIds }) => {
   }, [adLastReset, adSetting, dispatch]);
 
   useEffect(() => {
-    setShowAd(AdType.Off !== adSetting);
+    setShowAd(AdType.Off !== adSetting && Platform.OS !== 'web');
   }, [adSetting]);
 
   return showAd ? <Ad unit={unit} onFail={() => setShowAd(false)} /> : null;

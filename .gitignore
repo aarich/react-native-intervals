@@ -15,6 +15,5 @@ ios/*
 credentials.json
 dist/*
 .env
-
-# macOS
 .DS_Store
+scripts/deploy-web.sh
