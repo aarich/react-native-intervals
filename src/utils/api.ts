@@ -167,7 +167,7 @@ const actionIndices = [
   ActionType.goTo,
 ];
 
-export const serialize = (timer: Timer): string => {
+export const serialize = (timer: Timer, namePrefix = ''): string => {
   const actions: SerializableAction[] = timer.flow.map((action) => {
     let p;
     switch (action.type) {
@@ -194,7 +194,7 @@ export const serialize = (timer: Timer): string => {
   });
 
   const flow: SerializableTimer = {
-    n: timer.name,
+    n: namePrefix + timer.name,
     d: timer.description,
     f: actions,
   };

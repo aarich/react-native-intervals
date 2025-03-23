@@ -1,6 +1,5 @@
-/* eslint-disable no-undef */
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const fs = require('fs');
+import fs from 'fs';
+import { updateAppJson } from './preBuildWeb.js';
 
 const content = `
     <!-- Custom Content -->
@@ -60,3 +59,11 @@ indexContent =
 
 fs.writeFileSync('dist/index.php', indexContent);
 fs.unlinkSync('dist/index.html');
+
+updateAppJson((appJson) => {
+  if (appJson.expo.experiments) {
+    delete appJson.expo.experiments;
+  } else {
+    console.log('No experiments key found in app.json.');
+  }
+});

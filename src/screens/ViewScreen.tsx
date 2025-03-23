@@ -16,7 +16,8 @@ import ViewableFlow from '../components/view/ViewableFlow';
 import { useSetting } from '../redux/selectors';
 import { useTimer } from '../redux/selectors/TimerSelector';
 import { TimersParamList } from '../types';
-import { openInApp, osAlert, share } from '../utils/experience';
+import { openInApp, osAlert, osConfirm, share } from '../utils/experience';
+import { serialize } from '../utils/api';
 
 type Props = {
   navigation: StackNavigationProp<TimersParamList, 'ViewScreen'>;
@@ -44,6 +45,19 @@ const ViewScreen = ({ navigation, route }: Props) => {
       navigation.pop();
       return;
     }
+
+    const duplicateTimer = () => {
+      osConfirm(
+        'Would you like to duplicate this flow?',
+        () =>
+          navigation.push('EditScreen', {
+            serializedFlow: serialize(timer, 'Copy of '),
+          }),
+        'Duplicate It',
+        'default'
+      );
+    };
+
     navigation.setOptions({
       title: timer.name,
       headerTitle: timer.name,
@@ -54,9 +68,16 @@ const ViewScreen = ({ navigation, route }: Props) => {
             onPress={() => share(timer)}
           />
           <TopNavigationAction
+            icon={(props) => <Icon {...props} name="copy-outline" />}
+            onPress={duplicateTimer}
+          />
+          <TopNavigationAction
             icon={(props) => <Icon {...props} name="edit-outline" />}
             onPress={() =>
-              navigation.push('EditScreen', { id, serializedFlow: undefined })
+              navigation.push('EditScreen', {
+                id,
+                serializedFlow: undefined,
+              })
             }
           />
           {Platform.OS === 'web' ? (

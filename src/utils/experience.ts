@@ -1,7 +1,7 @@
 import * as Clipboard from 'expo-clipboard';
 import Constants from 'expo-constants';
 import { openURL } from 'expo-linking';
-import { Alert, Platform, Share } from 'react-native';
+import { Alert, AlertButton, Platform, Share } from 'react-native';
 import { Timer } from '../types';
 import { getShortenedURL, serialize } from './api';
 
@@ -94,4 +94,23 @@ export const openInApp = (timer: Timer) => {
   const serialized = serialize(timer);
   const url = `${Constants.expoConfig?.scheme}://?f=${serialized}`;
   openURL(url);
+};
+
+export const osConfirm = (
+  message: string,
+  onConfirm: VoidFunction,
+  nativeConfirm: string,
+  nativeConfirmStyle: AlertButton['style'] = 'destructive',
+  nativeTitle = 'Are you sure?'
+) => {
+  if (Platform.OS === 'web') {
+    if (confirm(message)) {
+      onConfirm();
+    }
+    return;
+  }
+  Alert.alert(nativeTitle, message, [
+    { text: nativeConfirm, style: nativeConfirmStyle, onPress: onConfirm },
+    { text: 'Cancel' },
+  ]);
 };

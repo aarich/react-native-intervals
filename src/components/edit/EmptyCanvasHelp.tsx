@@ -3,34 +3,41 @@ import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { Action } from '../../types';
-import LoadSampleOverlay from './LoadSampleOverlay';
+import LoadSampleOverlay, { ModalState } from './LoadSampleOverlay';
 
 type Props = {
   onSetTemplate: (nodes: Action[], title: string, description: string) => void;
 };
 
 const EmptyCanvasHelp = ({ onSetTemplate }: Props) => {
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalState, setModalState] = useState(ModalState.HIDDEN);
   return (
     <View style={styles.container}>
       <LoadSampleOverlay
-        visible={modalVisible}
+        modalState={modalState}
         onSetTemplate={(n, t, d) => {
-          setModalVisible(false);
+          setModalState(ModalState.HIDDEN);
           onSetTemplate(n, t, d);
         }}
-        onClose={() => setModalVisible(false)}
+        onClose={() => setModalState(ModalState.HIDDEN)}
       />
       <View style={{ flex: 1 }}>
         <Text category="h1">Need Inspiration?</Text>
         <Text
           category="s1"
-          style={{ textAlign: 'center', paddingVertical: 15 }}
-        >
+          style={{ textAlign: 'center', paddingVertical: 15 }}>
           Load a sample template to get started.
         </Text>
-        <Button appearance="outline" onPress={() => setModalVisible(true)}>
-          Browse Examples
+        <Button
+          appearance="outline"
+          onPress={() => setModalState(ModalState.SAMPLE)}>
+          Browse Samples
+        </Button>
+        <Button
+          appearance="outline"
+          onPress={() => setModalState(ModalState.DUPLICATE)}
+          style={{ marginVertical: 15 }}>
+          Copy an Existing Flow
         </Button>
       </View>
     </View>

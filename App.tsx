@@ -11,6 +11,7 @@ Sentry.init({
   dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
   debug: __DEV__,
   autoSessionTracking: true,
+  normalizeDepth: 5,
 });
 
 export default Sentry.wrap(function App() {

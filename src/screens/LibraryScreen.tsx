@@ -9,13 +9,14 @@ import {
   TopNavigationAction,
 } from '@ui-kitten/components';
 import { useCallback, useEffect } from 'react';
-import { Alert, Platform, Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import PotentialAd from '../components/shared/ads/PotentialAd';
 import { deleteTimer } from '../redux/actions';
 import { useTimers } from '../redux/selectors/TimerSelector';
 import { TimersParamList } from '../types';
 import { AdUnit } from '../utils/ads';
+import { osConfirm } from '../utils/experience';
 
 type Props = {
   navigation: StackNavigationProp<TimersParamList, 'LibraryScreen'>;
@@ -44,28 +45,10 @@ const LibraryScreen = ({ navigation }: Props) => {
 
   const deleteTimerAlert = useCallback(
     (id: string) => {
-      const doIt = () => dispatch(deleteTimer(id));
-      if (Platform.OS === 'web') {
-        if (
-          confirm(
-            `Do you really want to delete '${timers[id].name}'?\n\nThis action cannot be undone.`
-          )
-        ) {
-          doIt();
-        }
-        return;
-      }
-      Alert.alert(
-        'Are you sure?',
+      osConfirm(
         `Do you really want to delete '${timers[id].name}'?\n\nThis action cannot be undone.`,
-        [
-          {
-            text: 'Delete',
-            style: 'destructive',
-            onPress: doIt,
-          },
-          { text: 'Cancel' },
-        ]
+        () => dispatch(deleteTimer(id)),
+        'Delete'
       );
     },
     [dispatch, timers]
@@ -88,8 +71,7 @@ const LibraryScreen = ({ navigation }: Props) => {
             accessoryRight={(props) => (
               <Pressable
                 style={{ flexDirection: 'row' }}
-                onPress={() => deleteTimerAlert(item.id)}
-              >
+                onPress={() => deleteTimerAlert(item.id)}>
                 <Icon {...props} name="trash-outline" />
                 <Icon {...props} name="chevron-right-outline" />
               </Pressable>
@@ -115,8 +97,7 @@ const LibraryScreen = ({ navigation }: Props) => {
                 alignItems: 'center',
                 width: '80%',
               },
-            ]}
-          >
+            ]}>
             <Text category="h1">Nothing Here</Text>
             <Text category="s1" style={{ textAlign: 'center', paddingTop: 10 }}>
               {

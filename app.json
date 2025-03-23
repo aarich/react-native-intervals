@@ -2,7 +2,7 @@
   "expo": {
     "name": "Intervals",
     "slug": "intervals",
-    "version": "5.0.2",
+    "version": "5.2.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "intervals",
@@ -16,7 +16,6 @@
       "fallbackToCacheTimeout": 5000,
       "url": "https://u.expo.dev/2b6d1444-cdad-44b6-82b5-58ca17788482"
     },
-    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "config": {
@@ -49,24 +48,13 @@
         }
       }
     },
-    "experiments": {
-      "baseUrl": "/intervals"
-    },
     "extra": {
-      "MyVersion": "36",
+      "MyVersion": "39",
       "eas": {
         "projectId": "2b6d1444-cdad-44b6-82b5-58ca17788482"
       }
     },
     "plugins": [
-      [
-        "@sentry/react-native/expo",
-        {
-          "organization": "alex-rich",
-          "project": "intervals",
-          "url": "https://sentry.io/"
-        }
-      ],
       [
         "expo-tracking-transparency",
         {
@@ -74,15 +62,6 @@
         }
       ],
       "expo-font",
-      "expo-asset",
-      [
-        "expo-build-properties",
-        {
-          "ios": {
-            "useFrameworks": "static"
-          }
-        }
-      ],
       [
         "react-native-google-mobile-ads",
         {
@@ -139,6 +118,14 @@
             "3rd42ekr43.skadnetwork",
             "3qcr597p9d.skadnetwork"
           ]
+        }
+      ],
+      [
+        "@sentry/react-native/expo",
+        {
+          "organization": "alex-rich",
+          "project": "intervals",
+          "url": "https://sentry.io/"
         }
       ]
     ],
