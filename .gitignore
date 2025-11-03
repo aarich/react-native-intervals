@@ -17,3 +17,4 @@ dist/*
 .env
 .DS_Store
 scripts/deploy-web.sh
+.expo

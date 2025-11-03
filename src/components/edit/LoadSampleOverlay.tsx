@@ -49,7 +49,7 @@ const LoadSampleOverlay = ({ onSetTemplate, modalState, onClose }: Props) => {
   useEffect(() => {
     // Reset to 0 to avoid going out of bounds if the library changes
     setSelectedIndex((prev) => (prev >= library.length ? 0 : prev));
-  }, [library]);
+  }, [library.length]);
 
   const { nodes, title, description } = library[selectedIndex] ?? {};
   return (

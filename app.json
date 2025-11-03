@@ -2,7 +2,7 @@
   "expo": {
     "name": "Intervals",
     "slug": "intervals",
-    "version": "5.2.0",
+    "version": "6.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "intervals",
@@ -127,7 +127,8 @@
           "project": "intervals",
           "url": "https://sentry.io/"
         }
-      ]
+      ],
+      "expo-web-browser"
     ],
     "runtimeVersion": {
       "policy": "appVersion"
