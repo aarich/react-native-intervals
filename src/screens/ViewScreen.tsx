@@ -50,7 +50,7 @@ const ViewScreen = ({ navigation, route }: Props) => {
       osConfirm(
         'Would you like to duplicate this flow?',
         () =>
-          navigation.push('EditScreen', {
+          navigation.replace('EditScreen', {
             serializedFlow: serialize(timer, 'Copy of '),
           }),
         'Duplicate It',

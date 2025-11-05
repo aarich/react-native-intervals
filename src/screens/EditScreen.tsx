@@ -171,8 +171,8 @@ const EditScreen = ({ navigation, route }: Props) => {
 
   const deleteNode = useCallback(
     (index: number) => {
-      setNodes(
-        fixIndexes(nodes.filter((_, i) => index !== i)).map((node) => {
+      setNodes((old) =>
+        fixIndexes(old.filter((_, i) => index !== i)).map((node) => {
           if (node.type === ActionType.goTo && node.params.targetNode > index) {
             // We deleted a node. If this go to action was intended to go after it, we need to decrement it
             node.params.targetNode--;
@@ -180,8 +180,26 @@ const EditScreen = ({ navigation, route }: Props) => {
           return node;
         })
       );
+      setDirty(true);
     },
-    [nodes]
+    [setDirty]
+  );
+
+  const moveNode = useCallback(
+    (index: number, isMoveUp: boolean) => {
+      setNodes((oldNodes) => {
+        const newNodes = [...oldNodes];
+        const targetIndex = isMoveUp ? index - 1 : index + 1;
+        if (targetIndex >= 0 && targetIndex < newNodes.length) {
+          const temp = newNodes[index];
+          newNodes[index] = newNodes[targetIndex];
+          newNodes[targetIndex] = temp;
+        }
+        return fixIndexes(newNodes);
+      });
+      setDirty(true);
+    },
+    [setDirty]
   );
 
   const onSave = useCallback(
@@ -294,7 +312,7 @@ const EditScreen = ({ navigation, route }: Props) => {
 
   // If the nodes are changed do some cleanup work like removing go-tos
   useEffect(() => {
-    setActiveInsertIndex(nodes.length);
+    setActiveInsertIndex((old) => Math.min(nodes.length, old));
     if (nodes.length > 0 && nodes[0].type === ActionType.goTo) {
       // Remove go-tos at the beginning
       deleteNode(0);
@@ -311,13 +329,11 @@ const EditScreen = ({ navigation, route }: Props) => {
     <Layout style={styles.container}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        style={{ flex: 1 }}
-      >
+        style={{ flex: 1 }}>
         <ScrollView
           style={{ flex: 1 }}
           contentContainerStyle={{ margin: '5%', flexGrow: 1 }}
-          stickyHeaderIndices={[2]}
-        >
+          stickyHeaderIndices={[2]}>
           <View>
             <View style={{ flexDirection: 'row' }}>
               <Input
@@ -376,6 +392,7 @@ const EditScreen = ({ navigation, route }: Props) => {
                 setActiveInsertIndex(i);
                 setActionToEdit(nodes[i]);
               }}
+              onMoveNode={moveNode}
               onDeleteNode={deleteNode}
               activeInsertIndex={activeInsertIndex}
               onUpdateActiveInsertIndex={(i) =>
