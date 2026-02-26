@@ -11,7 +11,7 @@ export type TimerActions = {
 export const useTimer = (): { timer: number } & TimerActions => {
   const [timer, setTimer] = useState(0);
   const [danglingPausedMs, setDanglingPausedMs] = useState(0);
-  const countRef = useRef<NodeJS.Timeout>();
+  const countRef = useRef<NodeJS.Timeout>(null);
 
   const handleStart = useCallback(() => {
     countRef.current = setInterval(() => {

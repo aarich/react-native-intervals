@@ -1,6 +1,6 @@
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Divider, Icon, Layout, List, ListItem } from '@ui-kitten/components';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, ReactElement } from 'react';
 import { Alert, Platform, StyleSheet, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -59,18 +59,21 @@ const MoreScreen = ({ navigation }: Props) => {
       | ListItemAction
       | ListItemBooleanSetting
     )[] = [
-        { label: 'Help', destination: 'HelpScreen' },
-        { label: 'About', destination: 'AboutScreen' },
-        { label: 'Feedback', destination: 'FeedbackScreen' },
-        { label: 'Reset', action: resetAppAlert },
-      ];
+      { label: 'Help', destination: 'HelpScreen' },
+      { label: 'About', destination: 'AboutScreen' },
+      { label: 'Feedback', destination: 'FeedbackScreen' },
+      { label: 'Reset', action: resetAppAlert },
+    ];
 
     const booleans: (keyof BooleanSettings)[] = [
       'countUp',
       'showTotalTime',
       'hideDescription',
     ];
-    const selectables: (keyof SelectSettings)[] = ['theme', ...(Platform.select({ web: [], default: ['ads' as const] }))];
+    const selectables: (keyof SelectSettings)[] = [
+      'theme',
+      ...Platform.select({ web: [], default: ['ads' as const] }),
+    ];
 
     booleans.forEach((setting) => items.push({ setting, isBoolean: true }));
     selectables.forEach((setting) => items.push({ setting, isBoolean: false }));
@@ -89,7 +92,7 @@ const MoreScreen = ({ navigation }: Props) => {
       if (listItem.isBoolean) {
         return <ListItemToggle setting={listItem.setting} />;
       } else {
-        const Comp: () => JSX.Element = {
+        const Comp: () => ReactElement = {
           ads: ListItemAds,
           theme: ListItemTheme,
         }[listItem.setting];

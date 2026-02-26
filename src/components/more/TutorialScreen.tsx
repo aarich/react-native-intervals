@@ -4,7 +4,7 @@ import { StyleSheet, View } from 'react-native';
 type Props = {
   title: string;
   subtitle: string;
-  graphic?: JSX.Element;
+  graphic?: React.ReactElement;
 };
 
 const TutorialScreen = ({ title, subtitle = '', graphic }: Props) => {

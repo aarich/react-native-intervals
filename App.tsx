@@ -10,7 +10,7 @@ import { persistor, store } from './src/redux/store';
 Sentry.init({
   dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
   debug: __DEV__,
-  autoSessionTracking: true,
+  enableAutoSessionTracking: true,
   normalizeDepth: 5,
 });
 
