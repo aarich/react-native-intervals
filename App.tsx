@@ -7,10 +7,9 @@ import * as Sentry from '@sentry/react-native';
 import Navigation from './src/navigation';
 import { persistor, store } from './src/redux/store';
 import {
-  cancelIntervalNotifications,
   requestNotificationPermissionImmediately,
 } from './src/utils/background/notifications';
-import { stopLiveActivity } from './src/utils/background/liveActivity';
+import { liveActivityManager } from './src/utils/background/liveActivityManager';
 
 Sentry.init({
   dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
@@ -24,8 +23,7 @@ export default Sentry.wrap(function App() {
     void requestNotificationPermissionImmediately();
 
     return () => {
-      stopLiveActivity();
-      cancelIntervalNotifications();
+      void liveActivityManager.stop();
     };
   }, []);
 

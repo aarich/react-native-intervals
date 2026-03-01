@@ -236,7 +236,6 @@ export default class Executor {
       if (!first) {
         results.push({
           offsetMs: elapsedOffsetMs,
-          step: action.index + 1,
           title: getActionInfo(action.type).getDetails(action),
           actionType: action.type,
         });

@@ -12,6 +12,7 @@ import PotentialAd from '../../components/shared/ads/PotentialAd';
 import { resetApp } from '../../redux/actions';
 import {
   BooleanSettings,
+  IS_LIVE_ACTIVITY_AVAILABLE,
   SelectSettings,
 } from '../../redux/reducers/settingsReducer';
 import { MoreParamList } from '../../types';
@@ -48,11 +49,9 @@ const MoreScreen = ({ navigation }: Props) => {
     setNotificationStatus(status);
   }, []);
 
-  useFocusEffect(
-    useCallback(() => {
-      void loadNotificationStatus();
-    }, [loadNotificationStatus]),
-  );
+  useFocusEffect(() => {
+    loadNotificationStatus();
+  });
 
   const resetAppAlert = useCallback(() => {
     const message =
@@ -88,8 +87,12 @@ const MoreScreen = ({ navigation }: Props) => {
       'countUp',
       'showTotalTime',
       'hideDescription',
-      'hideLiveActivity',
     ];
+
+    if (IS_LIVE_ACTIVITY_AVAILABLE) {
+      booleans.push('hideLiveActivity');
+    }
+
     const selectables: (keyof SelectSettings)[] = [
       ...Platform.select({ web: [], default: ['ads' as const] }),
       'theme',

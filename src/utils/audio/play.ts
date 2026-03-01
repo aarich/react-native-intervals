@@ -6,11 +6,14 @@ export const load = (audioInfo: AudioInfo) => createAudioPlayer(audioInfo.file);
 
 export const play = (
   audioInfo: AudioInfo,
-  options?: { isLooping?: boolean; positionMillis?: number },
+  options?: { isLooping?: boolean; positionMillis?: number; volume?: number },
 ): AudioPlayer => {
   const player = load(audioInfo);
   if (options?.isLooping) {
     player.loop = true;
+  }
+  if (typeof options?.volume === 'number') {
+    player.volume = options.volume;
   }
   if (options?.positionMillis) {
     player.seekTo(options.positionMillis / 1000);

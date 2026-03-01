@@ -5,14 +5,7 @@ import useColorScheme from '../../hooks/useColorScheme';
 import { useTimer } from '../../hooks/useTimer';
 import { useSetting } from '../../redux/selectors';
 import { Action } from '../../types';
-import {
-  cancelIntervalNotifications,
-  scheduleIntervalNotifications,
-} from '../../utils/background/notifications';
-import {
-  stopLiveActivity,
-  syncLiveActivity,
-} from '../../utils/background/liveActivity';
+import { liveActivityManager } from '../../utils/background/liveActivityManager';
 import Executor from '../../utils/execution/Executor';
 import ControlButtons from './ControlButtons';
 import DoubleTimer from './DoubleTimer';
@@ -57,24 +50,15 @@ const RunControls = ({
   }, [timer]);
 
   const syncBackgroundState = useCallback(async () => {
-    if (executor.status !== 'running') {
-      await cancelIntervalNotifications();
-      await syncLiveActivity(executor.getLiveStatus(), showLiveActivity);
-      return;
-    }
-
-    const alerts = executor.getUpcomingAlerts();
-    await scheduleIntervalNotifications(timerName, alerts);
-    await syncLiveActivity(executor.getLiveStatus(), showLiveActivity);
+    await liveActivityManager.sync(executor, timerName, showLiveActivity);
   }, [executor, timerName, showLiveActivity]);
 
   useEffect(() => {
-    void syncLiveActivity(executor.getLiveStatus(), showLiveActivity);
+    void syncBackgroundState();
     if (executor.status === 'done' && !doneHandledRef.current) {
       doneHandledRef.current = true;
       void (async () => {
-        await cancelIntervalNotifications();
-        await stopLiveActivity();
+        await liveActivityManager.stop();
         timerActions.handleReset();
       })();
       return;
@@ -82,14 +66,13 @@ const RunControls = ({
     if (executor.status !== 'done') {
       doneHandledRef.current = false;
     }
-  }, [executor, timer, timerActions, showLiveActivity]);
+  }, [executor, timer, timerActions, syncBackgroundState]);
 
   useEffect(() => {
     onActiveNodeChange(0);
     return () => {
       timerActions.handlePause(Date.now() - executor.lastTickTimeMs);
-      cancelIntervalNotifications();
-      stopLiveActivity();
+      void liveActivityManager.stop();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -97,9 +80,8 @@ const RunControls = ({
   const handlePauseWrapper = useCallback(async () => {
     timerActions.handlePause(Date.now() - executor.lastTickTimeMs);
     executor.pause();
-    await cancelIntervalNotifications();
-    await syncLiveActivity(executor.getLiveStatus(), showLiveActivity);
-  }, [executor, timerActions, showLiveActivity]);
+    await syncBackgroundState();
+  }, [executor, timerActions, syncBackgroundState]);
 
   const handleStart = useCallback(async () => {
     timerActions.handleStart();
@@ -117,8 +99,7 @@ const RunControls = ({
   const handleReset = useCallback(async () => {
     timerActions.handleReset();
     executor.reset();
-    await cancelIntervalNotifications();
-    await stopLiveActivity();
+    await liveActivityManager.stop();
   }, [executor, timerActions]);
 
   const handleSkip = useCallback(async () => {

@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import {
   AppActionTypes,
   RESET,
@@ -47,6 +48,10 @@ export type SelectSettings = adSetting & themeSetting;
 export type SettingsState = SelectSettings &
   BooleanSettings &
   adLastResetSetting;
+
+export const IS_LIVE_ACTIVITY_AVAILABLE =
+  Platform.OS === 'ios' &&
+  process.env.EXPO_PUBLIC_ALLOW_LIVE_ACTIVITY === 'true';
 
 export const initialState: SettingsState = {
   ads: AdType.On,
