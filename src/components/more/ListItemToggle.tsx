@@ -12,11 +12,15 @@ const labels = {
   countUp: 'Timers Count Up',
   showTotalTime: 'Show Total Time',
   hideDescription: 'Hide Description (saves space)',
+  hideLiveActivity: 'Show Live Activity',
 };
+
+const INVERTED_SETTINGS = ['hideLiveActivity'];
 
 const ListItemToggle = ({ setting }: { setting: keyof BooleanSettings }) => {
   const dispatch = useDispatch();
   const on = useSetting(setting);
+  const shouldInvert = INVERTED_SETTINGS.includes(setting);
 
   return (
     <ListItem
@@ -25,9 +29,13 @@ const ListItemToggle = ({ setting }: { setting: keyof BooleanSettings }) => {
       accessoryRight={() => (
         <Toggle
           style={{ paddingRight: 10 }}
-          checked={on}
-          onChange={() =>
-            dispatch(updateSetting({ [setting]: !on } as AnySetting))
+          checked={shouldInvert ? !on : on}
+          onChange={(nextChecked) =>
+            dispatch(
+              updateSetting({
+                [setting]: shouldInvert ? !nextChecked : nextChecked,
+              } as AnySetting),
+            )
           }
         />
       )}

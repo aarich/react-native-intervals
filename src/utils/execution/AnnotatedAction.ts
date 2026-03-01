@@ -1,4 +1,4 @@
-import { Audio } from 'expo-av';
+import { AudioPlayer } from 'expo-audio';
 import { Action, ActionType } from '../../types';
 import { getAudioInfo, play } from '../audio';
 import Executor from './Executor';
@@ -11,7 +11,7 @@ export default class AnnotatedAction {
   // For GoTo
   totalPasses: number;
   // For Sound
-  private playingSound?: Audio.Sound;
+  private playingSound?: AudioPlayer;
   // For Pause
   hasResumed: boolean;
 
@@ -73,20 +73,20 @@ export default class AnnotatedAction {
     if (this.playingSound) {
       const sound = this.playingSound;
 
-      sound
-        .setStatusAsync({ shouldPlay: false })
-        .then(() => sound.unloadAsync())
-        .then(() => (this.playingSound = undefined));
+      sound.pause();
+      sound.remove();
+      this.playingSound = undefined;
     }
   }
 
-  public onStart(executor: Executor, isRapid?: boolean) {
+  public onStart(executor: Executor) {
     this.isCurrentlyPlayingAction = true;
     this.elapsedMs = 0;
-    if (!isRapid && this.action.type === ActionType.sound) {
-      play(getAudioInfo(this.action.params.sound), {
+    if (this.action.type === ActionType.sound) {
+      const sound = play(getAudioInfo(this.action.params.sound), {
         isLooping: true,
-      }).then((sound) => this.handleNewlyPlayedSound(sound));
+      });
+      this.handleNewlyPlayedSound(sound);
     }
 
     if (this.action.type === ActionType.pause) {
@@ -99,9 +99,8 @@ export default class AnnotatedAction {
     if (this.playingSound) {
       const sound = this.playingSound;
 
-      sound.setStatusAsync({ shouldPlay: false }).then(() => {
-        sound.unloadAsync();
-      });
+      sound.pause();
+      sound.remove();
     }
   }
 
@@ -109,10 +108,11 @@ export default class AnnotatedAction {
     this.isCurrentlyPlayingAction = true;
     this.hasResumed = true;
     if (this.action.type === ActionType.sound) {
-      play(getAudioInfo(this.action.params.sound), {
+      const sound = play(getAudioInfo(this.action.params.sound), {
         isLooping: true,
         positionMillis: this.elapsedMs,
-      }).then((sound) => this.handleNewlyPlayedSound(sound));
+      });
+      this.handleNewlyPlayedSound(sound);
     }
   }
 
@@ -142,14 +142,13 @@ export default class AnnotatedAction {
    * where the sound node is skipped out of before the sound has been loaded. This way, as soon as the
    * sound is loaded we check to make sure we haven't already exited the action.
    */
-  private handleNewlyPlayedSound(sound: Audio.Sound) {
+  private handleNewlyPlayedSound(sound: AudioPlayer) {
     this.playingSound = sound;
     if (!this.isCurrentlyPlayingAction) {
       // it means we already exited. Stop the sound
-      sound
-        .setStatusAsync({ shouldPlay: false })
-        .then(() => sound.unloadAsync())
-        .then(() => (this.playingSound = undefined));
+      sound.pause();
+      sound.remove();
+      this.playingSound = undefined;
     }
   }
 }

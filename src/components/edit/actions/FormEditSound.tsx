@@ -9,7 +9,7 @@ import {
 } from '@ui-kitten/components';
 import { useEffect, useState } from 'react';
 
-import { Audio } from 'expo-av';
+import { AudioPlayer } from 'expo-audio';
 import { BaseFormEditProps } from './FormEdit';
 import TimeInput from './TimeInput';
 import { View } from 'react-native';
@@ -19,7 +19,7 @@ const FormEditSound = ({
   setParams,
   timeUnitIsSeconds,
 }: BaseFormEditProps) => {
-  const [sound, setSound] = useState<Audio.Sound>();
+  const [sound, setSound] = useState<AudioPlayer>();
   const [playing, setPlaying] = useState(false);
   const [selectedAudioId, setSelectedAudioId] = useState(0);
 
@@ -29,7 +29,7 @@ const FormEditSound = ({
     if (!params.sound) {
       setParams((params) => ({ ...params, sound: id }));
     }
-    load(getAudioInfo(id)).then(({ sound }) => setSound(sound));
+    setSound(load(getAudioInfo(id)));
   }, [params.sound, setParams]);
 
   useEffect(() => {
@@ -37,16 +37,14 @@ const FormEditSound = ({
       return;
     }
 
-    sound.setOnPlaybackStatusUpdate((status) => {
-      if ('isPlaying' in status) {
-        setPlaying(status.isPlaying);
-      } else {
-        setPlaying(false);
-      }
+    const subscription = sound.addListener('playbackStatusUpdate', (status) => {
+      setPlaying(status.playing);
     });
 
     return () => {
-      sound?.unloadAsync();
+      sound?.pause();
+      subscription.remove();
+      sound?.remove();
     };
   }, [sound]);
 
@@ -60,7 +58,7 @@ const FormEditSound = ({
           <Select
             selectedIndex={
               new IndexPath(
-                AUDIO_FILES.findIndex((ai) => ai.id === selectedAudioId)
+                AUDIO_FILES.findIndex((ai) => ai.id === selectedAudioId),
               )
             }
             onSelect={(i) =>
@@ -77,13 +75,13 @@ const FormEditSound = ({
         </View>
         <View>
           <Button
-            onPress={() => {
-              playing
-                ? sound?.setStatusAsync({ shouldPlay: false })
-                : sound
-                    ?.setStatusAsync({ positionMillis: 0 })
-                    .then(() => sound.playAsync());
-              setPlaying(!playing);
+            onPress={async () => {
+              if (playing) {
+                sound?.pause();
+              } else {
+                await sound?.seekTo(0);
+                sound?.play();
+              }
             }}
             appearance="ghost"
             accessoryLeft={(props) => (

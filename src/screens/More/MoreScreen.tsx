@@ -1,6 +1,7 @@
 import { StackNavigationProp } from '@react-navigation/stack';
+import { useFocusEffect } from '@react-navigation/native';
 import { Divider, Icon, Layout, List, ListItem } from '@ui-kitten/components';
-import { useCallback, useMemo, ReactElement } from 'react';
+import { useCallback, useMemo, ReactElement, useState } from 'react';
 import { Alert, Platform, StyleSheet, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -15,13 +16,18 @@ import {
 } from '../../redux/reducers/settingsReducer';
 import { MoreParamList } from '../../types';
 import { AdUnit, useSupportMeSuggestion } from '../../utils/ads';
+import {
+  NotificationPermissionState,
+  getNotificationPermissionState,
+} from '../../utils/background/notifications';
+import { openSettings } from 'expo-linking';
 
 type Props = {
   navigation: StackNavigationProp<MoreParamList, 'MoreScreen'>;
 };
 
 type ListItemNav = { label: string; destination: keyof MoreParamList };
-type ListItemAction = { label: string; action: () => void };
+type ListItemAction = { label: string; subtitle?: string; action: () => void };
 type ListItemBooleanSetting = {
   setting: keyof BooleanSettings;
   isBoolean: true;
@@ -34,6 +40,19 @@ type ListItemSelectSetting = {
 const MoreScreen = ({ navigation }: Props) => {
   const dispatch = useDispatch();
   const supportMe = useSupportMeSuggestion();
+  const [notificationStatus, setNotificationStatus] =
+    useState<NotificationPermissionState>('undetermined');
+
+  const loadNotificationStatus = useCallback(async () => {
+    const status = await getNotificationPermissionState();
+    setNotificationStatus(status);
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      void loadNotificationStatus();
+    }, [loadNotificationStatus]),
+  );
 
   const resetAppAlert = useCallback(() => {
     const message =
@@ -69,21 +88,36 @@ const MoreScreen = ({ navigation }: Props) => {
       'countUp',
       'showTotalTime',
       'hideDescription',
+      'hideLiveActivity',
     ];
     const selectables: (keyof SelectSettings)[] = [
-      'theme',
       ...Platform.select({ web: [], default: ['ads' as const] }),
+      'theme',
     ];
-
-    booleans.forEach((setting) => items.push({ setting, isBoolean: true }));
-    selectables.forEach((setting) => items.push({ setting, isBoolean: false }));
 
     if (supportMe.isLoaded) {
       items.push({ label: '❤️', action: supportMe.show });
     }
 
+    booleans.forEach((setting) => items.push({ setting, isBoolean: true }));
+    selectables.forEach((setting) => items.push({ setting, isBoolean: false }));
+
+    if (Platform.OS !== 'web') {
+      items.push({
+        label: 'Notifications',
+        subtitle:
+          {
+            enabled: 'Enabled',
+            disabled: 'Disabled',
+            undetermined: 'Not yet decided',
+            unavailable: 'Unavailable on web',
+          }[notificationStatus] ?? 'Unknown',
+        action: openSettings,
+      });
+    }
+
     return items;
-  }, [resetAppAlert, supportMe.isLoaded, supportMe.show]);
+  }, [notificationStatus, resetAppAlert, supportMe.isLoaded, supportMe.show]);
 
   const lastNavListItem = listItems.length - 1;
 
@@ -91,19 +125,20 @@ const MoreScreen = ({ navigation }: Props) => {
     if ('setting' in listItem) {
       if (listItem.isBoolean) {
         return <ListItemToggle setting={listItem.setting} />;
-      } else {
-        const Comp: () => ReactElement = {
-          ads: ListItemAds,
-          theme: ListItemTheme,
-        }[listItem.setting];
-
-        return <Comp />;
       }
+
+      const Comp: () => ReactElement = {
+        ads: ListItemAds,
+        theme: ListItemTheme,
+      }[listItem.setting];
+
+      return <Comp />;
     } else {
       return (
         <>
           <ListItem
             title={listItem.label}
+            description={'subtitle' in listItem ? listItem.subtitle : undefined}
             onPress={
               'destination' in listItem
                 ? () => navigation.push(listItem.destination)

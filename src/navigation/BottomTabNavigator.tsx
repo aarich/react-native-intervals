@@ -1,4 +1,4 @@
-import { Audio } from 'expo-av';
+import { setAudioModeAsync } from 'expo-audio';
 import * as Linking from 'expo-linking';
 import { useEffect } from 'react';
 
@@ -35,7 +35,10 @@ export default function BottomTabNavigator() {
   };
 
   useEffect(() => {
-    Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
+    setAudioModeAsync({
+      playsInSilentMode: true,
+      shouldPlayInBackground: true,
+    });
 
     Linking.getInitialURL().then((initialUrl) => {
       initialUrl && handleURL(initialUrl);
@@ -52,9 +55,8 @@ export default function BottomTabNavigator() {
       screenOptions={{
         tabBarActiveTintColor: theme['color-primary-500'],
         tabBarLabelPosition: 'below-icon',
-        headerShown: false
-      }}
-    >
+        headerShown: false,
+      }}>
       <BottomTab.Screen
         name="Flows"
         component={TimerNavigator}

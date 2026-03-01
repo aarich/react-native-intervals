@@ -75,7 +75,7 @@ const alerts = [
 
 const makeActionGraphic = (
   types: ActionType | ActionType[] | undefined,
-  onPress: VoidFunction
+  onPress: VoidFunction,
 ) => {
   if (types == null) {
     return (
@@ -91,8 +91,7 @@ const makeActionGraphic = (
         style={{
           flexDirection: 'row',
           justifyContent: 'space-around',
-        }}
-      >
+        }}>
         {types.map((t) => (
           <View style={{ flex: 1 }} key={t}>
             <ActionIcon type={t} size={110} iconSize={80} onPress={onPress} />
@@ -126,7 +125,7 @@ const HelpScreen = () => {
   const makeScreen = (
     title: string,
     subtitle: string,
-    types?: ActionType | ActionType[]
+    types?: ActionType | ActionType[],
   ) => (
     <View style={styles.slide}>
       <TutorialScreen
@@ -144,33 +143,33 @@ const HelpScreen = () => {
           <TutorialScreen
             title="Welcome"
             subtitle={`Create and run highly customizable interval flows.\n\n${Platform.select(
-              { web: 'Scroll', default: 'Swipe' }
+              { web: 'Scroll', default: 'Swipe' },
             )} to learn how →`}
           />
         </View>
         {makeScreen(
           'Add a Step',
-          'Flows are made up of steps. In the flow editor you\'ll see a toolbar like this one. Tap on a step to add it to the flow. You can put steps in the middle of the flow using the "Insert Here" option'
+          'Flows are made up of steps. In the flow editor you\'ll see a toolbar like this one. Tap on a step to add it to the flow. You can put steps in the middle of the flow using the "Insert Here" option',
         )}
         {makeScreen(
           'Actions and Waiting',
           'Action steps let you specify something to do for a period of time. A common thing to do in an interval flow is wait, so the Wait step is its own thing.',
-          [ActionType.act, ActionType.wait]
+          [ActionType.act, ActionType.wait],
         )}
         {makeScreen(
           'Go To',
           "The Go To step lets you create loops. To use this step, put it at the end of a set of steps you'd like to repeat.",
-          ActionType.goTo
+          ActionType.goTo,
         )}
         {makeScreen(
           'Sounds',
-          'Play an alert for a specific amount of time. Sounds will not play if the app is in the background, though the timer will continue to run.',
-          ActionType.sound
+          'Play an alert for a specific amount of time.',
+          ActionType.sound,
         )}
         {makeScreen(
           'Pause',
           'When this step starts, the flow is immediately paused. This lets you do something in the flow unbound by time, like "Run around the block" or "Wait for the soup to boil"',
-          ActionType.pause
+          ActionType.pause,
         )}
       </Swiper>
     </Layout>

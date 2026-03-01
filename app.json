@@ -2,11 +2,12 @@
   "expo": {
     "name": "Intervals",
     "slug": "intervals",
-    "version": "6.0.0",
+    "version": "7.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "intervals",
     "userInterfaceStyle": "automatic",
+    "experiments": { "reactCompiler": true },
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
@@ -25,7 +26,8 @@
       "associatedDomains": ["applinks:mrarich.com"],
       "infoPlist": {
         "NSUserTrackingUsageDescription": "We'd like to show relevant ads.",
-        "NSMicrophoneUsageDescription": "We'll play alerts for your intervals."
+        "NSMicrophoneUsageDescription": "We'll play alerts for your intervals.",
+        "UIBackgroundModes": ["audio"]
       }
     },
     "android": {
@@ -62,6 +64,14 @@
         }
       ],
       "expo-font",
+      [
+        "expo-widgets",
+        {
+          "enablePushNotifications": true,
+          "widgets": []
+        }
+      ],
+      "expo-notifications",
       [
         "react-native-google-mobile-ads",
         {
@@ -128,8 +138,7 @@
           "url": "https://sentry.io/"
         }
       ],
-      "expo-web-browser",
-      "@sentry/react-native"
+      "expo-web-browser"
     ],
     "runtimeVersion": {
       "policy": "appVersion"

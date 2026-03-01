@@ -25,8 +25,8 @@ type themeSetting = { theme: ThemeType };
 type countUpSetting = { countUp: boolean };
 type totalTimeSetting = { showTotalTime: boolean };
 type hideDescription = { hideDescription: boolean };
-// other
 type adLastResetSetting = { adLastReset: number };
+type hideLiveActivitySetting = { hideLiveActivity: boolean };
 
 export type AnySetting =
   | adSetting
@@ -34,11 +34,13 @@ export type AnySetting =
   | countUpSetting
   | totalTimeSetting
   | hideDescription
-  | adLastResetSetting;
+  | adLastResetSetting
+  | hideLiveActivitySetting;
 
 export type BooleanSettings = countUpSetting &
   totalTimeSetting &
-  hideDescription;
+  hideDescription &
+  hideLiveActivitySetting;
 
 export type SelectSettings = adSetting & themeSetting;
 
@@ -53,11 +55,12 @@ export const initialState: SettingsState = {
   showTotalTime: true,
   hideDescription: false,
   adLastReset: Date.now(),
+  hideLiveActivity: false,
 };
 
 const reducer = (
   state: SettingsState = initialState,
-  action: SettingsActionTypes | AppActionTypes
+  action: SettingsActionTypes | AppActionTypes,
 ): SettingsState => {
   switch (action.type) {
     case SET_SETTINGS:

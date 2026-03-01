@@ -113,6 +113,7 @@ const ViewScreen = ({ navigation, route }: Props) => {
             ) : null}
 
             <RunControls
+              timerName={timer.name}
               actions={timer.flow}
               onActiveNodeChange={setActiveNodeIndex}
               onLabelOverridesChange={setLabelOverrides}

@@ -1,67 +1,55 @@
 import { Button, ButtonGroup, Icon } from '@ui-kitten/components';
 import { View } from 'react-native';
-import { TimerActions } from '../../hooks/useTimer';
-import Executor from '../../utils/execution/Executor';
 
 type Props = {
-  executor: Executor;
-  timerActions: Omit<TimerActions, 'handlePause'> & {
-    handlePause: VoidFunction;
-  };
+  showStart: boolean;
+  showPause: boolean;
+  showResume: boolean;
+  showReset: boolean;
+  showSkip: boolean;
+  onStart: VoidFunction;
+  onPause: VoidFunction;
+  onResume: VoidFunction;
+  onReset: VoidFunction;
+  onSkip: VoidFunction;
 };
 
 const makeButton = (title: string, icon: string, onPress: () => void) => (
   <Button
     key={title}
     onPress={onPress}
-    accessoryLeft={(props) => <Icon {...props} name={icon} />}
-  >
+    accessoryLeft={(props) => <Icon {...props} name={icon} />}>
     {title}
   </Button>
 );
 
-const ControlButtons = ({ executor, timerActions }: Props) => {
-  const { showStart, showPause, showResume, showReset, showSkip } = executor;
+const ControlButtons = ({
+  showStart,
+  showPause,
+  showResume,
+  showReset,
+  showSkip,
+  onStart,
+  onPause,
+  onResume,
+  onReset,
+  onSkip,
+}: Props) => {
   const buttons = [];
   if (showStart) {
-    buttons.push(
-      makeButton('Start', 'play-circle-outline', () => {
-        timerActions.handleStart();
-        executor.start();
-      })
-    );
+    buttons.push(makeButton('Start', 'play-circle-outline', onStart));
   }
   if (showPause) {
-    buttons.push(
-      makeButton('Pause', 'pause-circle-outline', () => {
-        timerActions.handlePause();
-        executor.pause();
-      })
-    );
+    buttons.push(makeButton('Pause', 'pause-circle-outline', onPause));
   }
   if (showResume) {
-    buttons.push(
-      makeButton('Resume', 'play-circle-outline', () => {
-        const resumeMs = timerActions.handleResume();
-        executor.resume();
-        executor.tick(resumeMs);
-      })
-    );
+    buttons.push(makeButton('Resume', 'play-circle-outline', onResume));
   }
   if (showReset) {
-    buttons.push(
-      makeButton('Reset', 'refresh-outline', () => {
-        timerActions.handleReset();
-        executor.reset();
-      })
-    );
+    buttons.push(makeButton('Reset', 'refresh-outline', onReset));
   }
   if (showSkip) {
-    buttons.push(
-      makeButton('Skip', 'skip-forward-outline', () => {
-        executor.skipNode();
-      })
-    );
+    buttons.push(makeButton('Skip', 'skip-forward-outline', onSkip));
   }
   return (
     <View style={{ flexDirection: 'row', justifyContent: 'center' }}>

@@ -1,7 +1,7 @@
-import { AVPlaybackSource } from 'expo-av/build/AV';
+import { AudioSource } from 'expo-audio';
 
 export type AudioInfo = {
-  file: AVPlaybackSource;
+  file: AudioSource;
   name: string;
   id: number;
 };
@@ -91,7 +91,7 @@ export const AUDIO_FILES: AudioInfo[] = [
 
 const AUDIO_LOOKUP = AUDIO_FILES.reduce<Record<number, AudioInfo>>(
   (prev, curr) => ({ ...prev, [curr.id]: curr }),
-  {}
+  {},
 );
 
 export const getAudioInfo = (audioId: number): AudioInfo => {
